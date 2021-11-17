@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttergram/screens/conversations/conversation_screen.dart';
+import 'default_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Fluttergram',
-      home: const ConversationScreen(),
+      home: const DefaultScreen(),
     );
   }
 }
