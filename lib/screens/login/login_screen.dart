@@ -63,7 +63,7 @@ class _LogInState extends State<LogInPage> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           primary: pressedColor,
-                          textStyle: TextStyle(color: Colors.white)),
+                          textStyle: TextStyle(color: secondaryColor)),
                       child: Text('Log in'),
                       onPressed: () async {
                         String phone = phoneController.text;
@@ -165,8 +165,8 @@ class _SignUpState extends State<SignUpPage> {
                     padding: EdgeInsets.all(10),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          textStyle: TextStyle(color: Colors.white)),
+                          primary: pressedColor,
+                          textStyle: TextStyle(color: secondaryColor)),
                       child: Text('Sign Up'),
                       onPressed: () async {
                         print("Sign Up request");
