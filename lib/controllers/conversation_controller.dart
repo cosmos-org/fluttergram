@@ -72,5 +72,5 @@ Future<List<Conversation>> getConversations() async {
 
 Future<Conversation> getConversation({required User user}) async {
   return Conversation(
-      name: user.name, messages: ["Hi there", "Hi", "How are you doing?"]);
+      name: user.username, messages: ["Hi there", "Hi", "How are you doing?"]);
 }

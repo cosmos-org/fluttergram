@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const primaryColor = Color(0xFF1565C0);
-const secondaryColor = Colors.grey;
+const secondaryColor = Colors.white;
 const pressedColor = Color(0xFF0D47A1);
 const warningColor = Colors.deepOrange;
 const errorColor = Colors.red;

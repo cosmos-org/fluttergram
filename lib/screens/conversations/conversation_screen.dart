@@ -130,7 +130,7 @@ class ConversationScreenBody extends StatelessWidget {
                           },
                         )));
           }, // move to chat screen
-          child: ConversationCard(conversation: conversations[index])),
+          child: ConversationCard(conversation: conversations [index])),
     );
   }
 }

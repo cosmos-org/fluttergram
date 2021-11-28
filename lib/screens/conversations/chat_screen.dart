@@ -58,7 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
   AppBar buildAppBar() {
     return AppBar(
       leading: BackButton(),
-      title: Text(widget.user.name),
+      title: Text(widget.user.username),
     );
   }
 }
