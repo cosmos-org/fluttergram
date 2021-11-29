@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../models/user_model.dart';
+import '../models/image_model.dart';
 import 'package:fluttergram/constants.dart';
 import 'package:http/http.dart';
 
@@ -10,6 +11,21 @@ Future<List<User>> getUsers() async {
     // User(id: '3', username: "Ralph Edwards"),
     // User(id: '4', username: "Jacob Jones"),
     // User(id: '5', username: "Albert Flores"),
+  ];
+}
+
+Future<List<User>> getFriends() async {
+  return [
+    User(id: '1', username: 'Emma Waston', phone: '0', password: 'a',
+        avatar: Image(id:'1', type: 'a', filename: "assets/images/user.png")),
+    User(id: '2', username: "Esther Howard",  phone: '0', password: 'a',
+        avatar: Image(id:'1', type: 'a', filename: "assets/images/user_2.png")),
+    User(id: '3', username: "Ralph Edwards",  phone: '0', password: 'a',
+        avatar: Image(id:'1', type: 'a', filename: "assets/images/user_3.png")),
+    User(id: '4', username: "Jacob Jones", phone: '0', password: 'a',
+        avatar: Image(id:'1', type: 'a', filename: "assets/images/user_4.png")),
+    User(id: '5', username: "Albert Flores", phone: '0', password: 'a',
+        avatar:Image(id:'1', type: 'a', filename: "assets/images/user_5.png"))
   ];
 }
 

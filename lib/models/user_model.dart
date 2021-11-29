@@ -43,13 +43,5 @@ class User {
       // token: json['token']
     );
   }
-// Map<String, dynamic> toJson() => {
-//   "id": id,
-//   "phonenumber": phonenumber,
-//   "username": username,
-//   "password": password,
-//   "avatar": avatar!.toJson(),
-//   "cover_image": cover_image!.toJson(),
-//   "token": token
-// };
+
 }
