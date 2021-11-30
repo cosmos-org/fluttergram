@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.all(2.0),
                           color: Colors.white,
                           child: Text(
-                            'Lastest Feed',
+                            'Latest Feed',
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.black,

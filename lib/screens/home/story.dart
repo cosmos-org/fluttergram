@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fluttergram/models/user_model.dart';
 

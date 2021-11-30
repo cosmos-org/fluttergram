@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttergram/models/profile.dart';
+import 'package:fluttergram/constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'Duong Dao', 'Duongdd', 23, 10, 'A hust boiz');
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: primaryColor,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,

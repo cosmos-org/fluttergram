@@ -167,7 +167,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
   AppBar buildAppBar() {
     return AppBar(
         backgroundColor: primaryColor,
-        title: Text("Messages"),
+        title: Text(
+            "Messages",
+            textAlign: TextAlign.center,
+            ),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
