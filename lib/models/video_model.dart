@@ -1,10 +1,10 @@
-class Image {
+class Video {
   String type;
   String id;
   String fileName;
   String fileType;
   int fileSize;
-  Image({
+  Video({
     required this.id,
     required this.type,
     this.fileName = '',
@@ -12,23 +12,17 @@ class Image {
     this.fileSize = 0,
   });
 
-  factory Image.fromJson(Map<String, dynamic> json){
-    print('from json image');
-    var a= Image(
+  factory Video.fromJson(Map<String, dynamic> json){
+    var a= Video(
       id: json['_id'] ?? '',
-      type: json['type'] ?? 'image',
+      type: json['type'] ?? 'video',
       fileName: json['fileName'] ?? '',
       fileType: json['mimetype'] ?? '',
       fileSize: json['fileSize'] ?? 0,
     );
-
+    print('from json video');
     print(a);
     return a;
-  }
-
-  @override
-  String toString() {
-    return 'Image{type: $type, id: $id, fileName: $fileName, fileType: $fileType, fileSize: $fileSize}';
   }
 }
 

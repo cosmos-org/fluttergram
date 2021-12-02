@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
+import '../../util/util.dart';
 class PostContainer extends StatelessWidget {
   final Post post;
   const PostContainer({
@@ -45,10 +45,7 @@ class PostContainer extends StatelessWidget {
                           children: <Widget>[
                             Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Image.network(e.filename,
-                                  // width: 1050,
-                                  // height: 350,
-                                  fit: BoxFit.cover,)
+                                child: getImageNetWork(e.fileName),
                             )
                           ],
                         ) ,
@@ -83,7 +80,7 @@ class _PostHeader extends StatelessWidget {
           child: CircleAvatar(
             radius: 20.0,
             backgroundColor: Colors.grey[200],
-            backgroundImage: NetworkImage(post.author.avatar!.filename),
+            backgroundImage: getImageProviderNetWork(post.author.avatar!.fileName),
           ),
         ),
         const SizedBox(width: 8.0),
@@ -100,7 +97,7 @@ class _PostHeader extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '${post.timeAgo} • ',
+                    '${post.createdAt} • ',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12.0,
