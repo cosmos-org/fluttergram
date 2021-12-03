@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import '../../constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 const String getFileUrl = hostname+ '/files/';
+bool checkMessageResponse(message){
+  if
+  (message.toLowerCase().contains('success')) return true;
+  else return false;
+}
 Map<String, dynamic> jsonConvert(jsonValue){
   print('in conver');
   print(jsonValue);
