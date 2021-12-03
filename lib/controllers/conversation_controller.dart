@@ -1,7 +1,52 @@
 import '../models/conversation_model.dart';
+import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
+import '../util/util.dart';
+import 'package:fluttergram/constants.dart';
+import 'dart:convert';
+final String getChatsURL = hostname + '/api/v1/chats/getChats';
+// final String searchPostsURL = hostname + '/api/v1/posts/search';
+Conversation conversationFromRespJson(json){
+  final String name, messagePreview, avatar, lastMessageTime;
+  final bool isActive, isSeen;
+  final List<String> messages;
+  name = json['partnerName'];
+  avatar = json['partnerAvatar'];
+  messagePreview = json['latestMessage'];
+  lastMessageTime = timeAgo(json['updatedAt']);
+  isActive = true;
+  isSeen = false;
+  messages = [];
+  return new Conversation(name: name,messagePreview: messagePreview,avatar: avatar,lastMessageTime: lastMessageTime,messages: messages,isActive: isActive,isSeen: isSeen);
+}
 
 Future<List<Conversation>> getConversations() async {
+  String token = await getToken();
+  final response = await http
+      .get(Uri.parse(getChatsURL),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'authorization': 'bearer ' + token,
+    },
+  );
+  var resp = jsonDecode(response.body);
+  print(resp);
+
+  if (checkMessageResponse(resp['message'])) {
+
+    var ls = <Conversation>[];
+    // for element
+    for (var element in resp['data'])
+      // resp['data'].foreach((element)
+        {
+      ls.add(conversationFromRespJson(element));
+    };
+    // );
+
+    return ls;
+  }
+
+  else return [];
   return [
     Conversation(
       name: "Jenny Wilson",
