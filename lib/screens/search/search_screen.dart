@@ -15,6 +15,10 @@ _getToken() async {
   token = prefs.getString('token').toString();
 }
 
+const headerTextColor = Colors.lightBlue;
+const headerFontSize = 24.0;
+const headerFontWeight = FontWeight.bold;
+
 class SearchScreen extends StatefulWidget {
 
   @override
@@ -252,7 +256,7 @@ class SearchResultsListView extends StatelessWidget {
           ),
           Text(
               'Everyone',
-              style: TextStyle(fontSize: 24.0 ,fontWeight:FontWeight.bold,color: Colors.lightBlue)
+              style: TextStyle(fontSize: headerFontSize ,fontWeight:headerFontWeight,color: headerTextColor)
           ),
           SizedBox(
             height:  20,
@@ -268,7 +272,14 @@ class SearchResultsListView extends StatelessWidget {
               } else {
                 // data loaded:
                 final searchedUsers = snapshot.data!;
-                return UserSearchedList(users: searchedUsers);
+                if (searchedUsers.length > 0)
+                  return UserSearchedList(users: searchedUsers);
+                else
+                  return  Center(
+                    child: Text(
+                        'No posts found',
+                        style: TextStyle(fontSize: headerFontSize*0.75 ,fontWeight:headerFontWeight)),
+                  );
               }
             },
           ),
@@ -280,7 +291,7 @@ class SearchResultsListView extends StatelessWidget {
           ),
           Text(
               'Every Posts',
-              style: TextStyle(fontSize: 24.0 ,fontWeight:FontWeight.bold,color: Colors.lightBlue)
+              style: TextStyle(fontSize: headerFontSize ,fontWeight:headerFontWeight,color: headerTextColor)
           ),
           SizedBox(
             height:  10,
@@ -297,9 +308,14 @@ class SearchResultsListView extends StatelessWidget {
               } else {
                 // data loaded:
                 final searchedPosts = snapshot.data!;
-                print('searched posts ');
-                print(searchedPosts);
-                return PostSearchedList(posts: searchedPosts);
+                if (searchedPosts.length > 0)
+                  return PostSearchedList(posts: searchedPosts);
+                else
+                  return Center(
+                      child: Text(
+                          'No posts found',
+                          style: TextStyle(fontSize: headerFontSize*0.75 ,fontWeight:headerFontWeight)),
+                  );
               }
             },
           ),),

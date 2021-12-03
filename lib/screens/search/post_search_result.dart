@@ -14,8 +14,6 @@ class PostSearchedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Post searched length: ");
-    print(posts.length);
     return Container(
       margin: const EdgeInsets.only(left: 10.0, right: 20.0),
       color: Colors.white,
