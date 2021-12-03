@@ -10,7 +10,6 @@ final String searchUsersURL = hostname + '/api/v1/users/search';
 final String searchPostsURL = hostname + '/api/v1/posts/search';
 
 Future<List<User>> getSearchUserResult(token, keyword) async {
-  return [];
   final response = await http
       .post(Uri.parse(searchUsersURL),
     headers: <String, String>{

@@ -20,26 +20,39 @@ class PostSearchedList extends StatelessWidget {
       margin: const EdgeInsets.only(left: 10.0, right: 20.0),
       color: Colors.white,
       child: SingleChildScrollView(
-          child: ListView.separated(
-            shrinkWrap: true,
-            separatorBuilder: (BuildContext context, int index) {
-              return SizedBox(
-                  height: 5,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                    ),
-                  )
-              );
-            },
-            itemCount: posts.length,
-            itemBuilder: (_, i) => PostSearched(post: posts[i]),
+          child: Wrap(
+            spacing: 10, // set spacing here
+            children: createPostList(posts),
           )
       ),
+      // child: SingleChildScrollView(
+      //     child: ListView.separated(
+      //       shrinkWrap: true,
+      //       separatorBuilder: (BuildContext context, int index) {
+      //         return SizedBox(
+      //             height: 5,
+      //             child: DecoratedBox(
+      //               decoration: BoxDecoration(
+      //                 color: Colors.black26,
+      //               ),
+      //             )
+      //         );
+      //       },
+      //       itemCount: posts.length,
+      //       itemBuilder: (_, i) => PostSearched(post: posts[i]),
+      //     )
+      // ),
     );
   }
 }
+List<Widget> createPostList(postList) {
+  var ls = <PostSearched>[];
+  postList.forEach((ele) {
+    ls.add(new PostSearched(post: ele));
+  });
 
+  return ls;
+}
 
 class PostSearched extends StatelessWidget {
   final Post post;
