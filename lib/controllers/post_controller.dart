@@ -5,35 +5,41 @@ import 'package:fluttergram/models/image_model.dart';
 
 List<User> Users = [
   User(id: '1', username: 'Emma Waston', phone: '0', password: 'a',
-      avatar: Image(id:'1', type: 'a', filename: "assets/images/user.png")),
+      avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
   User(id: '2', username: "Esther Howard",  phone: '0', password: 'a',
-    avatar: Image(id:'1', type: 'a', filename: "assets/images/user_2.png")),
+    avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
   User(id: '3', username: "Ralph Edwards",  phone: '0', password: 'a',
-      avatar: Image(id:'1', type: 'a', filename: "assets/images/user_3.png")),
+      avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
   User(id: '4', username: "Jacob Jones", phone: '0', password: 'a',
-    avatar: Image(id:'1', type: 'a', filename: "assets/images/user_4.png")),
+    avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
   User(id: '5', username: "Albert Flores", phone: '0', password: 'a',
-    avatar:Image(id:'1', type: 'a', filename: "assets/images/user_5.png"))];
+    avatar:Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg"))];
 
 Future<List<Post>> getPosts() async {
   return [
-    Post(author: Users[1],
+    Post(
+        id: '1',
+        author: Users[1],
         described: 'beautiful day',
-        timeAgo: '5m',
-        images: [Image(id:'1', type: 'a', filename: "assets/images/post1.jpg"),
-                    Image(id:'1', type: 'a', filename:   "assets/images/post2.jpg")],
+        createdAt: '5m',
+        images: [Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg"),
+                    Image(id:'1', type: 'a', fileName:   "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")],
         like: [Users[0], Users[2]],
         countComments: 5),
-    Post(author: Users[0],
+    Post(
+        id: '2',
+        author: Users[0],
         described: 'I want to sleep',
-        timeAgo: '10m',
-        images: [Image(id:'1', type: 'a', filename: "assets/images/post3.jpg")],
+        createdAt: '10m',
+        images: [Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")],
         like: [Users[0], Users[2], Users[1]],
         countComments: 10),
-    Post(author: Users[3],
+    Post(
+        id: '3',
+        author: Users[3],
         described: 'perfect',
-        timeAgo: '15m',
-        images: [Image(id:'1', type: 'a', filename: "assets/images/post4.jpg")],
+        createdAt: '15m',
+        images: [Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")],
         like: [Users[0], Users[2], Users[1], Users[3]],
         countComments: 15)
   ];

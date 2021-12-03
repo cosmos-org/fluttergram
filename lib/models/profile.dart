@@ -8,4 +8,9 @@ class Profile{
 
   Profile(this.imagePath, this.name, this.nickName, this.numberFriends,
       this.numberPosts, this.about);
+
+  @override
+  String toString() {
+    return 'Profile{imagePath: $imagePath, name: $name, nickName: $nickName, numberFriends: $numberFriends, numberPosts: $numberPosts, about: $about}';
+  }
 }

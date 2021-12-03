@@ -35,7 +35,8 @@ dependencies:
 
   # Focused menu library
   focused_menu: ^1.0.0
-
+  material_floating_search_bar: ^0.2.6
+  shared_preferences: ^2.0.9
 dev_dependencies:
   flutter_test:
     sdk: flutter
