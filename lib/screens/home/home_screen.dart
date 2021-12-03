@@ -29,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               // data loaded:
               final friends = snapshot.data!;
+              print("friends");
+              print(friends);
               return CustomScrollView(
                   slivers: <Widget>[
                     SliverToBoxAdapter(
@@ -63,7 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                     ),
                     SliverToBoxAdapter(
-                      child: Posts(),
+                      child:
+                      Expanded(
+                        child: Posts(),
+                      ),
                     )
                   ]
               );

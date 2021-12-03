@@ -21,7 +21,6 @@ class UserSearchedList extends StatelessWidget {
           child: Wrap(
             spacing: 10, // set spacing here
             children: createUserList(users),
-
           )
       ),
     );

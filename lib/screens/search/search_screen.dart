@@ -285,7 +285,8 @@ class SearchResultsListView extends StatelessWidget {
           SizedBox(
             height:  10,
           ),
-          FutureBuilder<List<Post>>(
+          Expanded(
+            child: FutureBuilder<List<Post>>(
             future: getSearchPostResult(token,searchTerm),
             builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
               if (!snapshot.hasData) {
@@ -301,7 +302,7 @@ class SearchResultsListView extends StatelessWidget {
                 return PostSearchedList(posts: searchedPosts);
               }
             },
-          ),
+          ),),
         ]
     );
   }
