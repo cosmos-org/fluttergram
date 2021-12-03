@@ -8,12 +8,9 @@ import '../../constants.dart';
 import 'package:fluttergram/controllers/search_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/models/post_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-String token = '';
-_getToken() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  token = prefs.getString('token').toString();
-}
+
+
+
 
 const headerTextColor = Colors.lightBlue;
 const headerFontSize = 24.0;
@@ -79,7 +76,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _getToken();
     controller = FloatingSearchBarController();
     filteredSearchHistory = filterSearchTerms(filter: null);
   }
@@ -262,7 +258,7 @@ class SearchResultsListView extends StatelessWidget {
             height:  20,
           ),
           FutureBuilder<List<User>>(
-            future: getSearchUserResult(token,searchTerm),
+            future: getSearchUserResult(searchTerm),
             builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
               if (!snapshot.hasData) {
                 // while data is loading:
@@ -277,7 +273,7 @@ class SearchResultsListView extends StatelessWidget {
                 else
                   return  Center(
                     child: Text(
-                        'No posts found',
+                        'No users found',
                         style: TextStyle(fontSize: headerFontSize*0.75 ,fontWeight:headerFontWeight)),
                   );
               }
@@ -298,7 +294,7 @@ class SearchResultsListView extends StatelessWidget {
           ),
           Expanded(
             child: FutureBuilder<List<Post>>(
-            future: getSearchPostResult(token,searchTerm),
+            future: getSearchPostResult(searchTerm),
             builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
               if (!snapshot.hasData) {
                 // while data is loading:

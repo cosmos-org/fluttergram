@@ -9,7 +9,8 @@ import '../util/util.dart';
 final String searchUsersURL = hostname + '/api/v1/users/search';
 final String searchPostsURL = hostname + '/api/v1/posts/search';
 
-Future<List<User>> getSearchUserResult(token, keyword) async {
+Future<List<User>> getSearchUserResult( keyword) async {
+  String token = await getToken();
   final response = await http
       .post(Uri.parse(searchUsersURL),
     headers: <String, String>{
@@ -40,8 +41,8 @@ Future<List<User>> getSearchUserResult(token, keyword) async {
   else return [];
 }
 
-Future<List<Post>> getSearchPostResult(token, keyword) async {
-  print('In API search post call');
+Future<List<Post>> getSearchPostResult( keyword) async {
+  String token = await getToken();
   final response = await http
       .post(Uri.parse(searchPostsURL),
     headers: <String, String>{
@@ -53,13 +54,8 @@ Future<List<Post>> getSearchPostResult(token, keyword) async {
     }),
   );
   var resp = jsonDecode(response.body);
-  print('post resp');
-  print(resp);
 
   if (checkMessageResponse(resp['message'])) {
-    print('have data');
-    print(resp['data'].length);
-
     var ls = <Post>[];
     // for element
     for (var element in resp['data'])
