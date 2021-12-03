@@ -50,3 +50,8 @@ void setToken(String? token) async {
     await prefs.setString('token', token);
   };
 }
+
+Future<String> getToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('token').toString();
+}
