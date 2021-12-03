@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:fluttergram/util/util.dart';
+
 import '../models/user_model.dart';
 import '../models/image_model.dart';
 import 'package:fluttergram/constants.dart';
@@ -60,4 +62,24 @@ Future signUp(String username, String phone, String password) async {
   String signupUrl = hostname + userSignUpEndpoint;
   Response resp = await post(Uri.parse(signupUrl), headers: headers, body: body);
   return resp.statusCode;
+}
+
+Future<User> show() async {
+  String token = await getToken();
+  print('token ne: '+token);
+  String showUrl = hostname + userGetInforEndpoint;
+  Response resp = await get(Uri.parse(showUrl) ,headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    'authorization': 'bearer ' + token,
+  });
+  int statusCode = resp.statusCode;
+  dynamic respBody = jsonDecode(resp.body);
+  if (statusCode < 300) {
+    User currentUser = User.fromJson(respBody);
+    print(currentUser);
+    return currentUser;
+  } else {
+    String message = respBody["message"];
+    return User(id: '-1', username: "Error", phone: statusCode.toString(), password: message);
+  }
 }
