@@ -74,8 +74,10 @@ Future<User> show() async {
   });
   int statusCode = resp.statusCode;
   dynamic respBody = jsonDecode(resp.body);
+  print('resp get user');
+  print(respBody);
   if (statusCode < 300) {
-    User currentUser = User.fromJson(respBody);
+    User currentUser = User.fromJson(respBody['data']);
     print(currentUser);
     return currentUser;
   } else {

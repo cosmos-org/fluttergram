@@ -26,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         else{
           final user = snapshot.data!;
+          print(user);
           print(user.username + "alooooo");
           return buildApp(user);
         }
