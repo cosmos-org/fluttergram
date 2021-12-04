@@ -79,6 +79,18 @@ NetworkImage getImageProviderNetWork(fileName) {
   );
 }
 
+void setCurrentUserId(String currentUserId) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  print('currentUserId:  $currentUserId.');
+  if (currentUserId != Null) {
+    await prefs.setString('currentUserId', currentUserId);
+  };
+}
+Future<String> getCurrentUserId() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('currentUserId').toString();
+}
+
 
 void setToken(String? token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
