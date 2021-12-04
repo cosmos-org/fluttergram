@@ -22,7 +22,6 @@ Future<List<User>> getSearchUserResult( keyword) async {
     }),
   );
   var resp = jsonDecode(response.body);
-  print(resp);
 
   if (checkMessageResponse(resp['message'])) {
 

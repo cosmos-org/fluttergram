@@ -37,6 +37,8 @@ dependencies:
   focused_menu: ^1.0.0
   material_floating_search_bar: ^0.2.6
   shared_preferences: ^2.0.9
+  socket_io_client: ^1.0.1
+  timeago: ^3.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

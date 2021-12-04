@@ -1,17 +1,55 @@
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 const String getFileUrl = hostname+ '/files/';
+
+late IO.Socket  socket;
+//Calculate time-ago format of a mongo-date-string
+String timeAgo(String dateMongo) {
+  final t = DateTime.parse(dateMongo);
+  Duration diff = DateTime.now().difference(t);
+  if (diff.inDays > 365)
+    return "${(diff.inDays / 365).floor()} ${(diff.inDays / 365).floor() == 1 ? "year" : "years"} ";
+  if (diff.inDays > 30)
+    return "${(diff.inDays / 30).floor()} ${(diff.inDays / 30).floor() == 1 ? "month" : "months"} ";
+  if (diff.inDays > 7)
+    return "${(diff.inDays / 7).floor()} ${(diff.inDays / 7).floor() == 1 ? "week" : "weeks"} ";
+  if (diff.inDays > 0)
+    return "${diff.inDays} ${diff.inDays == 1 ? "day" : "days"} ";
+  if (diff.inHours > 0)
+    return "${diff.inHours} ${diff.inHours == 1 ? "hour" : "hours"} ";
+  if (diff.inMinutes > 0)
+    return "${diff.inMinutes} ${diff.inMinutes == 1 ? "minute" : "minutes"} ";
+  return "Just now";
+}
+
+
+void connectSocket(userId, conversationScreen, chatScreen){
+  socket = IO.io(socketHostname, <String, dynamic>{
+    "transports": ["websocket"],
+    "autoConnect": false,
+  });
+  socket.connect();
+  socket.emit("signin", userId);
+  socket.onConnect((data) {
+    socket.on('message', (msg) {
+
+      });
+    });
+  print(socket.connected);
+}
+
+
 bool checkMessageResponse(message){
   if
   (message.toLowerCase().contains('success')) return true;
   else return false;
 }
+//try catch
 Map<String, dynamic> jsonConvert(jsonValue){
-  print('in conver');
-  print(jsonValue);
-  print(jsonValue.runtimeType);
-  print("is null " + (jsonValue == null).toString());
+
   if (jsonValue == null) {
     return {'null': 'null'};
   }
@@ -27,14 +65,14 @@ Map<String, dynamic> jsonConvert(jsonValue){
   };
 
 }
-
+//for example:  Image: getImageProviderNetWork(fileName),
 Image getImageNetWork(fileName) {
   return Image.network(
     getFileUrl + fileName,
     fit: BoxFit.cover,
   );
 }
-
+//for example:  backgroundImage: getImageProviderNetWork(fileName),
 NetworkImage getImageProviderNetWork(fileName) {
   return NetworkImage(
     getFileUrl + fileName,
