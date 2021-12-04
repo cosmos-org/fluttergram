@@ -49,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
           }
           final conversation = snapshot.data as Conversation;
           return ListView.builder(
-              itemBuilder: (_, index) => Text(conversation.messages[index]));
+              itemBuilder: (_, index) => Text('conversation.messages[index]'));
         },
       ),
     );
