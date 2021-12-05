@@ -68,12 +68,12 @@ class _LogInState extends State<LogInPage> {
                       onPressed: () async {
                         String phone = phoneController.text;
                         String password = passwordController.text;
-                        User currentUser = await logIn(phone, password);
+                        var currentUserAndToken = await logIn(phone, password);
 
-                        if (currentUser.id != "-1") {
-                          print(currentUser.token);
-                          setToken(currentUser.token);
-                          setCurrentUserId(currentUser.id);
+                        if (currentUserAndToken[0].id != "-1") {
+                          print(currentUserAndToken[1]);
+                          setToken(currentUserAndToken[1]);
+                          setCurrentUserId(currentUserAndToken[0].id);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

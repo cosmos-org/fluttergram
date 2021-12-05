@@ -15,7 +15,7 @@ Conversation conversationFromRespJson(json,messages){
   name = json['partnerName'] ?? '';
   avatar = json['partnerAvatar'] ?? '';
   messagePreview = json['latestMessage'] ?? '';
-  lastMessageTime = timeAgo(json['updatedAt']) ?? '';
+  lastMessageTime = timeAgo(json['updatedAt']);
   isActive = true;
   isSeen = false;
 

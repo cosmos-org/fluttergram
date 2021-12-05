@@ -54,7 +54,7 @@ Future<User> getCurrentUser() async{
   return currentUser;
 }
 
-Future<User> logIn(String phone, String password) async {
+Future<List> logIn(String phone, String password) async {
   // TODO Checking input condition
 
   String body = '{"phonenumber": "$phone", "password": "$password"}';
@@ -68,12 +68,13 @@ Future<User> logIn(String phone, String password) async {
   int statusCode = resp.statusCode;
   dynamic respBody = jsonDecode(resp.body);
   if (statusCode < 300) {
-    User currentUser = User.fromJsonLogIn(respBody);
+    User currentUser = User.fromJson(respBody['data']);
+    String token = respBody['token'];
     print(currentUser);
-    return currentUser;
+    return [currentUser,token];
   } else {
     String message = respBody["message"];
-    return User(id: '-1', username: "Error", phone: statusCode.toString(), password: message);
+    return [User(id: '-1', username: "Error", phone: statusCode.toString(), password: message),''];
   }
 }
 
