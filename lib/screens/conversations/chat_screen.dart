@@ -6,7 +6,7 @@ import '../../models/user_model.dart';
 import '../../controllers/conversation_controller.dart';
 // Others
 import '../../constants.dart';
-
+import '../../socket/custom_socket.dart';
 class MessageCard extends StatelessWidget {
   const MessageCard({Key? key}) : super(key: key);
 
@@ -26,8 +26,8 @@ class ChatScreenBody extends StatelessWidget {
 }
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key, required this.user}) : super(key: key);
-
+  const ChatScreen({Key? key, required this.user, required this.messages}) : super(key: key);
+  final List<Message> messages;
   final User user;
 
   @override
@@ -35,10 +35,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  late List<Message> messages;
-  void callSetState(){
-    setState(() {
-    });
+
+  void newMsgHandle(SocketMsg msg){
+
   }
   @override
   Widget build(BuildContext context) {

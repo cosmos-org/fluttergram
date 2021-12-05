@@ -20,10 +20,10 @@ Future<void> initGlobalCustomSocket  (curentUserId) async {
 class CustomSocket{
   late IO.Socket  socket;
   late String currentUserId;
-  late ConversationScreenState conversationScreenState;
+  late ConversationScreenBodyState conversationScreenBodyState;
   late ChatScreenState chatScreenState;
-  void initConversationState(ConversationScreenState t){
-    this.conversationScreenState = t;
+  void initConversationState(ConversationScreenBodyState t){
+    this.conversationScreenBodyState = t;
   }
   void initChatState(ChatScreenState  t){
     this.chatScreenState = t;
@@ -59,7 +59,7 @@ class CustomSocket{
 
   @override
   String toString() {
-    return 'CustomSocket{socket: $socket, currentUserId: $currentUserId, conversationScreenState: $conversationScreenState, chatScreenState: $chatScreenState}';
+    return 'CustomSocket{socket: $socket, currentUserId: $currentUserId, conversationScreenBodyState: $conversationScreenBodyState, chatScreenState: $chatScreenState}';
   }
 }
 

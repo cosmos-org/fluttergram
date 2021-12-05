@@ -17,8 +17,8 @@ const normalFontWeight = FontWeight.normal;
 const boldFontWeight = FontWeight.bold;
 
 
-const hostname = "http://10.0.2.2:8000"; //10.0.2.2
-const socketHostname = "http://10.0.2.2:7070";
+const hostname = "http://localhost:8000"; //10.0.2.2
+const socketHostname = "http://localhost:7070";
 //API For Users
 const userSignUpEndpoint = "/api/v1/users/register/";
 const userLogInEndpoint = "/api/v1/users/login/";

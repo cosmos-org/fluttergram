@@ -12,6 +12,7 @@ import 'chat_screen.dart';
 // Others
 import '../../constants.dart';
 import '../../util/util.dart';
+import '../../socket/custom_socket.dart';
 class ConversationCard extends StatelessWidget {
   const ConversationCard({
     Key? key,
@@ -91,16 +92,30 @@ class ConversationCard extends StatelessWidget {
   }
 }
 
-class ConversationScreenBody extends StatelessWidget {
+class ConversationScreenBody extends StatefulWidget {
+  final List<Conversation> conversations;
   const ConversationScreenBody({Key? key, required this.conversations})
       : super(key: key);
 
-  final List conversations;
 
+
+  @override
+  State<ConversationScreenBody> createState() => ConversationScreenBodyState();
+}
+
+class ConversationScreenBodyState extends State<ConversationScreenBody> {
+  @protected
+  void initState() {
+    globalCustomSocket.initConversationState(this);
+  }
+
+  void newMsgHandle(SocketMsg msg){
+
+  }
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: conversations.length,
+      itemCount: widget.conversations.length,
       itemBuilder: (_, index) => FocusedMenuHolder(
 
           blurSize: 0.3,
@@ -115,25 +130,15 @@ class ConversationScreenBody extends StatelessWidget {
           ],
           onPressed: () {
             print(index);
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => FutureBuilder(
-            //               future: getUsers(),
-            //               builder: (ctx, snapshot) {
-            //                 if (snapshot.connectionState !=
-            //                     ConnectionState.done) {
-            //                   return CircularProgressIndicator();
-            //                 }
-            //                 if (snapshot.hasError) {
-            //                   return Text("Error");
-            //                 }
-            //                 final users = snapshot.data as List<User>;
-            //                 return ChatScreen(user: users[index]);
-            //               },
-            //             )));
+
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ListView.builder(
+                        itemCount: widget.conversations[index].messages.length,
+                        itemBuilder: (_,i) => Text(widget.conversations[index].messages[i].content.toString()))));
           }, // move to chat screen
-          child: ConversationCard(conversation: conversations[index])),
+          child: ConversationCard(conversation: widget.conversations[index])),
     );
   }
 }
@@ -142,15 +147,11 @@ class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key}) : super(key: key);
 
   @override
-  ConversationScreenState createState() => ConversationScreenState();
+  _ConversationScreenState createState() => _ConversationScreenState();
 }
-// final conversationStateKey = GlobalKey<ConversationScreenState>();
-class ConversationScreenState extends State<ConversationScreen> {
-  late List<Conversation> convesations;
-  void callSetState(){
-    setState(() {
-    });
-  }
+
+class _ConversationScreenState extends State<ConversationScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
