@@ -5,6 +5,7 @@ import 'package:fluttergram/screens/home/post.dart';
 import 'package:fluttergram/screens/home/story.dart';
 
 import '../../constants.dart';
+import 'create_post.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -85,7 +86,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         leading: IconButton(
           icon: Icon(Icons.add_circle_outline),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CreatePost()),
+            );
+          },
         ),
         actions: [
           IconButton(

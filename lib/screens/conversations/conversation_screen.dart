@@ -11,7 +11,7 @@ import '../../models/user_model.dart';
 import 'chat_screen.dart';
 // Others
 import '../../constants.dart';
-
+import '../../util/util.dart';
 class ConversationCard extends StatelessWidget {
   const ConversationCard({
     Key? key,
@@ -36,7 +36,7 @@ class ConversationCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage: AssetImage(conversation.avatar),
+                backgroundImage: getImageProviderNetWork(conversation.avatar),
               ),
               Expanded(
                 child: Padding(
@@ -100,7 +100,9 @@ class ConversationScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      itemCount: conversations.length,
       itemBuilder: (_, index) => FocusedMenuHolder(
+
           blurSize: 0.3,
           blurBackgroundColor: secondaryColor,
           menuWidth: 200,
@@ -112,25 +114,26 @@ class ConversationScreenBody extends StatelessWidget {
                 title: Text("Turn off notification"), onPressed: () {}),
           ],
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => FutureBuilder(
-                          future: getUsers(),
-                          builder: (ctx, snapshot) {
-                            if (snapshot.connectionState !=
-                                ConnectionState.done) {
-                              return CircularProgressIndicator();
-                            }
-                            if (snapshot.hasError) {
-                              return Text("Error");
-                            }
-                            final users = snapshot.data as List<User>;
-                            return ChatScreen(user: users[index]);
-                          },
-                        )));
+            print(index);
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => FutureBuilder(
+            //               future: getUsers(),
+            //               builder: (ctx, snapshot) {
+            //                 if (snapshot.connectionState !=
+            //                     ConnectionState.done) {
+            //                   return CircularProgressIndicator();
+            //                 }
+            //                 if (snapshot.hasError) {
+            //                   return Text("Error");
+            //                 }
+            //                 final users = snapshot.data as List<User>;
+            //                 return ChatScreen(user: users[index]);
+            //               },
+            //             )));
           }, // move to chat screen
-          child: ConversationCard(conversation: conversations [index])),
+          child: ConversationCard(conversation: conversations[index])),
     );
   }
 }
@@ -139,10 +142,15 @@ class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key}) : super(key: key);
 
   @override
-  _ConversationScreenState createState() => _ConversationScreenState();
+  ConversationScreenState createState() => ConversationScreenState();
 }
-
-class _ConversationScreenState extends State<ConversationScreen> {
+// final conversationStateKey = GlobalKey<ConversationScreenState>();
+class ConversationScreenState extends State<ConversationScreen> {
+  late List<Conversation> convesations;
+  void callSetState(){
+    setState(() {
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

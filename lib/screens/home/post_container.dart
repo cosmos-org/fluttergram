@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/controllers/post_controller.dart';
+import '../../constants.dart';
 import '../../util/util.dart';
 class PostContainer extends StatelessWidget {
   final Post post;
@@ -55,9 +59,139 @@ class PostContainer extends StatelessWidget {
                 : const SizedBox.shrink(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: _PostStats(post: post),
+              child: PostStats(post: post),
             ),
           ]
+      ),
+    );
+  }
+}
+
+class _LikeButton extends StatelessWidget {
+  final bool isLiked;
+  final VoidCallback onTap;
+
+  const _LikeButton({
+    Key? key,
+    required this.isLiked,
+    required this.onTap,
+  }) : super(key: key);
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          onTap: () {
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            height: 25.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.thumb_up_alt_rounded,
+                  color: isLiked ? likeColor : unlikeColor,
+                  size: 20.0,
+                ),
+                const SizedBox(width: 4.0),
+                Text("Like"),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PostButton extends StatelessWidget{
+  final Icon icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _PostButton({
+    Key? key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            height: 25.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                icon,
+                const SizedBox(width: 4.0),
+                Text(label),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _moreOption extends StatelessWidget {
+  final Post post;
+
+  const _moreOption({
+    Key? key,
+    required this.post,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> actions = [];
+    User currentUser = getCurrentUser() as User;
+    if (post.author.id == currentUser.id  ) {
+      actions = <String>[
+        'Edit',
+        'Delete'
+      ];
+    }
+    else actions = <String>['Report'];
+
+    onAction(String action) async {
+      switch(action) {
+        case 'Edit':
+          break;
+        case 'Delete':
+          break;
+        case 'Report':
+          break;
+      }
+      print(action);
+    }
+
+    return Align(
+      alignment: Alignment.topRight,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: PopupMenuButton(
+          onSelected: onAction,
+          itemBuilder: (BuildContext context) {
+            return actions.map((String action) {
+              return PopupMenuItem(
+                value: action,
+                child: Text(action),
+              );
+            }).toList();
+          },
+        ),
       ),
     );
   }
@@ -115,108 +249,98 @@ class _PostHeader extends StatelessWidget {
         ),
         IconButton(
           icon: const Icon(Icons.more_horiz),
-          onPressed: () => print('More'),
+          onPressed: () => _moreOption(post: post),
         ),
       ],
     );
   }
 }
 
-class _PostStats extends StatelessWidget {
-  final Post post;
 
-  const _PostStats({
+class PostStats extends StatefulWidget {
+  final Post post;
+  const PostStats({
     Key? key,
     required this.post,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Icon(
-              Icons.thumb_up,
-              size: 12.0,
-              // color: Colors.grey[600],
-            ),
-            const SizedBox(width: 4.0),
-            Expanded(
-              child: Text(
-                '${post.like.length}',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-            Text(
-              '${post.countComments} Comments',
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
-        const Divider(),
-        Row(
-            children: [
-              _PostButton(
-                icon: Icon(
-                    Icons.thumb_up_alt_outlined,
-                    size: 20.0),
-                label: 'Like',
-                onTap: () => print('Like'),
-              ),
-              _PostButton(
-                icon: Icon(
-                  Icons.mode_comment_outlined,
-                  // color: Colors.grey[600],
-                  size: 20.0,
-                ),
-                label: 'Comment',
-                onTap: () => print('Comment'),
-              ),
-            ]
-        )
-      ],
-    );
-  }
+  _PostStats createState() => _PostStats(post: post);
 }
 
-class _PostButton extends StatelessWidget {
-  final Icon icon;
-  final String label;
-  final VoidCallback onTap;
+class _PostStats extends State<PostStats> {
+  final Post post;
 
-  const _PostButton({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  }) : super(key: key);
+  _PostStats({
+    required this.post,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Material(
-        color: Colors.white,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            height: 25.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return FutureBuilder<bool>(
+        future: isLiked(post),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (!snapshot.hasData) {
+            // while data is loading:
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          else {
+            bool isLiked = snapshot.data!;
+            return Column(
               children: [
-                icon,
-                const SizedBox(width: 4.0),
-                Text(label),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.thumb_up,
+                      size: 12.0,
+                      // color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 4.0),
+                    Expanded(
+                      child: Text(
+                        '${post.like.length}',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${post.countComments} Comments',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Row(
+                    children: [
+                      _LikeButton(
+                          isLiked: isLiked,
+                          onTap: () {
+                            setState(() {
+                              isLiked = !isLiked;
+                            });
+                          }
+
+                      ),
+                      _PostButton(
+                        icon: Icon(
+                          Icons.mode_comment_outlined,
+                          // color: Colors.grey[600],
+                          size: 20.0,
+                        ),
+                        label: 'Comment',
+                        onTap: () => print('Comment'),
+                      ),
+                    ]
+                )
               ],
-            ),
-          ),
-        ),
-      ),
+            );
+          }
+        }
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/models/conversation_model.dart';
+import 'package:fluttergram/models/message_model.dart';
 import '../../models/user_model.dart';
 // Controllers
 import '../../controllers/conversation_controller.dart';
@@ -30,10 +31,15 @@ class ChatScreen extends StatefulWidget {
   final User user;
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> {
+  late List<Message> messages;
+  void callSetState(){
+    setState(() {
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
           }
           final conversation = snapshot.data as Conversation;
           return ListView.builder(
-              itemBuilder: (_, index) => Text(conversation.messages[index]));
+              itemBuilder: (_, index) => Text('conversation.messages[index]'));
         },
       ),
     );

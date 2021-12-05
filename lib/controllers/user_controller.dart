@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:fluttergram/util/util.dart';
-
 import '../models/user_model.dart';
 import '../models/image_model.dart';
 import 'package:fluttergram/constants.dart';
@@ -17,25 +16,48 @@ Future<List<User>> getUsers() async {
 }
 
 Future<List<User>> getFriends() async {
-  return [
-    User(id: '1', username: 'Emma Waston', phone: '0', password: 'a',
-        avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
-    User(id: '2', username: "Esther Howard",  phone: '0', password: 'a',
-        avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
-    User(id: '3', username: "Ralph Edwards",  phone: '0', password: 'a',
-        avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
-    User(id: '4', username: "Jacob Jones", phone: '0', password: 'a',
-        avatar: Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg")),
-    User(id: '5', username: "Albert Flores", phone: '0', password: 'a',
-        avatar:Image(id:'1', type: 'a', fileName: "0a4efe47-fe2c-49c7-80b1-1b515595368a.jpeg"))
-  ];
+  String token = await getToken();
+  String url = hostname + friendGetListEndpoint;
+  print('Get Friends');
+  print(token);
+
+  final response = await http
+      .post(Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'authorization': 'bearer ' + token,
+    },
+  );
+  var resp = jsonDecode(response.body);
+  print(resp);
+
+  var ls = <User>[];
+  for (var element in resp['data']['friends']) {
+    ls.add(User.fromJson(element));
+  }
+  return ls;
 }
 
-Future<User> logIn(String phone, String password) async {
+Future<User> getCurrentUser() async{
+  String token = await getToken();
+  String url = hostname + userGetInforEndpoint;
+  final response = await http
+      .get(Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'authorization': 'bearer ' + token,
+    },
+  );
+  var resp = jsonDecode(response.body);
+  User currentUser = User.fromJson(resp['data']);
+  return currentUser;
+}
+
+Future<List> logIn(String phone, String password) async {
   // TODO Checking input condition
 
   String body = '{"phonenumber": "$phone", "password": "$password"}';
-  Map<String, String> headers = {"Content-type": "application/json"};
+  Map<String, String> headers = {"Content-type": "application/json",};
   String loginUrl = hostname + userLogInEndpoint;
   print(headers);
   print(loginUrl);
@@ -45,12 +67,13 @@ Future<User> logIn(String phone, String password) async {
   int statusCode = resp.statusCode;
   dynamic respBody = jsonDecode(resp.body);
   if (statusCode < 300) {
-    User currentUser = User.fromJson(respBody);
+    User currentUser = User.fromJson(respBody['data']);
+    String token = respBody['token'];
     print(currentUser);
-    return currentUser;
+    return [currentUser,token];
   } else {
     String message = respBody["message"];
-    return User(id: '-1', username: "Error", phone: statusCode.toString(), password: message);
+    return [User(id: '-1', username: "Error", phone: statusCode.toString(), password: message),''];
   }
 }
 
