@@ -21,22 +21,22 @@ Future<List<User>> getFriends() async {
   String url = hostname + friendGetListEndpoint;
   print('Get Friends');
   print(token);
-
-  final response = await http
-      .post(Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'authorization': 'bearer ' + token,
-    },
-  );
-  var resp = jsonDecode(response.body);
-  print(resp);
-
-  var ls = <User>[];
-  for (var element in resp['data']['friends']) {
-    ls.add(User.fromJson(element));
-  }
-  return ls;
+  //
+  // final response = await http
+  //     .post(Uri.parse(url),
+  //   headers: <String, String>{
+  //     'Content-Type': 'application/json',
+  //     'authorization': 'bearer ' + token,
+  //   },
+  // );
+  // var resp = jsonDecode(response.body);
+  // print(resp);
+  //
+  // var ls = <User>[];
+  // for (var element in resp['data']['friends']) {
+  //   ls.add(User.fromJson(element));
+  // }
+  return [];
 }
 
 Future<User> getCurrentUser() async{

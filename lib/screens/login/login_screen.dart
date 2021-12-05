@@ -72,8 +72,8 @@ class _LogInState extends State<LogInPage> {
 
                         if (currentUserAndToken[0].id != "-1") {
                           print(currentUserAndToken[1]);
-                          setToken(currentUserAndToken[1]);
-                          setCurrentUserId(currentUserAndToken[0].id);
+                          await setToken(currentUserAndToken[1]);
+                          await setCurrentUserId(currentUserAndToken[0].id);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

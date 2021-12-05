@@ -78,7 +78,7 @@ NetworkImage getImageProviderNetWork(fileName) {
   );
 }
 
-void setCurrentUserId(String currentUserId) async {
+Future<void> setCurrentUserId(String currentUserId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   print('currentUserId:  $currentUserId.');
   if (currentUserId != Null) {
@@ -90,8 +90,7 @@ Future<String> getCurrentUserId() async {
   return prefs.getString('currentUserId').toString();
 }
 
-
-void setToken(String? token) async {
+Future<void> setToken(String token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   print('Token:  $token.');
   if (token != Null) {
@@ -102,5 +101,6 @@ void setToken(String? token) async {
 
 Future<String> getToken() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  print('Token: ' + prefs.getString('token').toString());
   return prefs.getString('token').toString();
 }
