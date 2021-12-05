@@ -75,5 +75,27 @@ class User {
       // token: json['token']
     );
   }
+  factory User.fromJsonLogIn(Map<String, dynamic> json){
+    print('from json user');
+    var a = User(
+      id: json['data']['_id'] ?? '',
+      phone: json['data']['phonenumber'] ?? '',
+      username: json['data']['username'] ?? '',
+      password: '',
+      avatar: Image.fromJson(jsonConvert(json['avatar'])),
+      cover_image: Image.fromJson(jsonConvert(json['cover_image'])) ,
+      token: json['token'] ?? '',
+      birthday: json['birthday'] ?? 'Unknown',
+      description: json['description'] ?? '',
+      address: json['address'] ?? '',
+      city: json['city'] ?? '',
+      country: json['country'] ?? '',
+      link: json['link'] ?? '',
+      gender: json['gender'] ?? 'Secret',
+      blocked_inbox: [''],
+    );
 
+    print(a);
+    return a;
+  }
 }

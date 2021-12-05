@@ -25,12 +25,12 @@ class Posts extends StatelessWidget {
               children: createPostList(list),
             )
         );
-          ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (context, int index){
-                    return PostContainer(post: list[index]);
-                    }
-        );
+        //   ListView.builder(
+        //           itemCount: list.length,
+        //           itemBuilder: (context, int index){
+        //             return PostContainer(post: list[index]);
+        //             }
+        // );
       },
     );
   }

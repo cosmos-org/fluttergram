@@ -27,7 +27,7 @@ class Post {
       id: json['_id'] ?? '',
       author: User.fromJson(jsonConvert(json['author'])),
       described: json['described'] ?? '',
-      createdAt: json['createdAt'] ?? '',
+      createdAt: timeAgo(json['createdAt']) ?? '',
       images: List<Image>.generate(json['images'].length,(int index) => Image.fromJson(jsonConvert(json['images'][index]))),
       videos: List<Video>.generate(json['videos'].length,(int index) => Video.fromJson(jsonConvert(json['videos'][index]))),
       // Image.fromJson(json['avatar'] ?? {}),
