@@ -71,6 +71,7 @@ class _LogInState extends State<LogInPage> {
                         User currentUser = await logIn(phone, password);
 
                         if (currentUser.id != "-1") {
+                          print(currentUser.token);
                           setToken(currentUser.token);
                           setCurrentUserId(currentUser.id);
                           Navigator.push(

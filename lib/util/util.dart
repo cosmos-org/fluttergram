@@ -41,7 +41,6 @@ void connectSocket(userId, conversationScreen, chatScreen){
   print(socket.connected);
 }
 
-
 bool checkMessageResponse(message){
   if
   (message.toLowerCase().contains('success')) return true;
