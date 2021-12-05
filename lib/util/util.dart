@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../constants.dart';
+import '../socket/custom_socket.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 const String getFileUrl = hostname+ '/files/';
 
-late IO.Socket  socket;
+
 //Calculate time-ago format of a mongo-date-string
 String timeAgo(String dateMongo) {
   final t = DateTime.parse(dateMongo);
@@ -23,22 +24,6 @@ String timeAgo(String dateMongo) {
   if (diff.inMinutes > 0)
     return "${diff.inMinutes} ${diff.inMinutes == 1 ? "minute" : "minutes"} ";
   return "Just now";
-}
-
-
-void connectSocket(userId, conversationScreen, chatScreen){
-  socket = IO.io(socketHostname, <String, dynamic>{
-    "transports": ["websocket"],
-    "autoConnect": false,
-  });
-  socket.connect();
-  socket.emit("signin", userId);
-  socket.onConnect((data) {
-    socket.on('message', (msg) {
-
-      });
-    });
-  print(socket.connected);
 }
 
 bool checkMessageResponse(message){
@@ -78,7 +63,7 @@ NetworkImage getImageProviderNetWork(fileName) {
   );
 }
 
-void setCurrentUserId(String currentUserId) async {
+Future<void> setCurrentUserId(String currentUserId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   print('currentUserId:  $currentUserId.');
   if (currentUserId != Null) {
@@ -91,7 +76,7 @@ Future<String> getCurrentUserId() async {
 }
 
 
-void setToken(String? token) async {
+Future<void> setToken(String? token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   print('Token:  $token.');
   if (token != Null) {

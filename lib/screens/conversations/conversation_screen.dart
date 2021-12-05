@@ -142,10 +142,15 @@ class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key}) : super(key: key);
 
   @override
-  _ConversationScreenState createState() => _ConversationScreenState();
+  ConversationScreenState createState() => ConversationScreenState();
 }
-
-class _ConversationScreenState extends State<ConversationScreen> {
+// final conversationStateKey = GlobalKey<ConversationScreenState>();
+class ConversationScreenState extends State<ConversationScreen> {
+  late List<Conversation> convesations;
+  void callSetState(){
+    setState(() {
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

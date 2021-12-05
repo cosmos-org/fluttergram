@@ -4,7 +4,7 @@ import 'package:fluttergram/models/user_model.dart';
 import '../../util/util.dart';
 import 'package:fluttergram/default_screen.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
-
+import '../../socket/custom_socket.dart';
 class LogInPage extends StatefulWidget {
   const LogInPage({Key? key}) : super(key: key);
   @override
@@ -71,9 +71,12 @@ class _LogInState extends State<LogInPage> {
                         var currentUserAndToken = await logIn(phone, password);
 
                         if (currentUserAndToken[0].id != "-1") {
-                          print(currentUserAndToken[1]);
-                          setToken(currentUserAndToken[1]);
-                          setCurrentUserId(currentUserAndToken[0].id);
+                          User currentUser = currentUserAndToken[0];
+                          String token = currentUserAndToken[1];
+                          print(token);
+                          await setToken(token);
+                          await setCurrentUserId(currentUser.id);
+                          await initGlobalCustomSocket(currentUser.id);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
