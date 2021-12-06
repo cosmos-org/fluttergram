@@ -34,7 +34,6 @@ class User {
       );
 
   factory User.fromJson(Map<String, dynamic> json){
-    print('from json user');
     var a = User(
       id: json['_id'] ?? '',
       phone: json['phonenumber'] ?? '',
@@ -52,7 +51,6 @@ class User {
       blocked_inbox: [''],
     );
 
-    print(a);
     return a;
   }
 
@@ -73,7 +71,7 @@ class User {
     );
   }
   factory User.fromJsonLogIn(Map<String, dynamic> json){
-    print('from json user');
+
     var a = User(
       id: json['data']['_id'] ?? '',
       phone: json['data']['phonenumber'] ?? '',
@@ -91,8 +89,6 @@ class User {
       gender: json['gender'] ?? 'Secret',
       blocked_inbox: [''],
     );
-
-    print(a);
     return a;
   }
 }

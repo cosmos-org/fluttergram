@@ -22,7 +22,6 @@ class Post {
     this.countComments = 0
   });
   factory Post.fromJson(Map<String, dynamic> json){
-    print('from json post');
     var a = Post(
       id: json['_id'] ?? '',
       author: User.fromJson(jsonConvert(json['author'])),
@@ -34,7 +33,6 @@ class Post {
       like: List<User>.generate(json['like'].length,(int index) => User.fromJson({})),
       countComments:json['countComments'] ?? 0 ,
     );
-  print(a);
     return a;
   }
 

@@ -9,7 +9,7 @@ import '../util/util.dart';
 final String searchUsersURL = hostname + '/api/v1/users/search';
 final String searchPostsURL = hostname + '/api/v1/posts/search';
 
-Future<List<User>> getSearchUserResult( keyword) async {
+Future<List<User>> getSearchUserResultAPI( keyword) async {
   String token = await getToken();
   final response = await http
       .post(Uri.parse(searchUsersURL),
@@ -40,7 +40,7 @@ Future<List<User>> getSearchUserResult( keyword) async {
   else return [];
 }
 
-Future<List<Post>> getSearchPostResult( keyword) async {
+Future<List<Post>> getSearchPostResultAPI( keyword) async {
   String token = await getToken();
   final response = await http
       .post(Uri.parse(searchPostsURL),
