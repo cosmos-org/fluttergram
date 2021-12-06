@@ -32,6 +32,7 @@ class CustomSocket{
   late String currentUserId;
   late ConversationScreenBodyState conversationScreenBodyState;
   late ChatScreenState chatScreenState;
+  CustomSocket(this.currentUserId);
   void initConversationState(ConversationScreenBodyState t){
     this.conversationScreenBodyState = t;
   }
@@ -39,7 +40,6 @@ class CustomSocket{
     this.chatScreenState = t;
   }
   void connect(){
-    print('connecting');
     socket = IO.io(socketHostname, <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
@@ -53,11 +53,14 @@ class CustomSocket{
       });
     });
   }
-  void sendMessage(Message msg){
-    socket.emit(socketMessageEvent,msg);
+  void sendMessage(Message msg,receiveUserId){
+    var socketMsg = msg.toMap();
+    conversationScreenBodyState.setState(() {
+    });
+    socket.emit(socketMessageEvent,{'socketMsg' : socketMsg ,'receiveUserId':receiveUserId} );
   }
 
-  CustomSocket(this.currentUserId);
+
 
   @override
   String toString() {

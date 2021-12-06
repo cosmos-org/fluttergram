@@ -10,6 +10,7 @@ final String getMessagesURL = hostname + '/api/v1/chats/getMessages';
 final String sendMessageURL = hostname + '/api/v1/chats/send';
 // final String searchPostsURL = hostname + '/api/v1/posts/search';
 Conversation conversationFromRespJson(json,messages){
+
   final String id, messagePreview, lastMessageTime;
   final bool isActive, isSeen;
   final User partnerUser;
@@ -30,7 +31,9 @@ Message messageFromRespJson(json){
   id = json["_id"] ?? '';
   chatId = json['chat'] ?? '';
   content = json['content'] ?? '';
+
   createdAt = json['createdAt'] ?? '';
+
   updatedAt = json['updatedAt'] ?? '';
   user= User.fromJson(jsonConvert(json['user']));
   return new Message(id: id, chatId: chatId,content: content,createdAt: createdAt,updatedAt: updatedAt,user: user);
@@ -58,7 +61,6 @@ Future<List<Conversation>> getConversationsAPI() async {
       ls.add(conversationFromRespJson(element,messages));
     };
     // );
-
     return ls;
   }
 
@@ -85,12 +87,13 @@ Future<List<Message>> getMessagesAPI(chatId,page) async {
       ls.add(messageFromRespJson(element));
     };
     // );
+    ls = List.from(ls.reversed);
     return ls;
   }
   else return [];
 }
 
-Future<bool> sendMessageAPI(String content,String chatId,String  receiveId) async{
+Future<Message> sendMessageAPI(String content,String chatId,String  receiveId) async{
   String token = await getToken();
   final response = await http
       .post(Uri.parse(sendMessageURL),
@@ -98,28 +101,26 @@ Future<bool> sendMessageAPI(String content,String chatId,String  receiveId) asyn
       'Content-Type': 'application/json; charset=UTF-8',
       'authorization': 'bearer ' + token,
     },
-    body : {
+    body : jsonEncode(<String, String>{
       "chatId" : chatId,
       "receivedId": receiveId,
       "type" : "PRIVATE_CHAT",
       "content": content
-    }
+    })
   );
   int statusCode = response.statusCode;
   var resp = jsonDecode(response.body);
   if (statusCode < 300) {
     if (checkMessageResponse(resp['message'])) {
       var msgID = resp['data']['_id'] ?? '';
-      if (msgID != '') return true;
+      var msgJson =  resp['data'];
+      if (msgID != '') {
+       return Message(id: msgJson['_id'],chatId: msgJson['chat']['_id'],
+            content:  msgJson['content'],createdAt: msgJson['createdAt'],updatedAt: msgJson['updatedAt'],
+            user: User.fromJson(jsonConvert(msgJson['user'])));
+      }
     }
-    else return false;
+    else Message(id: '');
   }
-  return false;
-
-
-}
-
-Future<Conversation> getConversation({required User user}) async {
-  return Conversation(
-      id: '1',partnerUser:User.fromJson({}), messages: []);
+  return Message(id: '');
 }

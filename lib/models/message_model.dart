@@ -5,8 +5,16 @@ class Message {
   String chatId,id;
   String content,createdAt,updatedAt;
   User? user;
-  User? receiveUser;
-
+  Map<String, dynamic> toMap() {
+    return {
+      'chatId': chatId,
+      'id': id,
+      'content': content,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'user': user!.toMap(),
+    };
+  }
   Message({
     required this.id,
     this.chatId = '',
@@ -14,7 +22,6 @@ class Message {
     this.createdAt = '',
     this.updatedAt = '',
     this.user,
-    this.receiveUser
   });
   bool checkMsgUserId(anotherId){
     return this.user!.id == anotherId;
@@ -22,6 +29,7 @@ class Message {
 
   @override
   String toString() {
-    return 'Message{chatId: $chatId, id: $id, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, user: $user, receiveUser: $receiveUser}';
+    return 'Message{chatId: $chatId, id: $id, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, user: $user}';
   }
+
 }

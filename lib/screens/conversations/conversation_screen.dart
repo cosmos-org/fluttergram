@@ -119,9 +119,9 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
   // }
   void handleNewMessage(Message msg){
     void updateAConversation(Conversation conversation, Message msg){
-      conversation.lastMessageTime = msg.updatedAt;
+      conversation.lastMessageTime = timeAgo(msg.updatedAt);
       conversation.messagePreview = msg.content;
-      conversation.messages.insert(0, msg);
+      conversation.messages.add(msg);
     }
     void deleteConversation(Conversation conversation) {
       widget.conversations.removeWhere((c) => c == conversation);
@@ -140,8 +140,6 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
     String fromUserId = msg.user!.id;
     List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == fromUserId).toList();
     Conversation conversationFound;
-    print('before rebuild');
-    print(widget.conversations.length);
     if (conversationFoundLs.length > 0){
       conversationFound = conversationFoundLs[0];
       addConversation(conversationFound);
@@ -157,8 +155,6 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
 
   @override
   Widget build(BuildContext context) {
-    print('rebuild');
-    print(widget.conversations.length);
     return ListView.builder(
       itemCount: widget.conversations.length,
       itemBuilder: (_, index) => FocusedMenuHolder(
@@ -173,8 +169,6 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
                 title: Text("Turn off notification"), onPressed: () {}),
           ],
           onPressed: () {
-            print(index);
-
             Navigator.push(
                 context,
                 MaterialPageRoute(
