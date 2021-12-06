@@ -15,6 +15,24 @@ class User {
   String? link;
   String? gender;
   List<String>? blocked_inbox;
+  Map<String, dynamic> toMap() {
+    return {
+      'phone': phone,
+      'id': id,
+      'username': username,
+      'avatar': avatar!.toMap(),
+      'cover_image': cover_image!.toMap(),
+      'password': password,
+      'birthday': birthday,
+      'description': description,
+      'address': address,
+      'city': city,
+      'country': country,
+      'link': link,
+      'gender': gender,
+      'blocked_inbox': blocked_inbox
+    };
+  }
   User({
     required this.id,
     required this.phone,

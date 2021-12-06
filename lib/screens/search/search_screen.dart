@@ -251,7 +251,7 @@ class SearchResultsListView extends StatelessWidget {
             height: fsb.height + 20,
           ),
           Text(
-              'Everyone',
+              'Users',
               style: TextStyle(fontSize: headerFontSize ,fontWeight:headerFontWeight,color: headerTextColor)
           ),
           SizedBox(
@@ -286,7 +286,7 @@ class SearchResultsListView extends StatelessWidget {
             height:  10,
           ),
           Text(
-              'Every Posts',
+              'Posts',
               style: TextStyle(fontSize: headerFontSize ,fontWeight:headerFontWeight,color: headerTextColor)
           ),
           SizedBox(
