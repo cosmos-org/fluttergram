@@ -5,13 +5,23 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../screens/conversations/conversation_screen.dart';
 import '../screens/conversations/chat_screen.dart';
 import '../util/util.dart';
-// void passKeyConversation(CustomSocket customSocket, GlobalKey<>){
-//
-// }
+import 'dart:async';
+import 'dart:convert';
+import '../models/conversation_model.dart';
+import '../models/message_model.dart';
+import 'package:http/http.dart' as http;
+import '../models/user_model.dart';
+import '../util/util.dart';
+import 'package:fluttergram/constants.dart';
+import 'dart:convert';
+import 'dart:math';
+
 
 final String socketMessageEvent = 'message';
 final String socketSignInEvent = 'signin';
 late CustomSocket  globalCustomSocket;
+
+
 
 Future<void> initGlobalCustomSocket  (curentUserId) async {
   globalCustomSocket = CustomSocket(curentUserId);
@@ -25,18 +35,11 @@ class CustomSocket{
   void initConversationState(ConversationScreenBodyState t){
     this.conversationScreenBodyState = t;
   }
-  void initChatState(ChatScreenState  t){
+  void initChatScreenState(ChatScreenState  t){
     this.chatScreenState = t;
   }
-  void handleNewMessageForConvesation(msg){
-    //push new conversation or add message here
-    // this.conversationScreenState.convesations.push(msg)
-    // conversationScreenState.callSetState();
-  }
-  void handleNewMessageForChat(msg){
-    //add msg
-  }
   void connect(){
+    print('connecting');
     socket = IO.io(socketHostname, <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
@@ -45,14 +48,13 @@ class CustomSocket{
     socket.emit(socketSignInEvent, this.currentUserId);
     socket.onConnect((data) {
       socket.on(socketMessageEvent, (msg) {
-        handleNewMessageForConvesation(msg);
-        handleNewMessageForChat(msg);
+        conversationScreenBodyState.handleNewMessage(msg);
+        chatScreenState.handleNewMessage(msg);
       });
     });
   }
-  void sendMessage(String receiverId, String content){
-    SocketMsg socketMsg = SocketMsg(this.currentUserId, receiverId, content);
-    socket.emit(socketMessageEvent,socketMsg);
+  void sendMessage(Message msg){
+    socket.emit(socketMessageEvent,msg);
   }
 
   CustomSocket(this.currentUserId);
@@ -61,12 +63,4 @@ class CustomSocket{
   String toString() {
     return 'CustomSocket{socket: $socket, currentUserId: $currentUserId, conversationScreenBodyState: $conversationScreenBodyState, chatScreenState: $chatScreenState}';
   }
-}
-
-class SocketMsg{
-  String from;
-  String to;
-  String content;
-
-  SocketMsg(this.from, this.to, this.content);
 }

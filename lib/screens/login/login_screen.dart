@@ -73,7 +73,6 @@ class _LogInState extends State<LogInPage> {
                         if (currentUserAndToken[0].id != "-1") {
                           User currentUser = currentUserAndToken[0];
                           String token = currentUserAndToken[1];
-                          print(token);
                           await setToken(token);
                           await setCurrentUserId(currentUser.id);
                           await initGlobalCustomSocket(currentUser.id);
