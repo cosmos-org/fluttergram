@@ -73,7 +73,6 @@ class _LogInState extends State<LogInPage> {
                         if (currentUserAndToken[0].id != "-1") {
                           User currentUser = currentUserAndToken[0];
                           String token = currentUserAndToken[1];
-                          print(token);
                           await setToken(token);
                           await setCurrentUserId(currentUser.id);
                           await initGlobalCustomSocket(currentUser.id);
@@ -111,7 +110,9 @@ class _LogInState extends State<LogInPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                     ))
               ],
-            )));
+            )
+        )
+    );
   }
 }
 
@@ -176,8 +177,6 @@ class _SignUpState extends State<SignUpPage> {
                           textStyle: TextStyle(color: secondaryColor)),
                       child: Text('Sign Up'),
                       onPressed: () async {
-                        print("Sign Up request");
-
                         String phone = phoneController.text;
                         String password = passwordController.text;
                         String username = firstNameController.text +
@@ -203,7 +202,9 @@ class _SignUpState extends State<SignUpPage> {
                       },
                     ))
               ],
-            )));
+            )
+        )
+    );
   }
 
   Container signUpContainer(TextEditingController controller, String label) {

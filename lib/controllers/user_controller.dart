@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/models/post_model.dart';
+import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/util/util.dart';
 import '../models/user_model.dart';
 import '../models/image_model.dart';
@@ -18,19 +21,13 @@ Future<List<User>> getUsers() async {
 Future<List<User>> getFriends() async {
   String token = await getToken();
   String url = hostname + friendGetListEndpoint;
-  print('Get Friends');
-  print(token);
-
-  final response = await http
-      .post(Uri.parse(url),
+  final response = await post(Uri.parse(url),
     headers: <String, String>{
       'Content-Type': 'application/json',
       'authorization': 'bearer ' + token,
     },
   );
   var resp = jsonDecode(response.body);
-  print(resp);
-
   var ls = <User>[];
   for (var element in resp['data']['friends']) {
     ls.add(User.fromJson(element));
@@ -41,8 +38,7 @@ Future<List<User>> getFriends() async {
 Future<User> getCurrentUser() async{
   String token = await getToken();
   String url = hostname + userGetInforEndpoint;
-  final response = await http
-      .get(Uri.parse(url),
+  final response = await get(Uri.parse(url),
     headers: <String, String>{
       'Content-Type': 'application/json',
       'authorization': 'bearer ' + token,
@@ -59,9 +55,6 @@ Future<List> logIn(String phone, String password) async {
   String body = '{"phonenumber": "$phone", "password": "$password"}';
   Map<String, String> headers = {"Content-type": "application/json",};
   String loginUrl = hostname + userLogInEndpoint;
-  print(headers);
-  print(loginUrl);
-  print(body);
   Response resp = await post(Uri.parse(loginUrl), headers: headers, body: body);
 
   int statusCode = resp.statusCode;
@@ -69,7 +62,6 @@ Future<List> logIn(String phone, String password) async {
   if (statusCode < 300) {
     User currentUser = User.fromJson(respBody['data']);
     String token = respBody['token'];
-    print(currentUser);
     return [currentUser,token];
   } else {
     String message = respBody["message"];
@@ -87,9 +79,8 @@ Future signUp(String username, String phone, String password) async {
   return resp.statusCode;
 }
 
-Future<User> show() async {
+Future<User> getUser() async {
   String token = await getToken();
-  print('token ne: '+token);
   String showUrl = hostname + userGetInforEndpoint;
   Response resp = await get(Uri.parse(showUrl) ,headers: <String, String>{
     'Content-Type': 'application/json; charset=UTF-8',
@@ -97,14 +88,39 @@ Future<User> show() async {
   });
   int statusCode = resp.statusCode;
   dynamic respBody = jsonDecode(resp.body);
-  print('resp get user');
-  print(respBody);
   if (statusCode < 300) {
     User currentUser = User.fromJson(respBody['data']);
-    print(currentUser);
     return currentUser;
   } else {
     String message = respBody["message"];
     return User(id: '-1', username: "Error", phone: statusCode.toString(), password: message);
   }
+}
+
+Future<Profile> show() async{
+  User user = await getUser();
+  List<User> lf = await getFriends();
+  List<Post> lp = await getPosts();
+  int numFriends = 0, numPosts = 0;
+  for(var element in lf) {
+    numFriends++;
+  }
+  for(var element in lp){
+    numPosts++;
+  }
+  Profile p = Profile(user, numPosts, numFriends, lp);
+  return p;
+}
+
+Future edit(String username) async{
+  String token = await getToken();
+  String url = hostname + userEditInforEndpoint;
+  String param = '{"username": "$username"}';
+  print(param);
+  Map<String, String> headers = <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    'authorization': 'bearer ' + token,
+  };
+  Response resp = await post(Uri.parse(url), headers: headers, body: param);
+  return resp.statusCode;
 }

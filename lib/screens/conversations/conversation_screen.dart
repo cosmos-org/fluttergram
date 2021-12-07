@@ -18,7 +18,6 @@ class ConversationCard extends StatelessWidget {
     required this.conversation,
     // required this.onPressed
   }) : super(key: key);
-
   final Conversation conversation;
   // final VoidCallback onPressed;
 

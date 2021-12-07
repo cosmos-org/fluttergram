@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import '../models/message_model.dart';
 class Conversation {
-  final String id,name, messagePreview, avatar, lastMessageTime;
+  final String id, name, messagePreview, avatar, lastMessageTime;
   final bool isActive, isSeen;
   final List<Message> messages;
 

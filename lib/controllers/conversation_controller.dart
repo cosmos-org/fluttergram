@@ -75,8 +75,6 @@ Future<List<Message>> getMessages(chatId,page) async {
     },
   );
   var resp = jsonDecode(response.body);
-  print(resp);
-
   if (checkMessageResponse(resp['message'])) {
     var ls = <Message>[];
     // for element

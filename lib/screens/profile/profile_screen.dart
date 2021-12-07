@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttergram/models/profile.dart';
 import 'package:fluttergram/constants.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/screens/home/create_post.dart';
+import 'package:fluttergram/util/util.dart';
+import 'edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -16,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<User>(
+    return FutureBuilder<Profile>(
       future: show(),
       builder: (ctx, snapshot){
         if(!snapshot.hasData){
@@ -25,17 +27,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }
         else{
-          final user = snapshot.data!;
-          print(user);
-          print(user.username + "alooooo");
-          return buildApp(user);
+          final profile = snapshot.data!;
+          return buildApp(profile);
         }
       }
     );
   }
 
   Widget buildImage({required String path}) {
-    final image = NetworkImage(path);
+    final image = getImageProviderNetWork(path);
     return ClipOval(
         child: Material(
           color: Colors.transparent,
@@ -45,39 +45,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: 128,
             height: 128,
           ),
-        ));
+        )
+    );
   }
 
   Widget buildText({required String text})=>
       Text(text, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold));
 
-  Widget buildAbout(User user) => Container(
+  Widget buildAbout(String string) => Container(
     padding: EdgeInsets.fromLTRB(48, 10, 0, 20),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        buildText(text: user.description.toString()),
+        buildText(text: string),
       ],
     ),
   );
 
-  Widget buildButton(String text) => ElevatedButton(
+  Widget buildButton(User user) => ElevatedButton(
     style: ElevatedButton.styleFrom(
         shape: StadiumBorder(),
         onPrimary: Colors.black,
         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
         primary: Colors.white30
     ),
-    onPressed: () { },
-    child: Text(text, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+    onPressed: () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => EditProfile(user: user))
+      );
+    },
+    child: Text('Edit profile', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
   );
 
-  Widget buildApp(User user) => Scaffold(
+  Widget buildApp(Profile profile) => Scaffold(
     appBar: AppBar(
       backgroundColor: primaryColor,
       centerTitle: true,
-      title: Text(user.username),
+      title: Text(profile.user.username),
+      leading: IconButton(
+        icon: Icon(Icons.add_circle_outline),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CreatePost()),
+          );
+        },
+      ),
       actions: <Widget>[
         IconButton(
           icon: Icon(
@@ -102,61 +118,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Positioned(
                   top: 50,
                   right: 280,
-                  child: buildImage(path: ''),
+                  child: buildImage(path: profile.user.avatar!.fileName),
                 ),
               ]
               ),
               Column(children:[
-                buildText(text: ''),
+                buildText(text: profile.numFriends.toString()),
                 buildText(text: 'Friends')
               ],
               ),
 
               Column(children:[
-                buildText(text: ''),
+                buildText(text: profile.numPosts.toString()),
                 buildText(text: 'Posts')
               ])
             ],
           ),
         ),
-        buildAbout(user),
-        Center(child: buildButton('Edit profile'),),
-        Container(
-          padding: EdgeInsets.fromLTRB(48, 10, 0, 20),
-          child: buildText(text: 'Create new post'),
-        ),
-        Container(
-          padding: EdgeInsets.fromLTRB(48, 10, 48, 60),
-          child: TextField(
-              decoration: new InputDecoration(labelText: "What do you think?", border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.blue)), filled: true,
-                contentPadding: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),),
-              keyboardType: TextInputType.text,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.singleLineFormatter]
-          ),
-        ),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                  children:[
-                    Positioned(
-                      top: 50,
-                      right: 280,
-                      child: buildButton('Create post'),
-                    )
-                  ]
-              ),
-              Column(
-                  children:[
-                    Positioned(
-                      top: 50,
-                      right: 280,
-                      child: buildButton('Add media'),
-                    )
-                  ]
-              )
-            ])
+        buildAbout(profile.user.description!),
+        Center(child: buildButton(profile.user)),
       ],
     ),
   );

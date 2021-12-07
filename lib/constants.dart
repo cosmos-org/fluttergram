@@ -23,6 +23,7 @@ const socketHostname = "http://10.0.2.2:7070";
 const userSignUpEndpoint = "/api/v1/users/register/";
 const userLogInEndpoint = "/api/v1/users/login/";
 const userGetInforEndpoint = "/api/v1/users/show";
+const userEditInforEndpoint = "/api/v1/users/edit";
 
 //API For Friend
 const friendGetListEndpoint = "/api/v1/friends/list";
