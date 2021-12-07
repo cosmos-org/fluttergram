@@ -37,6 +37,7 @@ Future<List<User>> getFriends() async {
 }
 
 Future<User> getCurrentUser() async{
+
   String token = await getToken();
   String url = hostname + userGetInforEndpoint;
   final response = await http
@@ -48,6 +49,8 @@ Future<User> getCurrentUser() async{
   );
   var resp = jsonDecode(response.body);
   User currentUser = User.fromJson(resp['data']);
+  print('future current user');
+  print(currentUser);
   return currentUser;
 }
 

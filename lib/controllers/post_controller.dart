@@ -6,10 +6,11 @@ import 'package:http/http.dart';
 
 Future<List<Post>> getPosts() async {
   String token = await getToken();
-  final qParams = {
-    'page': 0,
-  };
-  Response response = await get(Uri.https(hostname, postGetListEndpoint, qParams),
+  // final qParams = {
+  //   'page': 0,
+  // };
+
+  Response response = await get(Uri.parse(hostname+ postGetListEndpoint + '?page=0'),
       headers: <String, String>{
     'Content-Type': 'application/json',
         'authorization': 'bearer ' + token,
