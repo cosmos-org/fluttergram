@@ -29,3 +29,6 @@ const friendGetListEndpoint = "/api/v1/friends/list";
 
 //API For Post
 const postGetListEndpoint = "/api/v1/posts/list";
+const postLikeEndpoint = "/api/v1/postLike/action/";
+const postCreateCommentEndpoint = "/api/v1/postComment/create/";
+const postGetCommentEndpoint = "/api/v1/postComment/list/";

@@ -30,8 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               // data loaded:
               final friends = snapshot.data!;
-              print("friends");
-              print(friends);
               return FutureBuilder<User>(
               future: getCurrentUser(),
               builder: (BuildContext context, AsyncSnapshot<User> snapshot) {

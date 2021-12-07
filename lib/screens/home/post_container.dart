@@ -5,6 +5,7 @@ import 'package:fluttergram/models/post_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/screens/home/post_view_screen.dart';
 import '../../constants.dart';
 import '../../util/util.dart';
 class PostContainer extends StatelessWidget {
@@ -57,89 +58,11 @@ class PostContainer extends StatelessWidget {
               ),
             )
                 : const SizedBox.shrink(),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            //   child: PostStats(post: post),
-            // ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: PostStats(post: post),
+            ),
           ]
-      ),
-    );
-  }
-}
-
-class _LikeButton extends StatelessWidget {
-  final bool isLiked;
-  final VoidCallback onTap;
-
-  const _LikeButton({
-    Key? key,
-    required this.isLiked,
-    required this.onTap,
-  }) : super(key: key);
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Material(
-        color: Colors.white,
-        child: InkWell(
-          onTap: () {
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            height: 25.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.thumb_up_alt_rounded,
-                  color: isLiked ? likeColor : unlikeColor,
-                  size: 20.0,
-                ),
-                const SizedBox(width: 4.0),
-                Text("Like"),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PostButton extends StatelessWidget{
-  final Icon icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _PostButton({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Material(
-        color: Colors.white,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            height: 25.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                icon,
-                const SizedBox(width: 4.0),
-                Text(label),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -174,9 +97,9 @@ class _moreOption extends StatelessWidget {
           }
           else
             actions = <String>['Report'];
-          print(post.author.id);
-          print('current id ' + currentUser.id);
-          print(actions[0]);
+          // print(post.author.id);
+          // print('current id ' + currentUser.id);
+          // print(actions[0]);
 
           onAction(String action) async {
             switch (action) {
@@ -187,14 +110,11 @@ class _moreOption extends StatelessWidget {
               case 'Report':
                 break;
             }
-            print(action);
+            // print(action);
           }
 
-          return Align(
-            // alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: PopupMenuButton(
+          return PopupMenuButton(
+                padding: const EdgeInsets.all(1.0),
                 onSelected: onAction,
                 itemBuilder: (BuildContext context) {
                   return actions.map((String action) {
@@ -204,9 +124,7 @@ class _moreOption extends StatelessWidget {
                     );
                   }).toList();
                 },
-              ),
-            ),
-          );
+              );
         }
     );
   }
@@ -264,13 +182,12 @@ class _PostHeader extends StatelessWidget {
         ),
         IconButton(
           icon: const Icon(Icons.more_horiz),
-          onPressed: () {print('press');},//=> _moreOption(post: post),
+          onPressed: () => _moreOption(post: post),
         ),
       ],
     );
   }
 }
-
 
 class PostStats extends StatefulWidget {
   final Post post;
@@ -310,7 +227,6 @@ class _PostStats extends State<PostStats> {
                     const Icon(
                       Icons.thumb_up,
                       size: 12.0,
-                      // color: Colors.grey[600],
                     ),
                     const SizedBox(width: 4.0),
                     Expanded(
@@ -332,24 +248,64 @@ class _PostStats extends State<PostStats> {
                 const Divider(),
                 Row(
                     children: [
-                      // _LikeButton(
-                      //     isLiked: isLiked,
-                      //     onTap: () {
-                      //       setState(() {
-                      //         isLiked = !isLiked;
-                      //       });
-                      //     }
-                      //
-                      // ),
-                      _PostButton(
-                        icon: Icon(
-                          Icons.mode_comment_outlined,
-                          // color: Colors.grey[600],
-                          size: 20.0,
+                      Expanded(
+                        child: Material(
+                          color: Colors.white,
+                          child: InkWell(
+                            onTap: (){
+                              setState(() {
+                                isLiked = !isLiked;
+                              });
+                              likePost(post);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              height: 25.0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.thumb_up_alt_rounded,
+                                    color: isLiked ? likeColor : unlikeColor,
+                                    size: 20.0,
+                                ),
+                                const SizedBox(width: 4.0),
+                                Text("Like"),
+                                ],
+                              ),
+                            ),
+                            ),
                         ),
-                        label: 'Comment',
-                        onTap: () => print('Comment'),
                       ),
+                      Expanded(
+                        child: Material(
+                          color: Colors.white,
+                          child: InkWell(
+                            onTap: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PostView(post: post)),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              height: 25.0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.mode_comment_outlined,
+                                    size: 20.0,
+                                  ),
+                                  const SizedBox(width: 4.0),
+                                  Text('Comment'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
                     ]
                 )
               ],

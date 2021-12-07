@@ -94,7 +94,6 @@ Future<void> setToken(String? token) async {
 
 Future<String> getToken() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  print('Token: ' + prefs.getString('token').toString());
   return prefs.getString('token').toString();
 }
 

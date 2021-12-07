@@ -175,7 +175,6 @@ class _SignUpState extends State<SignUpPage> {
                           textStyle: TextStyle(color: secondaryColor)),
                       child: Text('Sign Up'),
                       onPressed: () async {
-                        print("Sign Up request");
 
                         String phone = phoneController.text;
                         String password = passwordController.text;

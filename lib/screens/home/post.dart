@@ -37,7 +37,6 @@ List<Widget> createPostList(postList) {
   postList.forEach((ele) {
     ls.add(new PostSearched(post: ele));
   });
-
   return ls;
 }
 
