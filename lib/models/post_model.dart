@@ -8,7 +8,7 @@ class Post {
   final String described, createdAt;
   final List<Image> images;
   final List<Video> videos;
-  final List<String> like;
+  final List<User> like;
   final int countComments;
 
   Post({
@@ -29,8 +29,9 @@ class Post {
       createdAt: timeAgo(json['createdAt']) ,
       images: List<Image>.generate(json['images'].length,(int index) => Image.fromJson(jsonConvert(json['images'][index]))),
       videos: List<Video>.generate(json['videos'].length,(int index) => Video.fromJson(jsonConvert(json['videos'][index]))),
-      like: json['like'] ?? [],
-      countComments:json['countComments'] ?? 0,
+      // Image.fromJson(json['avatar'] ?? {}),
+      like: List<User>.generate(json['like'].length,(int index) => User.fromJson({})),
+      countComments:json['countComments'] ?? 0 ,
     );
     return a;
   }
