@@ -44,10 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       // data loaded:
                       User currentUser = snapshot.data!;
 
-                      return CustomScrollView(
-                          slivers: <Widget>[
-                            SliverToBoxAdapter(
-                                child: Container(
+                      return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children:[
+                            Container(
                                   padding: const EdgeInsets.all(2.0),
                                   color: Colors.white,
                                   child: Text(
@@ -58,13 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                )
-                            ),
-                            SliverToBoxAdapter(
-                                child: Story(currentUser: currentUser,friends: friends)
-                            ),
-                            SliverToBoxAdapter(
-                                child: Container(
+                                ),
+                            Story(currentUser: currentUser,friends: friends),
+                            Container(
                                   padding: const EdgeInsets.all(2.0),
                                   color: Colors.white,
                                   child: Text(
@@ -75,13 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                )
-                            ),
-                            SliverToBoxAdapter(
-                              child:
-                              Expanded(
-                                child: Posts(),
-                              ),
+                                ),
+                            Expanded(
+                              child: Posts(),
                             )
                           ]
                       );

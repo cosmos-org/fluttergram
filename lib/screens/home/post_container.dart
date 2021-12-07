@@ -31,7 +31,7 @@ class PostContainer extends StatelessWidget {
                     const SizedBox(height: 4.0),
                     Text(post.described),
                     post.images.isNotEmpty
-                        ? const SizedBox.shrink()
+                          ? const SizedBox.shrink()
                         : const SizedBox(height: 6.0),
                   ],
                 )
@@ -57,10 +57,10 @@ class PostContainer extends StatelessWidget {
               ),
             )
                 : const SizedBox.shrink(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: PostStats(post: post),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            //   child: PostStats(post: post),
+            // ),
           ]
       ),
     );
@@ -155,44 +155,59 @@ class _moreOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> actions = [];
-    User currentUser = getCurrentUser() as User;
-    if (post.author.id == currentUser.id  ) {
-      actions = <String>[
-        'Edit',
-        'Delete'
-      ];
-    }
-    else actions = <String>['Report'];
+    return FutureBuilder<User>(
+        future: getCurrentUser(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return CircularProgressIndicator();
+          };
+          if (snapshot.hasError) {
+            return Text("Error");
+          };
+          User currentUser =  snapshot.data as User;
+          List<String> actions = [];
+          if (post.author.id == currentUser.id) {
+            actions = <String>[
+              'Edit',
+              'Delete'
+            ];
+          }
+          else
+            actions = <String>['Report'];
+          print(post.author.id);
+          print('current id ' + currentUser.id);
+          print(actions[0]);
 
-    onAction(String action) async {
-      switch(action) {
-        case 'Edit':
-          break;
-        case 'Delete':
-          break;
-        case 'Report':
-          break;
-      }
-      print(action);
-    }
+          onAction(String action) async {
+            switch (action) {
+              case 'Edit':
+                break;
+              case 'Delete':
+                break;
+              case 'Report':
+                break;
+            }
+            print(action);
+          }
 
-    return Align(
-      alignment: Alignment.topRight,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: PopupMenuButton(
-          onSelected: onAction,
-          itemBuilder: (BuildContext context) {
-            return actions.map((String action) {
-              return PopupMenuItem(
-                value: action,
-                child: Text(action),
-              );
-            }).toList();
-          },
-        ),
-      ),
+          return Align(
+            // alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PopupMenuButton(
+                onSelected: onAction,
+                itemBuilder: (BuildContext context) {
+                  return actions.map((String action) {
+                    return PopupMenuItem(
+                      value: action,
+                      child: Text(action),
+                    );
+                  }).toList();
+                },
+              ),
+            ),
+          );
+        }
     );
   }
 }
@@ -249,7 +264,7 @@ class _PostHeader extends StatelessWidget {
         ),
         IconButton(
           icon: const Icon(Icons.more_horiz),
-          onPressed: () => _moreOption(post: post),
+          onPressed: () {print('press');},//=> _moreOption(post: post),
         ),
       ],
     );
@@ -317,15 +332,15 @@ class _PostStats extends State<PostStats> {
                 const Divider(),
                 Row(
                     children: [
-                      _LikeButton(
-                          isLiked: isLiked,
-                          onTap: () {
-                            setState(() {
-                              isLiked = !isLiked;
-                            });
-                          }
-
-                      ),
+                      // _LikeButton(
+                      //     isLiked: isLiked,
+                      //     onTap: () {
+                      //       setState(() {
+                      //         isLiked = !isLiked;
+                      //       });
+                      //     }
+                      //
+                      // ),
                       _PostButton(
                         icon: Icon(
                           Icons.mode_comment_outlined,

@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:fluttergram/models/user_model.dart';
 
 class Message {
-  final String chatId,id;
-  final String? content,createdAt,updatedAt;
-  final User? user;
-
+  String chatId,id;
+  String content,createdAt,updatedAt;
+  User? user;
+  User? receiveUser;
 
   Message({
     required this.id,
@@ -14,10 +14,14 @@ class Message {
     this.createdAt = '',
     this.updatedAt = '',
     this.user,
+    this.receiveUser
   });
+  bool checkMsgUserId(anotherId){
+    return this.user!.id == anotherId;
+  }
 
   @override
   String toString() {
-    return 'Message{chatId: $chatId, id: $id, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, user: $user}';
+    return 'Message{chatId: $chatId, id: $id, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, user: $user, receiveUser: $receiveUser}';
   }
 }

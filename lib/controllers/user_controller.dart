@@ -19,24 +19,21 @@ Future<List<User>> getUsers() async {
 Future<List<User>> getFriends() async {
   String token = await getToken();
   String url = hostname + friendGetListEndpoint;
-  print('Get Friends');
-  print(token);
-  //
-  // final response = await http
-  //     .post(Uri.parse(url),
-  //   headers: <String, String>{
-  //     'Content-Type': 'application/json',
-  //     'authorization': 'bearer ' + token,
-  //   },
-  // );
-  // var resp = jsonDecode(response.body);
-  // print(resp);
-  //
-  // var ls = <User>[];
-  // for (var element in resp['data']['friends']) {
-  //   ls.add(User.fromJson(element));
-  // }
-  return [];
+
+  final response = await http
+      .post(Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'authorization': 'bearer ' + token,
+    },
+  );
+  var resp = jsonDecode(response.body);
+
+  var ls = <User>[];
+  for (var element in resp['data']['friends']) {
+    ls.add(User.fromJson(element));
+  }
+  return ls;
 }
 
 Future<User> getCurrentUser() async{
@@ -60,9 +57,6 @@ Future<List> logIn(String phone, String password) async {
   String body = '{"phonenumber": "$phone", "password": "$password"}';
   Map<String, String> headers = {"Content-type": "application/json",};
   String loginUrl = hostname + userLogInEndpoint;
-  print(headers);
-  print(loginUrl);
-  print(body);
   Response resp = await post(Uri.parse(loginUrl), headers: headers, body: body);
 
   int statusCode = resp.statusCode;
@@ -70,7 +64,6 @@ Future<List> logIn(String phone, String password) async {
   if (statusCode < 300) {
     User currentUser = User.fromJson(respBody['data']);
     String token = respBody['token'];
-    print(currentUser);
     return [currentUser,token];
   } else {
     String message = respBody["message"];

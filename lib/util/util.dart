@@ -1,11 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../../constants.dart';
+import '../socket/custom_socket.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
+import 'package:intl/intl.dart';
 const String getFileUrl = hostname+ '/files/';
+String dateTimeFormat(String dateMongo){
+  final inputDate = DateTime.parse(dateMongo);
+  var outputFormat = DateFormat('MM/dd/yyyy hh:mm a');
+  var outputDate = outputFormat.format(inputDate);
+  return outputDate;
+}
+String getStaticURL(String fileName){
+  return getFileUrl + fileName;
+}
 
-late IO.Socket  socket;
 //Calculate time-ago format of a mongo-date-string
 String timeAgo(String dateMongo) {
   final t = DateTime.parse(dateMongo);
@@ -23,22 +34,6 @@ String timeAgo(String dateMongo) {
   if (diff.inMinutes > 0)
     return "${diff.inMinutes} ${diff.inMinutes == 1 ? "minute" : "minutes"} ";
   return "Just now";
-}
-
-
-void connectSocket(userId, conversationScreen, chatScreen){
-  socket = IO.io(socketHostname, <String, dynamic>{
-    "transports": ["websocket"],
-    "autoConnect": false,
-  });
-  socket.connect();
-  socket.emit("signin", userId);
-  socket.onConnect((data) {
-    socket.on('message', (msg) {
-
-      });
-    });
-  print(socket.connected);
 }
 
 bool checkMessageResponse(message){
@@ -80,7 +75,6 @@ NetworkImage getImageProviderNetWork(fileName) {
 
 Future<void> setCurrentUserId(String currentUserId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  print('currentUserId:  $currentUserId.');
   if (currentUserId != Null) {
     await prefs.setString('currentUserId', currentUserId);
   };
@@ -90,9 +84,8 @@ Future<String> getCurrentUserId() async {
   return prefs.getString('currentUserId').toString();
 }
 
-Future<void> setToken(String token) async {
+Future<void> setToken(String? token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  print('Token:  $token.');
   if (token != Null) {
     token = token.toString();
     await prefs.setString('token', token);
@@ -104,3 +97,5 @@ Future<String> getToken() async {
   print('Token: ' + prefs.getString('token').toString());
   return prefs.getString('token').toString();
 }
+
+
