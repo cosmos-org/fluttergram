@@ -7,35 +7,39 @@ import 'package:fluttergram/constants.dart';
 import 'dart:convert';
 final String getChatsURL = hostname + '/api/v1/chats/getChats';
 final String getMessagesURL = hostname + '/api/v1/chats/getMessages';
+final String sendMessageURL = hostname + '/api/v1/chats/send';
 // final String searchPostsURL = hostname + '/api/v1/posts/search';
 Conversation conversationFromRespJson(json,messages){
-  final String id,name, messagePreview, avatar, lastMessageTime;
+
+  final String id, messagePreview, lastMessageTime;
   final bool isActive, isSeen;
+  final User partnerUser;
   id = json["_id"] ?? '';
-  name = json['partnerName'] ?? '';
-  avatar = json['partnerAvatar'] ?? '';
+  partnerUser = User.fromJson(jsonConvert(json['partner']));
   messagePreview = json['latestMessage'] ?? '';
   lastMessageTime = timeAgo(json['updatedAt']);
   isActive = true;
   isSeen = false;
 
-  return new Conversation(id: id,name: name,messagePreview: messagePreview,avatar: avatar,lastMessageTime: lastMessageTime,messages: messages,isActive: isActive,isSeen: isSeen);
+  return new Conversation(id: id,partnerUser: partnerUser,messagePreview: messagePreview,lastMessageTime: lastMessageTime,messages: messages,isActive: isActive,isSeen: isSeen);
 }
 
 Message messageFromRespJson(json){
   final String chatId,id;
-  final String? content,createdAt,updatedAt;
+  final String content,createdAt,updatedAt;
   final User? user;
   id = json["_id"] ?? '';
   chatId = json['chat'] ?? '';
   content = json['content'] ?? '';
+
   createdAt = json['createdAt'] ?? '';
+
   updatedAt = json['updatedAt'] ?? '';
   user= User.fromJson(jsonConvert(json['user']));
   return new Message(id: id, chatId: chatId,content: content,createdAt: createdAt,updatedAt: updatedAt,user: user);
 }
 
-Future<List<Conversation>> getConversations() async {
+Future<List<Conversation>> getConversationsAPI() async {
   String token = await getToken();
   final response = await http
       .get(Uri.parse(getChatsURL),
@@ -45,7 +49,6 @@ Future<List<Conversation>> getConversations() async {
     },
   );
   var resp = jsonDecode(response.body);
-  print(resp);
 
   if (checkMessageResponse(resp['message'])) {
 
@@ -54,18 +57,17 @@ Future<List<Conversation>> getConversations() async {
     for (var element in resp['data'])
       // resp['data'].foreach((element)
         {
-          var messages = await getMessages(element['_id'],0);
+          var messages = await getMessagesAPI(element['_id'],0);
       ls.add(conversationFromRespJson(element,messages));
     };
     // );
-
     return ls;
   }
 
   else return [];
 
 }
-Future<List<Message>> getMessages(chatId,page) async {
+Future<List<Message>> getMessagesAPI(chatId,page) async {
   String token = await getToken();
   final response = await http
       .get(Uri.parse(getMessagesURL + '/${chatId}?page=${page}'),
@@ -75,6 +77,7 @@ Future<List<Message>> getMessages(chatId,page) async {
     },
   );
   var resp = jsonDecode(response.body);
+
   if (checkMessageResponse(resp['message'])) {
     var ls = <Message>[];
     // for element
@@ -84,11 +87,40 @@ Future<List<Message>> getMessages(chatId,page) async {
       ls.add(messageFromRespJson(element));
     };
     // );
+    ls = List.from(ls.reversed);
     return ls;
   }
   else return [];
 }
-Future<Conversation> getConversation({required User user}) async {
-  return Conversation(
-      id: '1',name: user.username, messages: []);
+
+Future<Message> sendMessageAPI(String content,String chatId,String  receiveId) async{
+  String token = await getToken();
+  final response = await http
+      .post(Uri.parse(sendMessageURL),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'authorization': 'bearer ' + token,
+    },
+    body : jsonEncode(<String, String>{
+      "chatId" : chatId,
+      "receivedId": receiveId,
+      "type" : "PRIVATE_CHAT",
+      "content": content
+    })
+  );
+  int statusCode = response.statusCode;
+  var resp = jsonDecode(response.body);
+  if (statusCode < 300) {
+    if (checkMessageResponse(resp['message'])) {
+      var msgID = resp['data']['_id'] ?? '';
+      var msgJson =  resp['data'];
+      if (msgID != '') {
+       return Message(id: msgJson['_id'],chatId: msgJson['chat']['_id'],
+            content:  msgJson['content'],createdAt: msgJson['createdAt'],updatedAt: msgJson['updatedAt'],
+            user: User.fromJson(jsonConvert(msgJson['user'])));
+      }
+    }
+    else Message(id: '');
+  }
+  return Message(id: '');
 }

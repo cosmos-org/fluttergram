@@ -15,6 +15,24 @@ class User {
   String? link;
   String? gender;
   List<String>? blocked_inbox;
+  Map<String, dynamic> toMap() {
+    return {
+      'phone': phone,
+      'id': id,
+      'username': username,
+      'avatar': avatar!.toMap(),
+      'cover_image': cover_image!.toMap(),
+      'password': password,
+      'birthday': birthday,
+      'description': description,
+      'address': address,
+      'city': city,
+      'country': country,
+      'link': link,
+      'gender': gender,
+      'blocked_inbox': blocked_inbox
+    };
+  }
   User({
     required this.id,
     required this.phone,
@@ -34,7 +52,6 @@ class User {
       );
 
   factory User.fromJson(Map<String, dynamic> json){
-    print('from json user');
     var a = User(
       id: json['_id'] ?? '',
       phone: json['phonenumber'] ?? '',
@@ -52,7 +69,6 @@ class User {
       blocked_inbox: [''],
     );
 
-    print(a);
     return a;
   }
 
@@ -73,7 +89,7 @@ class User {
     );
   }
   factory User.fromJsonLogIn(Map<String, dynamic> json){
-    print('from json user');
+
     var a = User(
       id: json['data']['_id'] ?? '',
       phone: json['data']['phonenumber'] ?? '',
@@ -91,8 +107,6 @@ class User {
       gender: json['gender'] ?? 'Secret',
       blocked_inbox: [''],
     );
-
-    print(a);
     return a;
   }
 }

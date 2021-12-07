@@ -251,14 +251,14 @@ class SearchResultsListView extends StatelessWidget {
             height: fsb.height + 20,
           ),
           Text(
-              'Everyone',
+              'Users',
               style: TextStyle(fontSize: headerFontSize ,fontWeight:headerFontWeight,color: headerTextColor)
           ),
           SizedBox(
             height:  20,
           ),
           FutureBuilder<List<User>>(
-            future: getSearchUserResult(searchTerm),
+            future: getSearchUserResultAPI(searchTerm),
             builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
               if (!snapshot.hasData) {
                 // while data is loading:
@@ -286,7 +286,7 @@ class SearchResultsListView extends StatelessWidget {
             height:  10,
           ),
           Text(
-              'Every Posts',
+              'Posts',
               style: TextStyle(fontSize: headerFontSize ,fontWeight:headerFontWeight,color: headerTextColor)
           ),
           SizedBox(
@@ -294,7 +294,7 @@ class SearchResultsListView extends StatelessWidget {
           ),
           Expanded(
             child: FutureBuilder<List<Post>>(
-            future: getSearchPostResult(searchTerm),
+            future: getSearchPostResultAPI(searchTerm),
             builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
               if (!snapshot.hasData) {
                 // while data is loading:

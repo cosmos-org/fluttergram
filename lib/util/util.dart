@@ -3,9 +3,17 @@ import '../../constants.dart';
 import '../socket/custom_socket.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
+import 'package:intl/intl.dart';
 const String getFileUrl = hostname+ '/files/';
-
+String dateTimeFormat(String dateMongo){
+  final inputDate = DateTime.parse(dateMongo);
+  var outputFormat = DateFormat('MM/dd/yyyy hh:mm a');
+  var outputDate = outputFormat.format(inputDate);
+  return outputDate;
+}
+String getStaticURL(String fileName){
+  return getFileUrl + fileName;
+}
 
 //Calculate time-ago format of a mongo-date-string
 String timeAgo(String dateMongo) {
@@ -65,7 +73,6 @@ NetworkImage getImageProviderNetWork(fileName) {
 
 Future<void> setCurrentUserId(String currentUserId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  print('currentUserId:  $currentUserId.');
   if (currentUserId != Null) {
     await prefs.setString('currentUserId', currentUserId);
   };
@@ -78,7 +85,6 @@ Future<String> getCurrentUserId() async {
 
 Future<void> setToken(String? token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  print('Token:  $token.');
   if (token != Null) {
     token = token.toString();
     await prefs.setString('token', token);
@@ -89,3 +95,5 @@ Future<String> getToken() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('token').toString();
 }
+
+

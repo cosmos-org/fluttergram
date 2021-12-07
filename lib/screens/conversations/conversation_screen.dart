@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttergram/models/message_model.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 // Controllers
@@ -12,6 +13,7 @@ import 'chat_screen.dart';
 // Others
 import '../../constants.dart';
 import '../../util/util.dart';
+import '../../socket/custom_socket.dart';
 class ConversationCard extends StatelessWidget {
   const ConversationCard({
     Key? key,
@@ -35,7 +37,7 @@ class ConversationCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage: getImageProviderNetWork(conversation.avatar),
+                backgroundImage: getImageProviderNetWork(conversation.partnerUser?.avatar?.fileName.toString()),
               ),
               Expanded(
                 child: Padding(
@@ -45,7 +47,7 @@ class ConversationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        conversation.name,
+                        conversation.partnerUser?.username.toString() ?? '',
                         style: TextStyle(
                             fontSize: usernameFontSize,
                             fontWeight: boldFontWeight),
@@ -90,18 +92,71 @@ class ConversationCard extends StatelessWidget {
   }
 }
 
-class ConversationScreenBody extends StatelessWidget {
-  const ConversationScreenBody({Key? key, required this.conversations})
+class ConversationScreenBody extends StatefulWidget {
+  List<Conversation> conversations;
+  ConversationScreenBody({Key? key, required this.conversations})
       : super(key: key);
+  @override
+  State<ConversationScreenBody> createState() => ConversationScreenBodyState();
+}
 
-  final List conversations;
+class ConversationScreenBodyState extends State<ConversationScreenBody> {
+  // final List<Conversation> conversations;
+  // ConversationScreenBodyState({Key? key, required this.conversations});
+  @protected
+  void initState() {
+    globalCustomSocket.initConversationState(this);
+  }
+  // bool checkNewConverSation(Message msg){
+  //   String fromUserId = msg.user!.id;
+  //   List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == fromUserId).toList();
+  //   if (conversationFoundLs.length > 0){
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
+  void handleNewMessage(Message msg){
+    void updateAConversation(Conversation conversation, Message msg){
+      conversation.lastMessageTime = timeAgo(msg.updatedAt);
+      conversation.messagePreview = msg.content;
+      conversation.messages.add(msg);
+    }
+    void deleteConversation(Conversation conversation) {
+      widget.conversations.removeWhere((c) => c == conversation);
+    }
+    void putConversationFirst(Conversation conversation) {
+      deleteConversation(conversation);
+      widget.conversations.insert(0, conversation);
+    }
+    void addConversation(Conversation conversation) {
+      if (widget.conversations.contains(conversation)) {
+        putConversationFirst(conversation);
+        return;
+      }
+      widget.conversations.insert(0, conversation);
+    }
+    String fromUserId = msg.user!.id;
+    List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == fromUserId).toList();
+    Conversation conversationFound;
+    if (conversationFoundLs.length > 0){
+      conversationFound = conversationFoundLs[0];
+      addConversation(conversationFound);
+      setState(() {
+        updateAConversation(conversationFound, msg);
+      });
+    } else {
+        setState(() async {
+          widget.conversations = await getConversationsAPI();
+        });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: conversations.length,
+      itemCount: widget.conversations.length,
       itemBuilder: (_, index) => FocusedMenuHolder(
-
           blurSize: 0.3,
           blurBackgroundColor: secondaryColor,
           menuWidth: 200,
@@ -113,26 +168,15 @@ class ConversationScreenBody extends StatelessWidget {
                 title: Text("Turn off notification"), onPressed: () {}),
           ],
           onPressed: () {
-            print(index);
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => FutureBuilder(
-            //               future: getUsers(),
-            //               builder: (ctx, snapshot) {
-            //                 if (snapshot.connectionState !=
-            //                     ConnectionState.done) {
-            //                   return CircularProgressIndicator();
-            //                 }
-            //                 if (snapshot.hasError) {
-            //                   return Text("Error");
-            //                 }
-            //                 final users = snapshot.data as List<User>;
-            //                 return ChatScreen(user: users[index]);
-            //               },
-            //             )));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (contex) => ChatScreen(
+                      conversation: widget.conversations[index],
+                    )),
+);
           }, // move to chat screen
-          child: ConversationCard(conversation: conversations[index])),
+          child: ConversationCard(conversation: widget.conversations[index])),
     );
   }
 }
@@ -141,21 +185,17 @@ class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key}) : super(key: key);
 
   @override
-  ConversationScreenState createState() => ConversationScreenState();
+  _ConversationScreenState createState() => _ConversationScreenState();
 }
-// final conversationStateKey = GlobalKey<ConversationScreenState>();
-class ConversationScreenState extends State<ConversationScreen> {
-  late List<Conversation> convesations;
-  void callSetState(){
-    setState(() {
-    });
-  }
+
+class _ConversationScreenState extends State<ConversationScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(),
         body: FutureBuilder(
-          future: getConversations(),
+          future: getConversationsAPI(),
           builder: (ctx, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return CircularProgressIndicator();
