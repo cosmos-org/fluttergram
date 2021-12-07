@@ -24,7 +24,7 @@ class Image {
   factory Image.fromJson(Map<String, dynamic> json){
     var a= Image(
       id: json['_id'] ?? '',
-      type: json['type'] ?? 'image',
+      type: json['type'] ?? 'images',
       fileName: json['fileName'] ?? '',
       fileType: json['mimetype'] ?? '',
       fileSize: json['fileSize'] ?? 0,
