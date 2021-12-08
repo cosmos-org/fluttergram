@@ -54,7 +54,7 @@ class ConversationCard extends StatelessWidget {
                       ),
                       SizedBox(height: defaultPadding * 0.25),
                       Text(
-                        conversation.messagePreview,
+                        (conversation.sender == 0 ? 'You: ' : '') + conversation.latestMessage,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -69,7 +69,7 @@ class ConversationCard extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(height: defaultPadding * 0.25),
-                  Text(conversation.lastMessageTime,
+                  Text(conversation.lastMessageTimeAgo,
                       style: TextStyle(
                           fontSize: 12.0, fontWeight: normalFontWeight)),
                   SizedBox(height: defaultPadding * 0.1),
@@ -219,7 +219,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
           future: getConversationsAPI(),
           builder: (ctx, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return CircularProgressIndicator();
+              return Center(
+                  child: CircularProgressIndicator()
+              );
             }
             ;
             if (snapshot.hasError) {
