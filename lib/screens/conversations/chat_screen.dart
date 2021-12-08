@@ -219,8 +219,8 @@ class ChatScreenState extends State<ChatScreen> {
                           );
                         } else {
                           return ReplyCard(
-                              message: widget.conversation.messages[index].content.toString(),
-                              time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
+                            message: widget.conversation.messages[index].content.toString(),
+                            time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
                           );
                         }
                       },
@@ -583,4 +583,3 @@ class ReplyCard extends StatelessWidget {
     );
   }
 }
-

@@ -4,6 +4,7 @@ import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/profile/profile_screen.dart';
 import 'package:fluttergram/util/util.dart';
 import '../../constants.dart';
+import '../../default_screen.dart';
 
 class EditProfile extends StatefulWidget{
   final User user;
@@ -153,7 +154,7 @@ class _EditProfileState extends State<EditProfile>{
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProfileScreen()),
+                              builder: (context) => DefaultScreen(currentScreen: 3)),
                         );
                       }
                     },
