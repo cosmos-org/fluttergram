@@ -10,8 +10,6 @@ import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/models/post_model.dart';
 
 
-
-
 const headerTextColor = Colors.lightBlue;
 const headerFontSize = 24.0;
 const headerFontWeight = FontWeight.bold;
