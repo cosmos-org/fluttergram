@@ -49,8 +49,7 @@ class ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
-    Future<String> tmpFu =  getCurrentUserId();
-    tmpFu.then((value){
+    getCurrentUserId().then((value){
       currentUserId  =value;
       _scrollController.animateTo(
           _scrollController
@@ -59,6 +58,7 @@ class ChatScreenState extends State<ChatScreen> {
           Duration(milliseconds: 300),
           curve: Curves.easeOut);
       setState((){
+        return;
       });
     });
     globalCustomSocket.initChatScreenState(this);
@@ -71,8 +71,16 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
   void handleNewMessage(Message msg){
+    if (!msg.checkMsgUserId(widget.conversation.partnerUser!.id)) {
+      return;
+    }
     setState((){
-      widget.conversation.messages.add(msg);
+      return;
+    });
+  }
+  void handleNewMessageFromCurrent(Message msg){
+    setState((){
+      return;
     });
   }
   void sendMessage(String text) async {
@@ -81,7 +89,7 @@ class ChatScreenState extends State<ChatScreen> {
     Message sentMsg = await sendMessageAPI(text, chatId, receiveUserId );
     if(sentMsg.id != '') {
       globalCustomSocket.sendMessage(sentMsg,receiveUserId);
-      handleNewMessage(sentMsg);
+      handleNewMessageFromCurrent(sentMsg);
     }
   }
 

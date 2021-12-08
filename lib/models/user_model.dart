@@ -18,7 +18,7 @@ class User {
   Map<String, dynamic> toMap() {
     return {
       'phone': phone,
-      'id': id,
+      '_id': id,
       'username': username,
       'avatar': avatar!.toMap(),
       'cover_image': cover_image!.toMap(),

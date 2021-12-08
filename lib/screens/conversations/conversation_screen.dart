@@ -103,9 +103,16 @@ class ConversationScreenBody extends StatefulWidget {
 class ConversationScreenBodyState extends State<ConversationScreenBody> {
   // final List<Conversation> conversations;
   // ConversationScreenBodyState({Key? key, required this.conversations});
+  String currentUserId = '';
   @protected
   void initState() {
     globalCustomSocket.initConversationState(this);
+    getCurrentUserId().then((value){
+      currentUserId  =value;
+      setState((){
+        return;
+      });
+    });
   }
   // bool checkNewConverSation(Message msg){
   //   String fromUserId = msg.user!.id;
@@ -116,42 +123,56 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
   //     return false;
   //   }
   // }
+  void deleteConversation(Conversation conversation) {
+    widget.conversations.removeWhere((c) => c == conversation);
+  }
+  void putConversationFirst(Conversation conversation) {
+    deleteConversation(conversation);
+    widget.conversations.insert(0, conversation);
+  }
+  void addConversation(Conversation conversation) {
+    if (widget.conversations.contains(conversation)) {
+      putConversationFirst(conversation);
+      return;
+    }
+    widget.conversations.insert(0, conversation);
+  }
   void handleNewMessage(Message msg){
-    void updateAConversation(Conversation conversation, Message msg){
-      conversation.lastMessageTime = timeAgo(msg.updatedAt);
-      conversation.messagePreview = msg.content;
-      conversation.messages.add(msg);
-    }
-    void deleteConversation(Conversation conversation) {
-      widget.conversations.removeWhere((c) => c == conversation);
-    }
-    void putConversationFirst(Conversation conversation) {
-      deleteConversation(conversation);
-      widget.conversations.insert(0, conversation);
-    }
-    void addConversation(Conversation conversation) {
-      if (widget.conversations.contains(conversation)) {
-        putConversationFirst(conversation);
-        return;
-      }
-      widget.conversations.insert(0, conversation);
-    }
     String fromUserId = msg.user!.id;
     List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == fromUserId).toList();
     Conversation conversationFound;
     if (conversationFoundLs.length > 0){
       conversationFound = conversationFoundLs[0];
-      addConversation(conversationFound);
+      putConversationFirst(conversationFound);
       setState(() {
-        updateAConversation(conversationFound, msg);
+        conversationFound.updateWithNewMsg(msg);
       });
     } else {
-        setState(() async {
-          widget.conversations = await getConversationsAPI();
+      getConversationsAPI().then((value){
+        setState(()  {
+          widget.conversations= value;
         });
+      });
+
     }
   }
-
+  void handleNewMessageFromCurrent(Message msg, receiveUserId){
+    List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == receiveUserId).toList();
+    Conversation conversationFound;
+    if (conversationFoundLs.length > 0){
+      conversationFound = conversationFoundLs[0];
+      conversationFound.updateWithNewMsg(msg);
+      setState(() {
+        putConversationFirst(conversationFound);
+      });
+    } else {
+      getConversationsAPI().then((value){
+        setState(()  {
+          widget.conversations= value;
+        });
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
