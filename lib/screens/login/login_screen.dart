@@ -79,7 +79,7 @@ class _LogInState extends State<LogInPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DefaultScreen()),
+                                builder: (context) => DefaultScreen(currentScreen: 0,)),
                           );
                         } else {
                           logInAlert(context, "error",

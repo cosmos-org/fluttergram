@@ -43,11 +43,24 @@ class ChatScreenState extends State<ChatScreen> {
   bool sendButton = false;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  late Future<String> currentUserId;
+  String currentUserId = '';
+
   @override
   void initState() {
     super.initState();
-    currentUserId =  getCurrentUserId();
+
+    Future<String> tmpFu =  getCurrentUserId();
+    tmpFu.then((value){
+      currentUserId  =value;
+      _scrollController.animateTo(
+          _scrollController
+              .position.maxScrollExtent,
+          duration:
+          Duration(milliseconds: 300),
+          curve: Curves.easeOut);
+      setState((){
+      });
+    });
     globalCustomSocket.initChatScreenState(this);
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -58,15 +71,20 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
   void handleNewMessage(Message msg){
-      setState((){
-      });
+    setState((){
+      widget.conversation.messages.add(msg);
+    });
   }
   void sendMessage(String text) async {
-    bool sendSuccess = await sendMessageAPI(text, widget.conversation.id, widget.conversation.partnerUser!.id);
-
+    var chatId =  widget.conversation.id;
+    var receiveUserId = widget.conversation.partnerUser!.id;
+    Message sentMsg = await sendMessageAPI(text, chatId, receiveUserId );
+    if(sentMsg.id != '') {
+      globalCustomSocket.sendMessage(sentMsg,receiveUserId);
+      handleNewMessage(sentMsg);
+    }
   }
 
-class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -96,13 +114,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       size: 24,
                     ),
                     CircleAvatar(
-                      child: SvgPicture.network(
-                        getStaticURL(widget.conversation.partnerUser!.avatar!.fileName),
-                        height: 36,
-                        width: 36,
-                      ),
+                      backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
                       radius: 20,
-                      backgroundColor: Colors.blueGrey,
                     ),
                   ],
                 ),
@@ -181,6 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     // height: MediaQuery.of(context).size.height - 150,
                     child: ListView.builder(
+
                       shrinkWrap: true,
                       controller: _scrollController,
                       itemCount: widget.conversation.messages.length + 1,
@@ -190,7 +204,6 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: 70,
                           );
                         }
-
                         if (widget.conversation.messages[index].checkMsgUserId(this.currentUserId)) {
                           return OwnMessageCard(
                             message: widget.conversation.messages[index].content.toString(),
@@ -198,8 +211,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           );
                         } else {
                           return ReplyCard(
-                              message: widget.conversation.messages[index].content.toString(),
-                              time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
+                            message: widget.conversation.messages[index].content.toString(),
+                            time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
                           );
                         }
                       },
@@ -456,6 +469,7 @@ class OwnMessageCard extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width - 45,
+          minWidth: 200,
         ),
         child: Card(
           elevation: 1,
@@ -466,8 +480,8 @@ class OwnMessageCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(
+                  right: 8,
                   left: 10,
-                  right: 30,
                   top: 5,
                   bottom: 20,
                 ),
@@ -520,6 +534,7 @@ class ReplyCard extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width - 45,
+          minWidth: 180,
         ),
         child: Card(
           elevation: 1,
@@ -531,9 +546,9 @@ class ReplyCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(
                   left: 8,
-                  right: 50,
+                  right: 20,
                   top: 5,
-                  bottom: 10,
+                  bottom: 20,
                 ),
                 child: Text(
                   message,
@@ -560,4 +575,3 @@ class ReplyCard extends StatelessWidget {
     );
   }
 }
-
