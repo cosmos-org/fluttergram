@@ -17,6 +17,9 @@ const normalFontWeight = FontWeight.normal;
 const boldFontWeight = FontWeight.bold;
 
 
+// const hostname = "http://localhost:8000"; //10.0.2.2
+// const socketHostname = "http://localhost:7070";
+
 const hostname = "http://10.0.2.2:8000"; //10.0.2.2
 const socketHostname = "http://10.0.2.2:7070";
 //API For Users
@@ -30,3 +33,6 @@ const friendGetListEndpoint = "/api/v1/friends/list";
 
 //API For Post
 const postGetListEndpoint = "/api/v1/posts/list";
+const postLikeEndpoint = "/api/v1/postLike/action/";
+const postCreateCommentEndpoint = "/api/v1/postComment/create/";
+const postGetCommentEndpoint = "/api/v1/postComment/list/";

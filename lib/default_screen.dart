@@ -6,15 +6,16 @@ import 'screens/profile/profile_screen.dart';
 import 'constants.dart';
 
 class DefaultScreen extends StatefulWidget {
-  const DefaultScreen({Key? key}) : super(key: key);
+  int currentScreen;
+  DefaultScreen({Key? key, required this.currentScreen}) : super(key: key);
 
   @override
-  _DefaultScreenState createState() => _DefaultScreenState();
+  _DefaultScreenState createState() => _DefaultScreenState(currentScreen);
 }
 
 class _DefaultScreenState extends State<DefaultScreen> {
-  int _currentScreen = 0;
 
+  int _currentScreen = 0;
   final screens = [
     HomeScreen(),
     SearchScreen(),
@@ -53,4 +54,6 @@ class _DefaultScreenState extends State<DefaultScreen> {
       ],
     );
   }
+
+  _DefaultScreenState(this._currentScreen);
 }

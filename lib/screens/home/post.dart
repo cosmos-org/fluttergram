@@ -8,7 +8,7 @@ import 'package:fluttergram/screens/home/post_container.dart';
 class Posts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<List<Post>>(
       future: getPosts(),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
@@ -19,28 +19,33 @@ class Posts extends StatelessWidget {
         };
         List<Post> list = snapshot.data as List<Post>;
         // return PostContainer(post: list[0]);
-        return  SingleChildScrollView(
+        return  Container(
+            child: SingleChildScrollView(
             child: Wrap(
               spacing: 10, // set spacing here
               children: createPostList(list),
             )
+        )
         );
-        //   ListView.builder(
-        //           itemCount: list.length,
-        //           itemBuilder: (context, int index){
-        //             return PostContainer(post: list[index]);
-        //             }
-        // );
       },
     );
   }
 }
 
 List<Widget> createPostList(postList) {
-  var ls = <PostContainer>[];
+  var ls = <PostSearched>[];
   postList.forEach((ele) {
-    ls.add(new PostContainer(post: ele));
+    ls.add(new PostSearched(post: ele));
   });
-
   return ls;
+}
+
+class PostSearched extends StatelessWidget {
+  final Post post;
+  PostSearched({Key? key, required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    return PostContainer(post: post);
+  }
 }
