@@ -3,7 +3,7 @@ import 'package:fluttergram/models/message_model.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 // Controllers
-import '../../controllers/conversation_controller.dart';
+import '../../controllers/conversation/conversation_controller.dart';
 import '../../controllers/user_controller.dart';
 // Models
 import '../../models/conversation_model.dart';

@@ -18,6 +18,10 @@ const boldFontWeight = FontWeight.bold;
 
 
 
+// const hostname = "https://murmuring-inlet-24969.herokuapp.com";
+// const socketHostname = "https://tranquil-garden-75087.herokuapp.com:7070";
+
+
 // const hostname = "http://localhost:8000"; //10.0.2.2
 // const socketHostname = "http://localhost:7070";
 

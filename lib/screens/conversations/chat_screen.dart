@@ -3,13 +3,13 @@ import 'package:fluttergram/models/conversation_model.dart';
 import 'package:fluttergram/models/message_model.dart';
 import '../../models/user_model.dart';
 // Controllers
-import '../../controllers/conversation_controller.dart';
+import '../../controllers/conversation/conversation_controller.dart';
 // Others
 import '../../constants.dart';
 import '../../util/util.dart';
 import '../../socket/custom_socket.dart';
 import 'package:emoji_picker/emoji_picker.dart';
-import 'package:flutter_svg/svg.dart';
+import '../../controllers/conversation/message_stream_controller.dart';
 class MessageCard extends StatelessWidget {
   const MessageCard({Key? key}) : super(key: key);
 
@@ -44,11 +44,22 @@ class ChatScreenState extends State<ChatScreen> {
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
   String currentUserId = '';
-
+  late int currentPage;
+  late MessageStreamModel _messageStreamModel;
   late EmojiPicker cachedPicker;
+  Future<void> lm() {
+    this.currentPage = this.currentPage + 1;
+    return _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
+    // setState((){
+    //   this.currentPage = this.currentPage + 1;
+    //   _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
+    // });
+
+  }
   @override
   void initState() {
-    super.initState();
+    currentPage = 0;
+    _messageStreamModel = MessageStreamModel(widget.conversation.id);
     cachedPicker = EmojiPicker(
         rows: 4,
         columns: 7,
@@ -59,6 +70,13 @@ class ChatScreenState extends State<ChatScreen> {
             sendButton = true;
           });
         });
+    // scrollController.offset
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.maxScrollExtent == 0) {
+    //
+    //   }
+    // });
+
     getCurrentUserId().then((value){
       currentUserId  =value;
       _scrollController.animateTo(
@@ -79,6 +97,7 @@ class ChatScreenState extends State<ChatScreen> {
         });
       }
     });
+    super.initState();
   }
   void handleNewMessage(Message msg){
     if (!msg.checkMsgUserId(widget.conversation.partnerUser!.id)) {
@@ -219,41 +238,53 @@ class ChatScreenState extends State<ChatScreen> {
                 children: [
                   Expanded(
                     // height: MediaQuery.of(context).size.height - 150,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      controller: _scrollController,
-                      itemCount: widget.conversation.messages.length + 1,
-                      itemBuilder: (context, index)  {
-                        if (index == widget.conversation.messages.length) {
-                          return Container(
-                            height: 70,
-                          );
-                        }
-                        if (widget.conversation.messages[index].checkMsgUserId(this.currentUserId)) {
-                          return OwnMessageCard(
-                            message: widget.conversation.messages[index].content.toString(),
-                            time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
-                          );
-                        } else {
+                    child: StreamBuilder(
+                          stream: _messageStreamModel.stream,
+                          builder:(BuildContext _context,AsyncSnapshot _snapshot){
+                          if (!_snapshot.hasData){
+                              return Center(child: CircularProgressIndicator());
+                          } else{
+                            return RefreshIndicator(
+                              onRefresh: lm,
+                              child:ListView.builder(
+                                shrinkWrap: true,
+                                controller: _scrollController,
+                                itemCount: _snapshot.data.length + 1,
+                                itemBuilder: (context, index)  {
+                                  if (index == _snapshot.data.length ) {
+                                    return Container(
+                                      height: 70,
+                                    );
+                                  }
+                                  if (_snapshot.data[index].checkMsgUserId(this.currentUserId)) {
+                                    return OwnMessageCard(
+                                      message: _snapshot.data[index].content.toString(),
+                                      time: dateTimeFormat(_snapshot.data[index].createdAt.toString()),
+                                    );
+                                  } else {
 
-                          return Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                CircleAvatar(
-                                  backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
-                                  radius: 12,
-                                ),
-                                ReplyCard(
-                                  message: widget.conversation.messages[index].content.toString(),
-                                  time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
-                                )
-                              ]
-                          );
-                        }
-                      },
+                                    return Row(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
+                                            radius: 12,
+                                          ),
+                                          ReplyCard(
+                                            message: _snapshot.data[index].content.toString(),
+                                            time: dateTimeFormat(_snapshot.data[index].createdAt.toString()),
+                                          )
+                                        ]
+                                    );
+                                  }
+                                },
+                              )
+                            );
+                          }
+                      }
                     ),
                   ),
                   Align(

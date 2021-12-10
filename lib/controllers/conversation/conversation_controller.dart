@@ -1,8 +1,8 @@
-import '../models/conversation_model.dart';
-import '../models/message_model.dart';
+import '../../models/conversation_model.dart';
+import '../../models/message_model.dart';
 import 'package:http/http.dart' as http;
-import '../models/user_model.dart';
-import '../util/util.dart';
+import '../../models/user_model.dart';
+import '../../util/util.dart';
 import 'package:fluttergram/constants.dart';
 import 'dart:convert';
 final String getChatsURL = hostname + '/api/v1/chats/getChats';
@@ -51,6 +51,7 @@ Future<List<Conversation>> getConversationsAPI() async {
     for (var element in resp['data'])
       // resp['data'].foreach((element)
         {
+          print('call from conversation');
           var messages = await getMessagesAPI(element['_id'],0);
           ls.add(Conversation.fromJson(handleJson(element,messages)));
         };
@@ -61,6 +62,7 @@ Future<List<Conversation>> getConversationsAPI() async {
   else return [];
 
 }
+
 Future<List<Message>> getMessagesAPI(chatId,page) async {
   String token = await getToken();
   final response = await http
@@ -82,6 +84,8 @@ Future<List<Message>> getMessagesAPI(chatId,page) async {
     };
     // );
     ls = List.from(ls.reversed);
+    print('load msg ' + page.toString());
+    print(ls.length);
     return ls;
   }
   else return [];
@@ -118,3 +122,4 @@ Future<Message> sendMessageAPI(String content,String chatId,String  receiveId) a
   }
   return Message(id: '');
 }
+
