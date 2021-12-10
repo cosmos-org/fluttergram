@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
+import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/screens/home/post_view_screen.dart';
+import '../../constants.dart';
+import '../../util/util.dart';
 class PostContainer extends StatelessWidget {
   final Post post;
   const PostContainer({
@@ -27,7 +32,7 @@ class PostContainer extends StatelessWidget {
                     const SizedBox(height: 4.0),
                     Text(post.described),
                     post.images.isNotEmpty
-                        ? const SizedBox.shrink()
+                          ? const SizedBox.shrink()
                         : const SizedBox(height: 6.0),
                   ],
                 )
@@ -45,10 +50,7 @@ class PostContainer extends StatelessWidget {
                           children: <Widget>[
                             Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Image.network(e.filename,
-                                  // width: 1050,
-                                  // height: 350,
-                                  fit: BoxFit.cover,)
+                                child: getImageNetWork(e.fileName),
                             )
                           ],
                         ) ,
@@ -58,10 +60,72 @@ class PostContainer extends StatelessWidget {
                 : const SizedBox.shrink(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: _PostStats(post: post),
+              child: PostStats(post: post),
             ),
           ]
       ),
+    );
+  }
+}
+
+class _moreOption extends StatelessWidget {
+  final Post post;
+
+  const _moreOption({
+    Key? key,
+    required this.post,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<User>(
+        future: getCurrentUser(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return CircularProgressIndicator();
+          };
+          if (snapshot.hasError) {
+            return Text("Error");
+          };
+          User currentUser =  snapshot.data as User;
+          List<String> actions = [];
+          if (post.author.id == currentUser.id) {
+            actions = <String>[
+              'Edit',
+              'Delete'
+            ];
+          }
+          else
+            actions = <String>['Report'];
+          // print(post.author.id);
+          // print('current id ' + currentUser.id);
+          // print(actions[0]);
+
+          onAction(String action) async {
+            switch (action) {
+              case 'Edit':
+                break;
+              case 'Delete':
+                break;
+              case 'Report':
+                break;
+            }
+            // print(action);
+          }
+
+          return PopupMenuButton(
+                padding: const EdgeInsets.all(1.0),
+                onSelected: onAction,
+                itemBuilder: (BuildContext context) {
+                  return actions.map((String action) {
+                    return PopupMenuItem(
+                      value: action,
+                      child: Text(action),
+                    );
+                  }).toList();
+                },
+              );
+        }
     );
   }
 }
@@ -83,7 +147,7 @@ class _PostHeader extends StatelessWidget {
           child: CircleAvatar(
             radius: 20.0,
             backgroundColor: Colors.grey[200],
-            backgroundImage: NetworkImage(post.author.avatar!.filename),
+            backgroundImage: getImageProviderNetWork(post.author.avatar!.fileName),
           ),
         ),
         const SizedBox(width: 8.0),
@@ -100,7 +164,7 @@ class _PostHeader extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '${post.timeAgo} • ',
+                    '${post.createdAt} • ',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12.0,
@@ -118,108 +182,136 @@ class _PostHeader extends StatelessWidget {
         ),
         IconButton(
           icon: const Icon(Icons.more_horiz),
-          onPressed: () => print('More'),
+          onPressed: () => _moreOption(post: post),
         ),
       ],
     );
   }
 }
 
-class _PostStats extends StatelessWidget {
+class PostStats extends StatefulWidget {
   final Post post;
-
-  const _PostStats({
+  const PostStats({
     Key? key,
     required this.post,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Icon(
-              Icons.thumb_up,
-              size: 12.0,
-              // color: Colors.grey[600],
-            ),
-            const SizedBox(width: 4.0),
-            Expanded(
-              child: Text(
-                '${post.like.length}',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-            Text(
-              '${post.countComments} Comments',
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
-        const Divider(),
-        Row(
-            children: [
-              _PostButton(
-                icon: Icon(
-                    Icons.thumb_up_alt_outlined,
-                    size: 20.0),
-                label: 'Like',
-                onTap: () => print('Like'),
-              ),
-              _PostButton(
-                icon: Icon(
-                  Icons.mode_comment_outlined,
-                  // color: Colors.grey[600],
-                  size: 20.0,
-                ),
-                label: 'Comment',
-                onTap: () => print('Comment'),
-              ),
-            ]
-        )
-      ],
-    );
-  }
+  _PostStats createState() => _PostStats(post: post);
 }
 
-class _PostButton extends StatelessWidget {
-  final Icon icon;
-  final String label;
-  final VoidCallback onTap;
+class _PostStats extends State<PostStats> {
+  final Post post;
 
-  const _PostButton({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  }) : super(key: key);
+  _PostStats({
+    required this.post,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Material(
-        color: Colors.white,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            height: 25.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return FutureBuilder<bool>(
+        future: isLiked(post),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (!snapshot.hasData) {
+            // while data is loading:
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          else {
+            bool isLiked = snapshot.data!;
+            return Column(
               children: [
-                icon,
-                const SizedBox(width: 4.0),
-                Text(label),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.thumb_up,
+                      size: 12.0,
+                    ),
+                    const SizedBox(width: 4.0),
+                    Expanded(
+                      child: Text(
+                        '${post.like.length}',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${post.countComments} Comments',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Row(
+                    children: [
+                      Expanded(
+                        child: Material(
+                          color: Colors.white,
+                          child: InkWell(
+                            onTap: (){
+                              setState(() {
+                                isLiked = !isLiked;
+                              });
+                              likePost(post);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              height: 25.0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.thumb_up_alt_rounded,
+                                    color: isLiked ? likeColor : unlikeColor,
+                                    size: 20.0,
+                                ),
+                                const SizedBox(width: 4.0),
+                                Text("Like"),
+                                ],
+                              ),
+                            ),
+                            ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Material(
+                          color: Colors.white,
+                          child: InkWell(
+                            onTap: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PostView(post: post)),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              height: 25.0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.mode_comment_outlined,
+                                    size: 20.0,
+                                  ),
+                                  const SizedBox(width: 4.0),
+                                  Text('Comment'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    ]
+                )
               ],
-            ),
-          ),
-        ),
-      ),
+            );
+          }
+        }
     );
   }
 }

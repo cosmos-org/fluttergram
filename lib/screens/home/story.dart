@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/models/user_model.dart';
-
+import '../../util/util.dart';
 class Story extends StatelessWidget {
   final List<User> friends;
   final User currentUser;
@@ -21,8 +21,8 @@ class Story extends StatelessWidget {
           itemCount: 1 + friends.length,
           itemBuilder: (BuildContext context, int index) {
             String imageUrl;
-            if (currentUser.avatar!.filename != '') {
-              imageUrl = currentUser.avatar!.filename;
+            if (currentUser.avatar!.fileName != '') {
+              imageUrl = currentUser.avatar!.fileName;
             } else {
               imageUrl = "https://icon-library.com/images/unknown-person-icon/unknown-person-icon-4.jpg";
             }
@@ -38,7 +38,7 @@ class Story extends StatelessWidget {
                                     child: CircleAvatar(
                                       radius: 20.0,
                                       backgroundColor: Colors.grey[200],
-                                      backgroundImage: NetworkImage(imageUrl),
+                                      backgroundImage: getImageProviderNetWork(currentUser.avatar!.fileName ),
                                     ),
                                   ),
                     ),
@@ -63,7 +63,7 @@ class Story extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 20.0,
                           backgroundColor: Colors.grey[200],
-                          backgroundImage: NetworkImage(user.avatar!.filename),
+                          backgroundImage: getImageProviderNetWork(user.avatar!.fileName),
                         ),
                       ),
                   ),

@@ -31,7 +31,7 @@ class GalleryImageState extends State<GalleryImage> {
             child: GestureDetector(
               onTap: () async {
                 XFile? image =
-                    await imagePicker.pickImage(source: ImageSource.gallery);
+                await imagePicker.pickImage(source: ImageSource.gallery);
                 setState(() {
                   _image = File(image!.path);
                 });
@@ -42,21 +42,21 @@ class GalleryImageState extends State<GalleryImage> {
                 decoration: BoxDecoration(color: Colors.red[200]),
                 child: _image != null
                     ? Image.file(
-                        _image,
-                        width: 200.0,
-                        height: 200.0,
-                        fit: BoxFit.fitHeight,
-                      )
+                  _image,
+                  width: 200.0,
+                  height: 200.0,
+                  fit: BoxFit.fitHeight,
+                )
                     : Container(
-                        child: Text("No Images Selected"),
-                        // decoration: BoxDecoration(
-                        //     color: Colors.red[200]),
-                        // width: 200,
-                        // height: 200,
-                        // child: Icon(
-                        //   Icons.camera_alt,
-                        //   color: Colors.grey[800],
-                      ),
+                  child: Text("No Images Selected"),
+                  // decoration: BoxDecoration(
+                  //     color: Colors.red[200]),
+                  // width: 200,
+                  // height: 200,
+                  // child: Icon(
+                  //   Icons.camera_alt,
+                  //   color: Colors.grey[800],
+                ),
               ),
             ),
           ),

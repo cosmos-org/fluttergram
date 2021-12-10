@@ -24,13 +24,14 @@ class _CreatePostState extends State<CreatePost> {
             height: 60,
             margin: EdgeInsets.all(10),
             child: TextField(
-              controller: captionController,
-              decoration: InputDecoration(
-              enabledBorder: const OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.grey, width: 0.5),
-              ),
-              hintText: "What's in your mind?",
-            )),
+                controller: captionController,
+                decoration: InputDecoration(
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: const BorderSide(
+                        color: Colors.grey, width: 0.5),
+                  ),
+                  hintText: "What's in your mind?",
+                )),
           ),
           IconButton(
             icon: Icon(Icons.add_photo_alternate),

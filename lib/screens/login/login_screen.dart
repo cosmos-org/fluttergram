@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/constants.dart';
 import 'package:fluttergram/models/user_model.dart';
-
+import '../../util/util.dart';
 import 'package:fluttergram/default_screen.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
-
+import '../../socket/custom_socket.dart';
 class LogInPage extends StatefulWidget {
   const LogInPage({Key? key}) : super(key: key);
   @override
@@ -68,12 +68,18 @@ class _LogInState extends State<LogInPage> {
                       onPressed: () async {
                         String phone = phoneController.text;
                         String password = passwordController.text;
-                        User currentUser = await logIn(phone, password);
-                        if (currentUser.id != "-1") {
+                        var currentUserAndToken = await logIn(phone, password);
+
+                        if (currentUserAndToken[0].id != "-1") {
+                          User currentUser = currentUserAndToken[0];
+                          String token = currentUserAndToken[1];
+                          await setToken(token);
+                          await setCurrentUserId(currentUser.id);
+                          await initGlobalCustomSocket(currentUser.id);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DefaultScreen()),
+                                builder: (context) => DefaultScreen(currentScreen: 0,)),
                           );
                         } else {
                           logInAlert(context, "error",
@@ -83,28 +89,30 @@ class _LogInState extends State<LogInPage> {
                     )),
                 Container(
                     child: Row(
-                  children: <Widget>[
-                    const Text("Haven't got any account?",
-                        style: TextStyle(fontSize: 13)),
-                    TextButton(
-                      style: TextButton.styleFrom(primary: primaryColor),
-                      child: const Text(
-                        'Create a new one',
-                        style: TextStyle(
-                            fontSize: 15, decoration: TextDecoration.underline),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUpPage()),
-                        );
-                      },
-                    )
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                ))
+                      children: <Widget>[
+                        const Text("Haven't got any account?",
+                            style: TextStyle(fontSize: 13)),
+                        TextButton(
+                          style: TextButton.styleFrom(primary: primaryColor),
+                          child: const Text(
+                            'Create a new one',
+                            style: TextStyle(
+                                fontSize: 15, decoration: TextDecoration.underline),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignUpPage()),
+                            );
+                          },
+                        )
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ))
               ],
-            )));
+            )
+        )
+    );
   }
 }
 
@@ -169,8 +177,6 @@ class _SignUpState extends State<SignUpPage> {
                           textStyle: TextStyle(color: secondaryColor)),
                       child: Text('Sign Up'),
                       onPressed: () async {
-                        print("Sign Up request");
-
                         String phone = phoneController.text;
                         String password = passwordController.text;
                         String username = firstNameController.text +
@@ -185,7 +191,7 @@ class _SignUpState extends State<SignUpPage> {
                         // int statusCode = resp.statusCode;
                         // print(statusCode);
                         int statusCode =
-                            await signUp(username, phone, password);
+                        await signUp(username, phone, password);
                         if (statusCode < 300) {
                           signUpAlert(context, "success",
                               "Sign Up Successfully", "Let's Log in");
@@ -196,7 +202,9 @@ class _SignUpState extends State<SignUpPage> {
                       },
                     ))
               ],
-            )));
+            )
+        )
+    );
   }
 
   Container signUpContainer(TextEditingController controller, String label) {

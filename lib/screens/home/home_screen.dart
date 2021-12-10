@@ -3,6 +3,7 @@ import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post.dart';
 import 'package:fluttergram/screens/home/story.dart';
+import 'package:fluttergram/screens/home/upload_post.dart';
 import '../../constants.dart';
 import 'create_post.dart';
 
@@ -29,48 +30,58 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               // data loaded:
               final friends = snapshot.data!;
-              return CustomScrollView(
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                        child: Container(
-                          padding: const EdgeInsets.all(2.0),
-                          color: Colors.white,
-                          child: Text(
-                            'Stories',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                    ),
-                    SliverToBoxAdapter(
-                        child: Story(currentUser: friends[0],friends: friends)
-                    ),
-                    SliverToBoxAdapter(
-                        child: Container(
-                          padding: const EdgeInsets.all(2.0),
-                          color: Colors.white,
-                          child: Text(
-                            'Latest Feed',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                    ),
-                    SliverToBoxAdapter(
-                      child: Posts(),
-                    )
-                  ]
+              return FutureBuilder<User>(
+              future: getCurrentUser(),
+              builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                    if (!snapshot.hasData) {
+                    // while data is loading:
+                      return const Center(
+                      child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      // data loaded:
+                      User currentUser = snapshot.data!;
+
+                      return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children:[
+                            Container(
+                                  padding: const EdgeInsets.all(2.0),
+                                  color: Colors.white,
+                                  child: Text(
+                                    'Stories',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                            Story(currentUser: currentUser,friends: friends),
+                            Container(
+                                  padding: const EdgeInsets.all(2.0),
+                                  color: Colors.white,
+                                  child: Text(
+                                    'Latest Feed',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                            Expanded(
+                              child: Posts(),
+                            )
+                          ]
+                      );
+                    }
+              },
               );
-            }
-          },
-        )
-    );
+              }
+        }
+  )
+  );
   }
   AppBar buildAppBar() {
     return AppBar(
@@ -80,13 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         leading: IconButton(
           icon: Icon(Icons.add_circle_outline),
-          onPressed:() {
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => CreatePost()),
+                  builder: (context) => Uploader()),
             );
-          }
+          },
         ),
         actions: [
           IconButton(
