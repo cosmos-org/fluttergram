@@ -51,8 +51,11 @@ Future<List<Conversation>> getConversationsAPI() async {
     for (var element in resp['data'])
       // resp['data'].foreach((element)
         {
-          print('call from conversation');
+          // print('call from conversation');
           var messages = await getMessagesAPI(element['_id'],0);
+          // var messages = <Message>[];
+          // print('load conver');
+          // print(z);
           ls.add(Conversation.fromJson(handleJson(element,messages)));
         };
     // );
@@ -83,9 +86,8 @@ Future<List<Message>> getMessagesAPI(chatId,page) async {
       ls.add(messageFromRespJson(element));
     };
     // );
-    ls = List.from(ls.reversed);
-    print('load msg ' + page.toString());
-    print(ls.length);
+    // ls = List.from(ls.reversed);
+
     return ls;
   }
   else return [];

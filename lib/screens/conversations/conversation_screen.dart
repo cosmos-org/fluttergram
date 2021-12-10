@@ -175,6 +175,8 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
   }
   @override
   Widget build(BuildContext context) {
+    print('num of conver');
+    print(widget.conversations.length);
     return ListView.builder(
       itemCount: widget.conversations.length,
       itemBuilder: (_, index) => FocusedMenuHolder(

@@ -21,10 +21,11 @@ class Conversation {
   void updateWithNewMsg(Message msg){
     this.lastMessageTimeAgo = timeAgo(msg.updatedAt);
     this.latestMessage = msg.content;
-    this.messages.add(msg);
+    this.messages.insert(0,msg);
     this.sender = (msg.user!.id == this.partnerUser!.id) ? 1: 0;
   }
   factory Conversation.fromJson(Map<String, dynamic> json){
+
     var a= Conversation(
       id: json['_id'] ?? '',
       latestMessage: json['latestMessage'] ?? '',

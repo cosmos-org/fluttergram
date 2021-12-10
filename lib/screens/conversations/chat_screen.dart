@@ -47,19 +47,20 @@ class ChatScreenState extends State<ChatScreen> {
   late int currentPage;
   late MessageStreamModel _messageStreamModel;
   late EmojiPicker cachedPicker;
-  Future<void> lm() {
-    this.currentPage = this.currentPage + 1;
-    return _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
-    // setState((){
-    //   this.currentPage = this.currentPage + 1;
-    //   _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
-    // });
-
-  }
+  // Future<void> lm() {
+  //   print('on ref');
+  //   this.currentPage = this.currentPage + 1;
+  //   return _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
+  //   // setState((){
+  //   //   this.currentPage = this.currentPage + 1;
+  //   //   _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
+  //   // });
+  //
+  // }
   @override
   void initState() {
     currentPage = 0;
-    _messageStreamModel = MessageStreamModel(widget.conversation.id);
+    _messageStreamModel = MessageStreamModel(widget.conversation.id,widget.conversation);
     cachedPicker = EmojiPicker(
         rows: 4,
         columns: 7,
@@ -70,21 +71,17 @@ class ChatScreenState extends State<ChatScreen> {
             sendButton = true;
           });
         });
-    // scrollController.offset
-    // _scrollController.addListener(() {
-    //   if (_scrollController.position.maxScrollExtent == 0) {
-    //
-    //   }
-    // });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.maxScrollExtent == _scrollController.offset) {
+        this.currentPage = this.currentPage + 1;
+        _messageStreamModel.loadMore(page: this.currentPage);
+      }
+    });
 
     getCurrentUserId().then((value){
       currentUserId  =value;
-      _scrollController.animateTo(
-          _scrollController
-              .position.maxScrollExtent,
-          duration:
-          Duration(milliseconds: 300),
-          curve: Curves.easeOut);
+
       setState((){
         return;
       });
@@ -99,6 +96,7 @@ class ChatScreenState extends State<ChatScreen> {
     });
     super.initState();
   }
+
   void handleNewMessage(Message msg){
     if (!msg.checkMsgUserId(widget.conversation.partnerUser!.id)) {
       return;
@@ -107,29 +105,34 @@ class ChatScreenState extends State<ChatScreen> {
       return;
     });
   }
-  void handleNewMessageFromCurrent(Message msg){
-    setState((){
-      return;
-    });
-  }
+  // void handleNewMessageFromCurrent(Message msg){
+  //   setState((){
+  //     return;
+  //   });
+  // }
   void sendMessage(String text) async {
     var chatId =  widget.conversation.id;
     var receiveUserId = widget.conversation.partnerUser!.id;
     Message sentMsg = await sendMessageAPI(text, chatId, receiveUserId );
     if(sentMsg.id != '') {
       globalCustomSocket.sendMessage(sentMsg,receiveUserId);
-      handleNewMessageFromCurrent(sentMsg);
+      setState((){
+        sendButton = false;
+      });
+      // if (_scrollController.position.pixels != 0) {
+      //   _scrollController.animateTo(
+      //       _scrollController
+      //           .position.minScrollExtent,
+      //       duration:
+      //       Duration(milliseconds: 300),
+      //       curve: Curves.easeOut);
+      // }
     }
-    if (_scrollController.position.pixels != 0) {
-      _scrollController.animateTo(
-          _scrollController
-              .position.maxScrollExtent,
-          duration:
-          Duration(milliseconds: 300),
-          curve: Curves.easeOut);
-    }
-  }
 
+  }
+  Future<void> nth(){
+    return Future.value();
+  }
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -241,25 +244,38 @@ class ChatScreenState extends State<ChatScreen> {
                     child: StreamBuilder(
                           stream: _messageStreamModel.stream,
                           builder:(BuildContext _context,AsyncSnapshot _snapshot){
+
                           if (!_snapshot.hasData){
                               return Center(child: CircularProgressIndicator());
                           } else{
+                            // loadMore(_snapshot.data);
+                            print('current ms ls');
+                            print(widget.conversation.messages.length);
                             return RefreshIndicator(
-                              onRefresh: lm,
+                              onRefresh: nth,
                               child:ListView.builder(
+                                reverse: true,
                                 shrinkWrap: true,
                                 controller: _scrollController,
-                                itemCount: _snapshot.data.length + 1,
-                                itemBuilder: (context, index)  {
-                                  if (index == _snapshot.data.length ) {
+                                itemCount: widget.conversation.messages.length + 2,
+                                itemBuilder: (context, ind)  {
+                                  int index = ind - 1;
+                                  if (index ==  -1 ) {
                                     return Container(
                                       height: 70,
                                     );
+                                  }else if (index == widget.conversation.messages.length  && _messageStreamModel.hasMore){
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 32.0),
+                                      child: Center(child: CircularProgressIndicator()),
+                                    );
+                                  } else if (index == widget.conversation.messages.length  && !_messageStreamModel.hasMore){
+                                    return Container();
                                   }
-                                  if (_snapshot.data[index].checkMsgUserId(this.currentUserId)) {
+                                  if ( widget.conversation.messages[index].checkMsgUserId(this.currentUserId)) {
                                     return OwnMessageCard(
-                                      message: _snapshot.data[index].content.toString(),
-                                      time: dateTimeFormat(_snapshot.data[index].createdAt.toString()),
+                                      message:  widget.conversation.messages[index].content.toString(),
+                                      time: dateTimeFormat( widget.conversation.messages[index].createdAt.toString()),
                                     );
                                   } else {
 
@@ -274,8 +290,8 @@ class ChatScreenState extends State<ChatScreen> {
                                             radius: 12,
                                           ),
                                           ReplyCard(
-                                            message: _snapshot.data[index].content.toString(),
-                                            time: dateTimeFormat(_snapshot.data[index].createdAt.toString()),
+                                            message:  widget.conversation.messages[index].content.toString(),
+                                            time: dateTimeFormat( widget.conversation.messages[index].createdAt.toString()),
                                           )
                                         ]
                                     );
@@ -390,18 +406,9 @@ class ChatScreenState extends State<ChatScreen> {
                                     ),
                                     onPressed: () {
                                       if (sendButton) {
-                                        _scrollController.animateTo(
-                                            _scrollController
-                                                .position.maxScrollExtent,
-                                            duration:
-                                            Duration(milliseconds: 300),
-                                            curve: Curves.easeOut);
                                         sendMessage(
                                             _controller.text);
                                         _controller.clear();
-                                        setState(() {
-                                          sendButton = false;
-                                        });
                                       }
                                     },
                                   ),
