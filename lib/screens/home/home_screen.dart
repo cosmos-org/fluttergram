@@ -3,9 +3,8 @@ import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post.dart';
 import 'package:fluttergram/screens/home/story.dart';
-
+import 'package:fluttergram/screens/home/upload_post.dart';
 import '../../constants.dart';
-import 'create_post.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

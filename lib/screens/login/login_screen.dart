@@ -20,6 +20,7 @@ class _LogInState extends State<LogInPage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('COSMOS'),
+          backgroundColor: primaryColor,
         ),
         body: Padding(
             padding: EdgeInsets.all(10),
