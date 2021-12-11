@@ -78,6 +78,7 @@ class _ListComment extends StatelessWidget {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
+                  print(item);
                   String imageUrl;
                   if (item.author.avatar!.fileName != '') {
                     imageUrl = item.author.avatar!.fileName;
@@ -91,7 +92,7 @@ class _ListComment extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 20.0,
                         backgroundColor: Color(0xFFEEEEEE),
-                        backgroundImage: getImageProviderNetWork(item.author.avatar!.fileName),
+                        backgroundImage: getImageProviderNetWork(imageUrl),
                       ),
                     ),
 

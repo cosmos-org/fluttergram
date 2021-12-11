@@ -18,10 +18,7 @@ Future<List<Post>> getPosts() async {
 
   var ls = <Post>[];
   for (var element in resp['data']) {
-    // print(element);
     ls.add(Post.fromJson(element));
-    Post p = Post.fromJson(element);
-    print(p);
   }
   return ls;
 }
@@ -45,10 +42,30 @@ Future<void> likePost(Post post) async{
         'Content-Type': 'application/json',
         'authorization': 'bearer ' + token,
       });
-  int statusCode = response.statusCode;
-  dynamic respBody = jsonDecode(response.body);
-
 }
+
+Future<void> reportPost(Post post) async{
+  String token = await getToken();
+  String url = hostname + postReportEndpoint + post.id;
+  String body = '{"subject": "1", "details": ""}';
+  final response = await http.post(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      },
+      body: body);
+}
+
+Future<void> deletePost(Post post) async{
+  String token = await getToken();
+  String url = hostname + postDeleteEndpoint + post.id;
+  final response = await http.get(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+}
+
 
 Future<void> createComment(Post post, String content) async{
   String token = await getToken();
