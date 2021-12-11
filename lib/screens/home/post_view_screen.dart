@@ -4,7 +4,6 @@ import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';
 import 'package:fluttergram/models/user_model.dart';
-import 'package:http/http.dart';
 import '../../util/util.dart';
 import 'package:fluttergram/constants.dart';
 
@@ -234,6 +233,7 @@ class _navBar extends StatelessWidget {
                                 ),
                                 onPressed: (){
                                   createComment(post, commentController.text);
+
                                 },
                                 child: Icon(
                                   Icons.send,

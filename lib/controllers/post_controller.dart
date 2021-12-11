@@ -80,6 +80,21 @@ Future<void> createComment(Post post, String content) async{
       body: body);
 }
 
+Future<void> editPost(Post post, String described) async{
+  String token = await getToken();
+  String url = hostname + postEditEndpoint + post.id;
+  String images = post.images.toString();
+  String videos = post.videos.toString();
+  String body = '{"described": "$described", "images": "$images", "videos": "$videos"}';
+
+  final response = await http.post(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      },
+      body: body);
+}
+
 Future<List<Comment>> getComment(Post post) async{
   String token = await getToken();
   String url = hostname + postGetCommentEndpoint + post.id;

@@ -41,3 +41,4 @@ const postCreateCommentEndpoint = "/api/v1/postComment/create/";
 const postGetCommentEndpoint = "/api/v1/postComment/list/";
 const postDeleteEndpoint = "/api/v1/posts/delete/";
 const postReportEndpoint = "/api/v1/postReport/create/";
+const postEditEndpoint = "/api/v1/posts/edit/";
