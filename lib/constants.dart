@@ -29,6 +29,7 @@ const userSignUpEndpoint = "/api/v1/users/register/";
 const userLogInEndpoint = "/api/v1/users/login/";
 const userGetInforEndpoint = "/api/v1/users/show";
 const userEditInforEndpoint = "/api/v1/users/edit";
+const userGetAnotherEndpoint = "/api/v1/users/show/";
 
 //API For Friend
 const friendGetListEndpoint = "/api/v1/friends/list";

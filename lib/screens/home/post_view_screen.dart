@@ -78,29 +78,37 @@ class _ListComment extends StatelessWidget {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  print(item);
-                  String imageUrl;
-                  if (item.author.avatar!.fileName != '') {
-                    imageUrl = item.author.avatar!.fileName;
-                  } else {
-                    imageUrl =
-                    "https://icon-library.com/images/unknown-person-icon/unknown-person-icon-4.jpg";
-                  }
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 20.0,
-                      child: CircleAvatar(
-                        radius: 20.0,
-                        backgroundColor: Color(0xFFEEEEEE),
-                        backgroundImage: getImageProviderNetWork(imageUrl),
-                      ),
-                    ),
+                  String userId = item.author.id;
+                  return FutureBuilder<User>(
+                      future: getAnotherUser(userId),
+                      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                        if (!snapshot.hasData) {
+                          // while data is loading:
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        else {
+                          User user = snapshot.data!;
+                          return ListTile(
+                            leading: CircleAvatar(
+                              radius: 20.0,
+                              child: CircleAvatar(
+                                radius: 20.0,
+                                backgroundColor: Color(0xFFEEEEEE),
+                                backgroundImage: getImageProviderNetWork(
+                                    user.avatar!.fileName),
+                              ),
+                            ),
 
-                    trailing: Text(item.createdAt),
-                    title: Text(item.author.username),
-                    subtitle: Text(item.content),
-                    onTap: () {},
-                  );
+                            trailing: Text(item.createdAt),
+                            title: Text(item.author.username),
+                            subtitle: Text(item.content),
+                            onTap: () {},
+                          );
+                        }
+                      }
+                      );
                 }
 
             );
