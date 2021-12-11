@@ -47,7 +47,8 @@ class CustomSocket{
     socket.connect();
     socket.emit(socketSignInEvent, this.currentUserId);
     socket.onConnect((data) {
-      socket.on(socketMessageEvent, (msg) {
+      socket.on(socketMessageEvent, (socketMsg) {
+        Message msg = Message.fromJson(socketMsg);
         conversationScreenBodyState.handleNewMessage(msg);
         chatScreenState.handleNewMessage(msg);
       });
@@ -55,9 +56,8 @@ class CustomSocket{
   }
   void sendMessage(Message msg,receiveUserId){
     var socketMsg = msg.toMap();
-    conversationScreenBodyState.setState(() {
-    });
     socket.emit(socketMessageEvent,{'socketMsg' : socketMsg ,'receiveUserId':receiveUserId} );
+    conversationScreenBodyState.handleNewMessageFromCurrent(msg, receiveUserId);
   }
 
 
