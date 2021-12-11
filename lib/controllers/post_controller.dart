@@ -18,7 +18,10 @@ Future<List<Post>> getPosts() async {
 
   var ls = <Post>[];
   for (var element in resp['data']) {
+    // print(element);
     ls.add(Post.fromJson(element));
+    Post p = Post.fromJson(element);
+    print(p);
   }
   return ls;
 }
