@@ -159,6 +159,10 @@ class _EditProfileState extends State<EditProfile>{
                       if (gender==""){
                         if (user.gender == "Secret"){
                           gender = "secret";
+                        } else if(user.gender == "Male"){
+                          gender = "male";
+                        } else if(user.gender == "Female") {
+                          gender = "female";
                         }
                       }
                       int statusCode = await edit(username, description, gender);

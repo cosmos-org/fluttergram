@@ -121,6 +121,12 @@ Future<Profile> show() async{
   if(user.gender=="secret"){
     user.gender = "Secret";
   }
+  if(user.gender=="male"){
+    user.gender = "Male";
+  }
+  if(user.gender=="female"){
+    user.gender = "Female";
+  }
   List<User> lf = await getFriends();
   List<Post> lp = await getPosts();
   int numFriends = 0, numPosts = 0;
