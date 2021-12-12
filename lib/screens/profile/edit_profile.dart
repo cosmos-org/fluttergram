@@ -39,6 +39,7 @@ class _EditProfileState extends State<EditProfile>{
   Widget buildApp(User user) {
     TextEditingController usernameController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
+    TextEditingController genderController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -121,7 +122,8 @@ class _EditProfileState extends State<EditProfile>{
                 height: 35,
               ),
               buildTextField("Username", user.username, usernameController),
-              buildTextField("Description", user.description.toString(), descriptionController),
+              buildTextField("Gender", user.gender!, genderController),
+              buildTextField("Bio", user.description.toString(), descriptionController),
               SizedBox(
                 height: 35,
               ),
@@ -146,10 +148,20 @@ class _EditProfileState extends State<EditProfile>{
                   RaisedButton(
                     onPressed: () async {
                       String username = usernameController.text;
+                      String description = descriptionController.text;
+                      String gender = genderController.text;
                       if (username==""){
                         username = user.username;
                       }
-                      int statusCode = await edit(username);
+                      if (description==""){
+                        description = user.description!;
+                      }
+                      if (gender==""){
+                        if (user.gender == "Secret"){
+                          gender = "secret";
+                        }
+                      }
+                      int statusCode = await edit(username, description, gender);
                       if (statusCode < 300){
                         Navigator.push(
                           context,
@@ -191,50 +203,6 @@ class _EditProfileState extends State<EditProfile>{
             labelText: labelText,
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: placeholder,
-            hintStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            )
-        ),
-      ),
-    );
-  }
-}
-
-class passwordTextField extends StatefulWidget{
-  @override
-  State<StatefulWidget> createState() => _PasswordTextFieldState();
-}
-
-class _PasswordTextFieldState extends State<passwordTextField>{
-  bool isPasswordTextField = true;
-  bool showPassword = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 35.0),
-      child: TextField(
-        obscureText: isPasswordTextField ? showPassword : false,
-        decoration: InputDecoration(
-            suffixIcon: isPasswordTextField
-                ? IconButton(
-              onPressed: () {
-                setState(() {
-                  showPassword = !showPassword;
-                });
-              },
-              icon: Icon(
-                Icons.remove_red_eye,
-                color: Colors.grey,
-              ),
-            )
-                : null,
-            contentPadding: EdgeInsets.only(bottom: 3),
-            labelText: "Password",
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "*****",
             hintStyle: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

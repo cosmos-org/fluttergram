@@ -99,6 +99,9 @@ Future<User> getUser() async {
 
 Future<Profile> show() async{
   User user = await getUser();
+  if(user.gender=="secret"){
+    user.gender = "Secret";
+  }
   List<User> lf = await getFriends();
   List<Post> lp = await getPosts();
   int numFriends = 0, numPosts = 0;
@@ -112,10 +115,10 @@ Future<Profile> show() async{
   return p;
 }
 
-Future edit(String username) async{
+Future edit(String username, String description, String gender) async{
   String token = await getToken();
   String url = hostname + userEditInforEndpoint;
-  String param = '{"username": "$username"}';
+  String param = '{"username": "$username", "description": "$description", "gender": "$gender"}';
   Map<String, String> headers = <String, String>{
     'Content-Type': 'application/json; charset=UTF-8',
     'authorization': 'bearer ' + token,
@@ -134,5 +137,4 @@ Future changePassword(String oldPass, String newPass) async{
   };
   Response resp = await post(Uri.parse(url), headers: headers, body: param);
   return resp.statusCode;
-
 }
