@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';
 import 'package:fluttergram/models/user_model.dart';
@@ -101,28 +102,44 @@ class _PageState extends State<Page>{
           ),
           Expanded(
                 child: ListView.builder(
-                    controller: controller,
-                    itemCount: listComment.length,
-                    itemBuilder: (context, index) {
-                      final item = listComment[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          radius: 20.0,
-                          child: CircleAvatar(
+              itemCount: listComment.length,
+              itemBuilder: (context, index) {
+                final item = listComment[index];
+                String userId = item.author.id;
+                return FutureBuilder<User>(
+                    future: getAnotherUser(userId),
+                    builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                      if (!snapshot.hasData) {
+                        // while data is loading:
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      else {
+                        User userComment = snapshot.data!;
+                        return ListTile(
+                          leading: CircleAvatar(
                             radius: 20.0,
-                            backgroundColor: Color(0xFFEEEEEE),
-                            backgroundImage: getImageProviderNetWork(item.author.avatar!.fileName),
+                            child: CircleAvatar(
+                              radius: 20.0,
+                              backgroundColor: Color(0xFFEEEEEE),
+                              backgroundImage: getImageProviderNetWork(
+                                  userComment.avatar!.fileName),
+                            ),
                           ),
-                        ),
 
-                        trailing: Text(item.createdAt),
-                        title: Text(item.author.username),
-                        subtitle: Text(item.content),
-                        onTap: () {},
-                      );
+                          trailing: Text(item.createdAt),
+                          title: Text(item.author.username),
+                          subtitle: Text(item.content),
+                          onTap: () {},
+                        );
+                      }
                     }
+                );}
                 )
-              )
+
+
+          ),
         ],
       ),
       bottomNavigationBar: Container(
