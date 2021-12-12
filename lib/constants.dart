@@ -20,13 +20,17 @@ const boldFontWeight = FontWeight.bold;
 // const hostname = "http://localhost:8000"; //10.0.2.2
 // const socketHostname = "http://localhost:7070";
 
-const hostname = "http://10.0.2.2:8000"; //10.0.2.2
-const socketHostname = "http://10.0.2.2:7070";
+// const hostname = "http://10.0.2.2:8000"; //10.0.2.2
+// const socketHostname = "http://10.0.2.2:7070";
+
+const hostname = "https://murmuring-inlet-24969.herokuapp.com";
+const socketHostname = "https://tranquil-garden-75087.herokuapp.com";
 //API For Users
 const userSignUpEndpoint = "/api/v1/users/register/";
 const userLogInEndpoint = "/api/v1/users/login/";
 const userGetInforEndpoint = "/api/v1/users/show";
 const userEditInforEndpoint = "/api/v1/users/edit";
+const userChangePasswordEndpoint = "/api/v1/users/change-password";
 
 //API For Friend
 const friendGetListEndpoint = "/api/v1/friends/list";

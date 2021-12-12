@@ -4,6 +4,8 @@ import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/create_post.dart';
+import 'package:fluttergram/screens/login/login_screen.dart';
+import 'package:fluttergram/screens/profile/change_password.dart';
 import 'package:fluttergram/util/util.dart';
 import 'edit_profile.dart';
 
@@ -15,6 +17,24 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  void choiceAction(String choice){
+    if(choice == Constants.Changepassword){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChangePassword()
+          )
+      );
+    }else if(choice == Constants.SignOut){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+          builder: (context) => LogInPage()
+          )
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,15 +115,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
       ),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.more_horiz,
-            color: secondaryColor,
-          ),
-          onPressed: () {
-            // do something
+        PopupMenuButton<String>(
+          onSelected: choiceAction,
+          itemBuilder: (BuildContext context){
+            return Constants.choices.map((String choice){
+              return PopupMenuItem<String>(
+                value: choice,
+                child: Text(choice),
+              );
+            }).toList();
           },
-        ),
+        )
       ],
     ),
     body: ListView(
@@ -140,4 +162,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ],
     ),
   );
+}
+
+class Constants {
+  static const String Changepassword = 'Change password';
+  static const String SignOut = 'Sign out';
+
+  static const List<String> choices = <String>[
+    Changepassword,
+    SignOut
+  ];
 }

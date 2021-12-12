@@ -69,7 +69,6 @@ class _LogInState extends State<LogInPage> {
                         String phone = phoneController.text;
                         String password = passwordController.text;
                         var currentUserAndToken = await logIn(phone, password);
-
                         if (currentUserAndToken[0].id != "-1") {
                           User currentUser = currentUserAndToken[0];
                           String token = currentUserAndToken[1];
@@ -86,7 +85,8 @@ class _LogInState extends State<LogInPage> {
                               "Logged in unsuccessfully.", "Retry");
                         }
                       },
-                    )),
+                    )
+                ),
                 Container(
                     child: Row(
                       children: <Widget>[

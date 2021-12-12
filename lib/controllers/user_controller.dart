@@ -116,11 +116,23 @@ Future edit(String username) async{
   String token = await getToken();
   String url = hostname + userEditInforEndpoint;
   String param = '{"username": "$username"}';
-  print(param);
   Map<String, String> headers = <String, String>{
     'Content-Type': 'application/json; charset=UTF-8',
     'authorization': 'bearer ' + token,
   };
   Response resp = await post(Uri.parse(url), headers: headers, body: param);
   return resp.statusCode;
+}
+
+Future changePassword(String oldPass, String newPass) async{
+  String token = await getToken();
+  String url = hostname + userChangePasswordEndpoint;
+  String param = '{"currentPassword": "$oldPass", "newPassword": "$newPass"}';
+  Map<String, String> headers = <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    'authorization': 'bearer ' + token,
+  };
+  Response resp = await post(Uri.parse(url), headers: headers, body: param);
+  return resp.statusCode;
+
 }

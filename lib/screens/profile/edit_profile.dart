@@ -154,7 +154,8 @@ class _EditProfileState extends State<EditProfile>{
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DefaultScreen(currentScreen: 3)),
+                              builder: (context) => DefaultScreen(currentScreen: 3)
+                          ),
                         );
                       }
                     },

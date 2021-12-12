@@ -1,7 +1,9 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
+import 'package:fluttergram/models/comment_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/controllers/post_controller.dart';
@@ -281,10 +283,12 @@ class _PostStats extends State<PostStats> {
                         child: Material(
                           color: Colors.white,
                           child: InkWell(
-                            onTap: (){
+                            onTap: () async {
+                              List<Comment> listComment = await getComment(post);
+                              User user = await getCurrentUser();
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => PostView(post: post)),
+                                MaterialPageRoute(builder: (context) => PostView(post: post, listComment: listComment, user: user)),
                               );
                             },
                             child: Container(
