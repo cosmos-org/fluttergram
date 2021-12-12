@@ -76,11 +76,12 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
           )
       );
     }else if(choice == Constants.SignOut){
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (context) => LogInPage()
-          )
+          ),
+          ModalRoute.withName("/Login")
       );
     }
   }

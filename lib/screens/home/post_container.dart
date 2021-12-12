@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
@@ -11,12 +10,10 @@ import 'package:fluttergram/screens/home/post_view_screen.dart';
 import '../../constants.dart';
 import '../../util/util.dart';
 import 'edit_post.dart';
+
 class PostContainer extends StatelessWidget {
   final Post post;
-  const PostContainer({
-    Key? key,
-    required this.post}
-      ) : super(key: key);
+  const PostContainer({Key? key, required this.post}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,53 +21,51 @@ class PostContainer extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 5.0),
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       color: Colors.white,
-      child: Column(
-          children:[
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _PostHeader(post: post),
-                    const SizedBox(height: 4.0),
-                    Text(post.described),
-                    post.images.isNotEmpty
-                          ? const SizedBox.shrink()
-                        : const SizedBox(height: 6.0),
-                  ],
-                )
-            ),
-            post.images.isNotEmpty
-                ? Center(
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        enlargeCenterPage: true,
-                        enableInfiniteScroll: false,
-                      ),
-                      items: post.images.map((e) => ClipRRect(
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: <Widget>[
-                            Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: getImageNetWork(e.fileName),
-                            )
-                          ],
-                        ) ,
-                      )).toList(),
-              ),
-            )
-                : const SizedBox.shrink(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: PostStats(post: post),
-            ),
-          ]
-      ),
+      child: Column(children: [
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _PostHeader(post: post),
+                const SizedBox(height: 4.0),
+                Text(post.described),
+                post.images.isNotEmpty
+                    ? const SizedBox.shrink()
+                    : const SizedBox(height: 6.0),
+              ],
+            )),
+        post.images.isNotEmpty
+            ? Center(
+                child: CarouselSlider(
+                  options: CarouselOptions(
+                    enlargeCenterPage: true,
+                    enableInfiniteScroll: false,
+                  ),
+                  items: post.images
+                      .map((e) => ClipRRect(
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: getImageNetWork(e.fileName),
+                                )
+                              ],
+                            ),
+                          ))
+                      .toList(),
+                ),
+              )
+            : const SizedBox.shrink(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: PostStats(post: post),
+        ),
+      ]),
     );
   }
 }
-
 
 class _PostHeader extends StatelessWidget {
   final Post post;
@@ -80,17 +75,17 @@ class _PostHeader extends StatelessWidget {
     required this.post,
   }) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-       CircleAvatar(
+        CircleAvatar(
           radius: 20.0,
           child: CircleAvatar(
             radius: 20.0,
             backgroundColor: Colors.grey[200],
-            backgroundImage: getImageProviderNetWork(post.author.avatar!.fileName),
+            backgroundImage:
+                getImageProviderNetWork(post.author.avatar!.fileName),
           ),
         ),
         const SizedBox(width: 8.0),
@@ -123,40 +118,39 @@ class _PostHeader extends StatelessWidget {
             ],
           ),
         ),
-          FutureBuilder<String>(
+        FutureBuilder<String>(
             future: getCurrentUserId(),
             builder: (ctx, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
                 return CircularProgressIndicator();
-              };
+              }
+              ;
               if (snapshot.hasError) {
                 return Text("Error");
-              };
-              String currentUserId =  snapshot.data as String;
+              }
+              ;
+              String currentUserId = snapshot.data as String;
               List<String> actions = [];
               if (post.author.id == currentUserId) {
-                actions = <String>[
-                'Edit',
-                'Delete'
-                ];
-              }
-              else
+                actions = <String>['Edit', 'Delete'];
+              } else
                 actions = <String>['Report'];
 
-              onAction(String action){
+              onAction(String action) {
                 switch (action) {
-                case 'Edit':
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditPost(post: post)),
-                  );
-                  break;
-                case 'Delete':
-                  showDeleteAlertDialog(context, post);
-                  break;
-                case 'Report':
-                  showReportAlertDialog(context, post);
-                  break;
+                  case 'Edit':
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditPost(post: post)),
+                    );
+                    break;
+                  case 'Delete':
+                    showDeleteAlertDialog(context, post);
+                    break;
+                  case 'Report':
+                    showReportAlertDialog(context, post);
+                    break;
                 }
               }
 
@@ -166,16 +160,14 @@ class _PostHeader extends StatelessWidget {
                 onSelected: onAction,
                 itemBuilder: (BuildContext context) {
                   return actions.map((String action) {
-                  return PopupMenuItem(
-                  value: action,
-                  child: Text(action),
-                  );
-                }).toList();
+                    return PopupMenuItem(
+                      value: action,
+                      child: Text(action),
+                    );
+                  }).toList();
                 },
               );
-            }
-          ),
-
+            }),
       ],
     );
   }
@@ -209,8 +201,7 @@ class _PostStats extends State<PostStats> {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          }
-          else {
+          } else {
             bool isLiked = snapshot.data!;
             return Column(
               children: [
@@ -238,91 +229,89 @@ class _PostStats extends State<PostStats> {
                   ],
                 ),
                 const Divider(),
-                Row(
-                    children: [
-                      Expanded(
-                        child: Material(
-                          color: Colors.white,
-                          child: InkWell(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                              height: 25.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.thumb_up_alt_rounded,
-                                    color: isLiked ? likeColor : unlikeColor,
-                                    size: 20.0,
-                                ),
-                                const SizedBox(width: 4.0),
-                                Text("Like"),
-                                ],
+                Row(children: [
+                  Expanded(
+                    child: Material(
+                      color: Colors.white,
+                      child: InkWell(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          height: 25.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.thumb_up_alt_rounded,
+                                color: isLiked ? likeColor : unlikeColor,
+                                size: 20.0,
                               ),
-                            ),
-                            onTap: (){
-                              setState(() {
-                                isLiked = !isLiked;
-                              });
-                              likePost(post);
-                            },
-                            ),
+                              const SizedBox(width: 4.0),
+                              Text("Like"),
+                            ],
+                          ),
                         ),
+                        onTap: () {
+                          // setState(() {
+                          //   isLikedBy = !isLikedBy;
+                          // });
+                          likePost(post);
+                        },
                       ),
-                      Expanded(
-                        child: Material(
-                          color: Colors.white,
-                          child: InkWell(
-                            onTap: () async {
-                              List<Comment> listComment = await getComment(post);
-                              User user = await getCurrentUser();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => PostView(post: post, listComment: listComment, user: user)),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                              height: 25.0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.mode_comment_outlined,
-                                    size: 20.0,
-                                  ),
-                                  const SizedBox(width: 4.0),
-                                  Text('Comment'),
-                                ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Material(
+                      color: Colors.white,
+                      child: InkWell(
+                        onTap: () async {
+                          List<Comment> listComment = await getComment(post);
+                          User user = await getCurrentUser();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostView(
+                                    post: post,
+                                    listComment: listComment,
+                                    user: user)),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          height: 25.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.mode_comment_outlined,
+                                size: 20.0,
                               ),
-                            ),
+                              const SizedBox(width: 4.0),
+                              Text('Comment'),
+                            ],
                           ),
                         ),
                       ),
-
-                    ]
-                )
+                    ),
+                  ),
+                ])
               ],
             );
           }
-        }
-    );
+        });
   }
 }
 
-
 showDeleteAlertDialog(BuildContext context, Post post) {
-
   // set up the buttons
   Widget cancelButton = TextButton(
     child: Text("Cancel"),
-    onPressed:  () {
+    onPressed: () {
       Navigator.of(context).pop();
     },
   );
   Widget continueButton = TextButton(
     child: Text("OK"),
-    onPressed:  () {
+    onPressed: () {
       deletePost(post);
       Navigator.of(context).pop();
     },
@@ -348,21 +337,19 @@ showDeleteAlertDialog(BuildContext context, Post post) {
 }
 
 showReportAlertDialog(BuildContext context, Post post) {
-
   // set up the buttons
   Widget cancelButton = TextButton(
     child: Text("Cancel"),
-    onPressed:  () {
+    onPressed: () {
       Navigator.of(context).pop();
     },
   );
   Widget continueButton = TextButton(
-    child: Text("OK"),
-    onPressed:  () {
-      reportPost(post);
-      Navigator.of(context).pop();
-    }
-  );
+      child: Text("OK"),
+      onPressed: () {
+        reportPost(post);
+        Navigator.of(context).pop();
+      });
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(

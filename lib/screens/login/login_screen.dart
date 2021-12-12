@@ -19,7 +19,7 @@ class _LogInState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('COSMOS'),
+          title: Center(child: Text('COSMOS')),
           backgroundColor: primaryColor,
         ),
         body: Padding(
