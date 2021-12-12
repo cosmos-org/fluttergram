@@ -9,20 +9,7 @@ final String getChatsURL = hostname + '/api/v1/chats/getChats';
 final String getMessagesURL = hostname + '/api/v1/chats/getMessages';
 final String sendMessageURL = hostname + '/api/v1/chats/send';
 // final String searchPostsURL = hostname + '/api/v1/posts/search';
-Conversation conversationFromRespJson(json,messages){
 
-  final String id, messagePreview, lastMessageTime;
-  final bool isActive, isSeen;
-  final User partnerUser;
-  id = json["_id"] ?? '';
-  partnerUser = User.fromJson(jsonConvert(json['partner']));
-  messagePreview = json['latestMessage'] ?? '';
-  lastMessageTime = timeAgo(json['updatedAt']);
-  isActive = true;
-  isSeen = false;
-
-  return new Conversation(id: id,partnerUser: partnerUser,messagePreview: messagePreview,lastMessageTime: lastMessageTime,messages: messages,isActive: isActive,isSeen: isSeen);
-}
 
 Message messageFromRespJson(json){
   final String chatId,id;
@@ -40,6 +27,13 @@ Message messageFromRespJson(json){
 }
 
 Future<List<Conversation>> getConversationsAPI() async {
+  Map<String, dynamic> handleJson(json,messages){
+    json['lastMessageTimeAgo'] =  timeAgo(json['lastMessageTime']);
+    json['messages'] = messages ?? [];
+    json['isActive'] = true;
+    json['isSeen'] = true;
+    return json;
+  }
   String token = await getToken();
   final response = await http
       .get(Uri.parse(getChatsURL),
@@ -58,8 +52,8 @@ Future<List<Conversation>> getConversationsAPI() async {
       // resp['data'].foreach((element)
         {
           var messages = await getMessagesAPI(element['_id'],0);
-      ls.add(conversationFromRespJson(element,messages));
-    };
+          ls.add(Conversation.fromJson(handleJson(element,messages)));
+        };
     // );
     return ls;
   }

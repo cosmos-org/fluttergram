@@ -97,6 +97,25 @@ Future<User> getUser() async {
   }
 }
 
+
+Future<User> getAnotherUser(String UserId) async {
+  String token = await getToken();
+  String showUrl = hostname + userGetAnotherEndpoint + UserId;
+  Response resp = await get(Uri.parse(showUrl) ,headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    'authorization': 'bearer ' + token,
+  });
+  int statusCode = resp.statusCode;
+  dynamic respBody = jsonDecode(resp.body);
+  if (statusCode < 300) {
+    User anotherUser = User.fromJson(respBody['data']);
+    return anotherUser;
+  } else {
+    String message = respBody["message"];
+    return User(id: '-1', username: "Error", phone: statusCode.toString(), password: message);
+  }
+}
+
 Future<Profile> show() async{
   User user = await getUser();
   if(user.gender=="secret"){

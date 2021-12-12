@@ -6,9 +6,11 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:intl/intl.dart';
 const String getFileUrl = hostname+ '/files/';
 String dateTimeFormat(String dateMongo){
-  final inputDate = DateTime.parse(dateMongo);
+  final t = DateTime.parse(dateMongo);
+  Duration diff = DateTime.now().difference(t);
+  var a = DateTime.now().subtract(diff);
   var outputFormat = DateFormat('MM/dd/yyyy hh:mm a');
-  var outputDate = outputFormat.format(inputDate);
+  var outputDate = outputFormat.format(a);
   return outputDate;
 }
 String getStaticURL(String fileName){
@@ -57,6 +59,24 @@ Map<String, dynamic> jsonConvert(jsonValue){
   };
 
 }
+
+String stringConver(jsonValue){
+
+  if (jsonValue == null) {
+    return '';
+  }
+  if (jsonValue.runtimeType == String) {
+    return jsonValue;
+  }
+  try {
+    jsonValue = Map<String,dynamic>.from(jsonValue);
+    return jsonValue['_id'] ?? '';
+  }
+  catch (e){
+    return '';
+  };
+
+}
 //for example:  Image: getImageProviderNetWork(fileName),
 Image getImageNetWork(fileName) {
   return Image.network(
@@ -64,6 +84,7 @@ Image getImageNetWork(fileName) {
     fit: BoxFit.cover,
   );
 }
+
 //for example:  backgroundImage: getImageProviderNetWork(fileName),
 NetworkImage getImageProviderNetWork(fileName) {
   return NetworkImage(

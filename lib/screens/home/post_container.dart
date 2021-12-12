@@ -1,15 +1,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/screens/home/post_view_screen.dart';
 import '../../constants.dart';
 import '../../util/util.dart';
+import 'edit_post.dart';
 class PostContainer extends StatelessWidget {
   final Post post;
   const PostContainer({
@@ -70,67 +69,6 @@ class PostContainer extends StatelessWidget {
   }
 }
 
-class _moreOption extends StatelessWidget {
-  final Post post;
-
-  const _moreOption({
-    Key? key,
-    required this.post,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<User>(
-        future: getCurrentUser(),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return CircularProgressIndicator();
-          };
-          if (snapshot.hasError) {
-            return Text("Error");
-          };
-          User currentUser =  snapshot.data as User;
-          List<String> actions = [];
-          if (post.author.id == currentUser.id) {
-            actions = <String>[
-              'Edit',
-              'Delete'
-            ];
-          }
-          else
-            actions = <String>['Report'];
-          // print(post.author.id);
-          // print('current id ' + currentUser.id);
-          // print(actions[0]);
-
-          onAction(String action) async {
-            switch (action) {
-              case 'Edit':
-                break;
-              case 'Delete':
-                break;
-              case 'Report':
-                break;
-            }
-            // print(action);
-          }
-
-          return PopupMenuButton(
-                padding: const EdgeInsets.all(1.0),
-                onSelected: onAction,
-                itemBuilder: (BuildContext context) {
-                  return actions.map((String action) {
-                    return PopupMenuItem(
-                      value: action,
-                      child: Text(action),
-                    );
-                  }).toList();
-                },
-              );
-        }
-    );
-  }
-}
 
 class _PostHeader extends StatelessWidget {
   final Post post;
@@ -139,6 +77,7 @@ class _PostHeader extends StatelessWidget {
     Key? key,
     required this.post,
   }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -182,10 +121,59 @@ class _PostHeader extends StatelessWidget {
             ],
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.more_horiz),
-          onPressed: () => _moreOption(post: post),
-        ),
+          FutureBuilder<String>(
+            future: getCurrentUserId(),
+            builder: (ctx, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return CircularProgressIndicator();
+              };
+              if (snapshot.hasError) {
+                return Text("Error");
+              };
+              String currentUserId =  snapshot.data as String;
+              List<String> actions = [];
+              if (post.author.id == currentUserId) {
+                actions = <String>[
+                'Edit',
+                'Delete'
+                ];
+              }
+              else
+                actions = <String>['Report'];
+
+              onAction(String action){
+                switch (action) {
+                case 'Edit':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditPost(post: post)),
+                  );
+                  break;
+                case 'Delete':
+                  showDeleteAlertDialog(context, post);
+                  break;
+                case 'Report':
+                  showReportAlertDialog(context, post);
+                  break;
+                }
+              }
+
+              return PopupMenuButton(
+                icon: Icon(Icons.more_horiz),
+                padding: const EdgeInsets.all(1.0),
+                onSelected: onAction,
+                itemBuilder: (BuildContext context) {
+                  return actions.map((String action) {
+                  return PopupMenuItem(
+                  value: action,
+                  child: Text(action),
+                  );
+                }).toList();
+                },
+              );
+            }
+          ),
+
       ],
     );
   }
@@ -254,12 +242,6 @@ class _PostStats extends State<PostStats> {
                         child: Material(
                           color: Colors.white,
                           child: InkWell(
-                            onTap: (){
-                              setState(() {
-                                isLiked = !isLiked;
-                              });
-                              likePost(post);
-                            },
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               height: 25.0,
@@ -276,6 +258,12 @@ class _PostStats extends State<PostStats> {
                                 ],
                               ),
                             ),
+                            onTap: (){
+                              setState(() {
+                                isLiked = !isLiked;
+                              });
+                              likePost(post);
+                            },
                             ),
                         ),
                       ),
@@ -318,4 +306,77 @@ class _PostStats extends State<PostStats> {
         }
     );
   }
+}
+
+
+showDeleteAlertDialog(BuildContext context, Post post) {
+
+  // set up the buttons
+  Widget cancelButton = TextButton(
+    child: Text("Cancel"),
+    onPressed:  () {
+      Navigator.of(context).pop();
+    },
+  );
+  Widget continueButton = TextButton(
+    child: Text("OK"),
+    onPressed:  () {
+      deletePost(post);
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Delete Post"),
+    content: Text("Are you sure to delete this post?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+showReportAlertDialog(BuildContext context, Post post) {
+
+  // set up the buttons
+  Widget cancelButton = TextButton(
+    child: Text("Cancel"),
+    onPressed:  () {
+      Navigator.of(context).pop();
+    },
+  );
+  Widget continueButton = TextButton(
+    child: Text("OK"),
+    onPressed:  () {
+      reportPost(post);
+      Navigator.of(context).pop();
+    }
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Report Post"),
+    content: Text("Are you sure to report this post?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

@@ -7,7 +7,7 @@ class Image {
   Map<String, dynamic> toMap() {
     return {
       'type': type,
-      'id': id,
+      '_id': id,
       'fileName': fileName,
       'fileType': fileType,
       'fileSize': fileSize,
@@ -24,7 +24,7 @@ class Image {
   factory Image.fromJson(Map<String, dynamic> json){
     var a= Image(
       id: json['_id'] ?? '',
-      type: json['type'] ?? 'image',
+      type: json['type'] ?? 'images',
       fileName: json['fileName'] ?? '',
       fileType: json['mimetype'] ?? '',
       fileSize: json['fileSize'] ?? 0,

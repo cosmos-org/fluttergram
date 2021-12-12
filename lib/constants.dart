@@ -31,7 +31,7 @@ const userLogInEndpoint = "/api/v1/users/login/";
 const userGetInforEndpoint = "/api/v1/users/show";
 const userEditInforEndpoint = "/api/v1/users/edit";
 const userChangePasswordEndpoint = "/api/v1/users/change-password";
-
+const userGetAnotherEndpoint = "/api/v1/users/show/";
 //API For Friend
 const friendGetListEndpoint = "/api/v1/friends/list";
 
@@ -40,3 +40,8 @@ const postGetListEndpoint = "/api/v1/posts/list";
 const postLikeEndpoint = "/api/v1/postLike/action/";
 const postCreateCommentEndpoint = "/api/v1/postComment/create/";
 const postGetCommentEndpoint = "/api/v1/postComment/list/";
+
+const postDeleteEndpoint = "/api/v1/posts/delete/";
+const postReportEndpoint = "/api/v1/postReport/create/";
+const postEditEndpoint = "/api/v1/posts/edit/";
+const postCreateEndpoint = "/api/v1/posts/create";
