@@ -46,12 +46,12 @@ dependencies:
   image_picker: ^0.8.2
   uuid: ^3.0.1
   image: ^3.0.1
+  video_player: ^2.2.7
   font_awesome_flutter: ^8.5.0
   async: ^2.4.0
   http: ^0.13.0
   cached_network_image: ^2.0.0
   location: ^4.1.1
-  gallery_view:
 #  geocoder: ^0.2.1
   flare_flutter: ^2.0.6
 dev_dependencies:
