@@ -20,10 +20,11 @@ class CreatePost extends StatefulWidget {
 class _CreatePostState extends State<CreatePost> {
   TextEditingController descriptionController = new TextEditingController();
   TextEditingController locationController = new TextEditingController();
+  ImagePicker imagePicker = new ImagePicker();
+  late VideoPlayerController videoPlayerController;
   List<File> images = [];
   List<File> videos = [];
   bool loading = false;
-  ImagePicker imagePicker = new ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +147,20 @@ class _CreatePostState extends State<CreatePost> {
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Image.file(img),
-                                          )
+                                          ),
+                                          Positioned(
+                                              right: -2,
+                                              top: -5,
+                                              child: IconButton(
+                                                  icon: Icon(
+                                                    Icons.close,
+                                                    color: Colors.grey
+                                                        .withOpacity(0.8),
+                                                    size: 18,
+                                                  ),
+                                                  onPressed: () => setState(() {
+                                                        images.remove(img);
+                                                      })))
                                         ],
                                       ),
                                     ))
@@ -170,8 +184,20 @@ class _CreatePostState extends State<CreatePost> {
                                               padding:
                                                   const EdgeInsets.all(8.0),
                                               child: VideoPlayer(
-                                                  VideoPlayerController.file(
-                                                      vid)))
+                                                  videoPlayerController)),
+                                          Positioned(
+                                              right: -2,
+                                              top: -5,
+                                              child: IconButton(
+                                                  icon: Icon(
+                                                    Icons.close,
+                                                    color: Colors.grey
+                                                        .withOpacity(0.5),
+                                                    size: 18,
+                                                  ),
+                                                  onPressed: () => setState(() {
+                                                        videos.remove(vid);
+                                                      })))
                                         ],
                                       ),
                                     ))
@@ -221,6 +247,7 @@ class _CreatePostState extends State<CreatePost> {
                     setState(() {
                       images.addAll(
                           selectedImages.map((xImg) => File(xImg.path)));
+                      videos = [];
                     });
                   } else {
                     setState(() {
@@ -235,9 +262,14 @@ class _CreatePostState extends State<CreatePost> {
                   Navigator.pop(context);
                   XFile? videoFile = (await imagePicker.pickVideo(
                       source: ImageSource.gallery));
-                  setState(() {
-                    videos.add(File(videoFile!.path));
-                  });
+                  File video = File(videoFile!.path);
+                  videoPlayerController = VideoPlayerController.file(video)
+                    ..initialize().then((_) {
+                      setState(() {
+                        images = [];
+                        videos.add(File(videoFile.path));
+                      });
+                    });
                 }),
             SimpleDialogOption(
               child: const Text("Cancel"),
