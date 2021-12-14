@@ -111,7 +111,6 @@ class _PasswordTextFieldState extends State<passwordTextField>{
             contentPadding: EdgeInsets.only(bottom: 3),
             labelText: widget.label,
             floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "*****",
             hintStyle: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

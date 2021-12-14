@@ -4,7 +4,6 @@ import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/util/util.dart';
 import '../models/user_model.dart';
-import '../models/image_model.dart';
 import 'package:fluttergram/constants.dart';
 import 'package:http/http.dart';
 

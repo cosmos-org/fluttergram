@@ -150,28 +150,19 @@ class _EditProfileState extends State<EditProfile>{
                       String username = usernameController.text;
                       String description = descriptionController.text;
                       String gender = genderController.text;
-                      if (username==""){
-                        username = user.username;
-                      }
-                      if (description==""){
-                        description = user.description!;
-                      }
-                      if (gender==""){
-                        if (user.gender == "Secret"){
-                          gender = "secret";
-                        } else if(user.gender == "Male"){
-                          gender = "male";
-                        } else if(user.gender == "Female") {
-                          gender = "female";
-                        }
+                      if (user.gender == "Secret"){
+                        gender = "secret";
+                      } else if(user.gender == "Male"){
+                        gender = "male";
+                      } else if(user.gender == "Female") {
+                        gender = "female";
                       }
                       int statusCode = await edit(username, description, gender);
                       if (statusCode < 300){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DefaultScreen(currentScreen: 3)
-                          ),
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (BuildContext context) => DefaultScreen(currentScreen: 3)),
+                            ModalRoute.withName('/')
                         );
                       }
                     },
@@ -198,6 +189,7 @@ class _EditProfileState extends State<EditProfile>{
   }
 
   Widget buildTextField(String labelText, String placeholder, TextEditingController tec) {
+    tec.text = placeholder;
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
       child: TextField(
@@ -206,7 +198,6 @@ class _EditProfileState extends State<EditProfile>{
             contentPadding: EdgeInsets.only(bottom: 3),
             labelText: labelText,
             floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: placeholder,
             hintStyle: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
