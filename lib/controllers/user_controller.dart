@@ -4,7 +4,6 @@ import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/util/util.dart';
 import '../models/user_model.dart';
-import '../models/image_model.dart';
 import 'package:fluttergram/constants.dart';
 import 'package:http/http.dart';
 
@@ -97,8 +96,36 @@ Future<User> getUser() async {
   }
 }
 
+
+Future<User> getAnotherUser(String UserId) async {
+  String token = await getToken();
+  String showUrl = hostname + userGetAnotherEndpoint + UserId;
+  Response resp = await get(Uri.parse(showUrl) ,headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    'authorization': 'bearer ' + token,
+  });
+  int statusCode = resp.statusCode;
+  dynamic respBody = jsonDecode(resp.body);
+  if (statusCode < 300) {
+    User anotherUser = User.fromJson(respBody['data']);
+    return anotherUser;
+  } else {
+    String message = respBody["message"];
+    return User(id: '-1', username: "Error", phone: statusCode.toString(), password: message);
+  }
+}
+
 Future<Profile> show() async{
   User user = await getUser();
+  if(user.gender=="secret"){
+    user.gender = "Secret";
+  }
+  if(user.gender=="male"){
+    user.gender = "Male";
+  }
+  if(user.gender=="female"){
+    user.gender = "Female";
+  }
   List<User> lf = await getFriends();
   List<Post> lp = await getPosts();
   int numFriends = 0, numPosts = 0;
@@ -112,11 +139,22 @@ Future<Profile> show() async{
   return p;
 }
 
-Future edit(String username) async{
+Future edit(String username, String description, String gender) async{
   String token = await getToken();
   String url = hostname + userEditInforEndpoint;
-  String param = '{"username": "$username"}';
-  print(param);
+  String param = '{"username": "$username", "description": "$description", "gender": "$gender"}';
+  Map<String, String> headers = <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    'authorization': 'bearer ' + token,
+  };
+  Response resp = await post(Uri.parse(url), headers: headers, body: param);
+  return resp.statusCode;
+}
+
+Future changePassword(String oldPass, String newPass) async{
+  String token = await getToken();
+  String url = hostname + userChangePasswordEndpoint;
+  String param = '{"currentPassword": "$oldPass", "newPassword": "$newPass"}';
   Map<String, String> headers = <String, String>{
     'Content-Type': 'application/json; charset=UTF-8',
     'authorization': 'bearer ' + token,

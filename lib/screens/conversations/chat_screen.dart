@@ -8,7 +8,7 @@ import '../../controllers/conversation_controller.dart';
 import '../../constants.dart';
 import '../../util/util.dart';
 import '../../socket/custom_socket.dart';
-import 'package:emoji_picker/emoji_picker.dart';
+// import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter_svg/svg.dart';
 class MessageCard extends StatelessWidget {
   const MessageCard({Key? key}) : super(key: key);
@@ -45,10 +45,20 @@ class ChatScreenState extends State<ChatScreen> {
   ScrollController _scrollController = ScrollController();
   String currentUserId = '';
 
+  // late EmojiPicker cachedPicker;
   @override
   void initState() {
     super.initState();
-
+    // cachedPicker = EmojiPicker(
+    //     rows: 4,
+    //     columns: 7,
+    //     onEmojiSelected: (emoji, category) {
+    //       print(emoji);
+    //       setState(() {
+    //         _controller.text = _controller.text + emoji.emoji;
+    //         sendButton = true;
+    //       });
+    //     });
     getCurrentUserId().then((value){
       currentUserId  =value;
       _scrollController.animateTo(
@@ -90,6 +100,14 @@ class ChatScreenState extends State<ChatScreen> {
     if(sentMsg.id != '') {
       globalCustomSocket.sendMessage(sentMsg,receiveUserId);
       handleNewMessageFromCurrent(sentMsg);
+    }
+    if (_scrollController.position.pixels != 0) {
+      _scrollController.animateTo(
+          _scrollController
+              .position.maxScrollExtent,
+          duration:
+          Duration(milliseconds: 300),
+          curve: Curves.easeOut);
     }
   }
 
@@ -202,7 +220,6 @@ class ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     // height: MediaQuery.of(context).size.height - 150,
                     child: ListView.builder(
-
                       shrinkWrap: true,
                       controller: _scrollController,
                       itemCount: widget.conversation.messages.length + 1,
@@ -218,9 +235,22 @@ class ChatScreenState extends State<ChatScreen> {
                             time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
                           );
                         } else {
-                          return ReplyCard(
-                            message: widget.conversation.messages[index].content.toString(),
-                            time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
+
+                          return Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                CircleAvatar(
+                                  backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
+                                  radius: 12,
+                                ),
+                                ReplyCard(
+                                  message: widget.conversation.messages[index].content.toString(),
+                                  time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
+                                )
+                              ]
                           );
                         }
                       },
@@ -229,7 +259,7 @@ class ChatScreenState extends State<ChatScreen> {
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
-                      height: 70,
+                      height:70,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -251,6 +281,7 @@ class ChatScreenState extends State<ChatScreen> {
                                     maxLines: 5,
                                     minLines: 1,
                                     onChanged: (value) {
+                                      print(value);
                                       if (value.length > 0) {
                                         setState(() {
                                           sendButton = true;
@@ -347,11 +378,21 @@ class ChatScreenState extends State<ChatScreen> {
                               ),
                             ],
                           ),
-                          show ? emojiSelect() : Container(),
                         ],
                       ),
                     ),
                   ),
+                  // Align(
+                  //   alignment: Alignment.bottomCenter,
+                  //   child: Container(
+                  //     child: Column(
+                  //       mainAxisAlignment: MainAxisAlignment.end,
+                  //       children: [
+                  //         show ? cachedPicker : Container(),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               onWillPop: () {
@@ -451,17 +492,17 @@ class ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget emojiSelect() {
-    return EmojiPicker(
-        rows: 4,
-        columns: 7,
-        onEmojiSelected: (emoji, category) {
-          print(emoji);
-          setState(() {
-            _controller.text = _controller.text + emoji.emoji;
-          });
-        });
-  }
+  // Widget emojiSelect() {
+  //   return EmojiPicker(
+  //       rows: 4,
+  //       columns: 7,
+  //       onEmojiSelected: (emoji, category) {
+  //         print(emoji);
+  //         setState(() {
+  //           _controller.text = _controller.text + emoji.emoji;
+  //         });
+  //       });
+  // }
 }
 
 
@@ -483,7 +524,7 @@ class OwnMessageCard extends StatelessWidget {
           elevation: 1,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           color: Color(0xffdcf8c6),
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           child: Stack(
             children: [
               Padding(
@@ -548,7 +589,7 @@ class ReplyCard extends StatelessWidget {
           elevation: 1,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           // color: Color(0xffdcf8c6),
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           child: Stack(
             children: [
               Padding(
