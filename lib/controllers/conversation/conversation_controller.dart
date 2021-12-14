@@ -8,6 +8,7 @@ import 'dart:convert';
 final String getChatsURL = hostname + '/api/v1/chats/getChats';
 final String getMessagesURL = hostname + '/api/v1/chats/getMessages';
 final String sendMessageURL = hostname + '/api/v1/chats/send';
+final String searchUsersURL = hostname + '/api/v1/users/search';
 // final String searchPostsURL = hostname + '/api/v1/posts/search';
 
 
@@ -125,3 +126,54 @@ Future<Message> sendMessageAPI(String content,String chatId,String  receiveId) a
   return Message(id: '');
 }
 
+Future<List<Conversation>> searchConversationAPI(String keyword,List<Conversation> conversationList)  async {
+  List<String> extractUserFromConversations(List<Conversation> convers){
+    var  userLs = <String>[];
+    for (var element in convers)
+        {
+      userLs.add(element.partnerUser!.id! ?? '');
+    };
+    return userLs;
+  }
+  var chattingUser = extractUserFromConversations(conversationList);
+  String currentId = await getCurrentUserId();
+  String token = await getToken();
+  final response = await http
+      .post(Uri.parse(searchUsersURL),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'authorization': 'bearer ' + token,
+    },
+    body: jsonEncode(<String, String>{
+      'keyword': keyword,
+    }),
+  );
+  var resp = jsonDecode(response.body);
+
+  if (checkMessageResponse(resp['message'])) {
+
+    var finalConversationSearchList = <Conversation>[];
+    // for element
+    for (var element in resp['data'])
+        {
+          // print(element['_id']);
+          bool found = false; //check whether user have chat with current user
+          chattingUser.asMap().forEach((index,value)  {
+          if (value == element['_id']){
+              found = true;
+              finalConversationSearchList.add(conversationList[index]);
+          }
+          });
+            if (!found) {
+              if (element['_id'] == currentId) continue;
+              Map<String,dynamic> new_element = {};
+              new_element['partnerUser'] = element;
+              finalConversationSearchList.add(Conversation.fromJson(new_element));
+            }
+        }
+    return finalConversationSearchList;
+  }
+
+  else return [];
+
+}

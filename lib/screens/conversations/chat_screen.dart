@@ -10,23 +10,9 @@ import '../../util/util.dart';
 import '../../socket/custom_socket.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import '../../controllers/conversation/message_stream_controller.dart';
-class MessageCard extends StatelessWidget {
-  const MessageCard({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
 
-class ChatScreenBody extends StatelessWidget {
-  const ChatScreenBody({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
 
 
 class ChatScreen extends StatefulWidget {

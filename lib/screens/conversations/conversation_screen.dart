@@ -10,6 +10,7 @@ import '../../models/conversation_model.dart';
 import '../../models/user_model.dart';
 // Views
 import 'chat_screen.dart';
+import 'search_conversation_screen.dart';
 // Others
 import '../../constants.dart';
 import '../../util/util.dart';
@@ -175,7 +176,6 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
   }
   @override
   Widget build(BuildContext context) {
-    print('num of conver');
     print(widget.conversations.length);
     return ListView.builder(
       itemCount: widget.conversations.length,
@@ -197,7 +197,7 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
                     builder: (contex) => ChatScreen(
                       conversation: widget.conversations[index],
                     )),
-);
+          );
           }, // move to chat screen
           child: ConversationCard(conversation: widget.conversations[index])),
     );
@@ -212,32 +212,35 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-
+  List<Conversation> conversations = [];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: buildAppBar(),
-        body: FutureBuilder(
-          future: getConversationsAPI(),
-          builder: (ctx, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return Center(
-                  child: CircularProgressIndicator()
-              );
-            }
-            ;
-            if (snapshot.hasError) {
-              return Text("Error");
-            }
-            ;
-            return ConversationScreenBody(
-                conversations: snapshot.data as List<Conversation>);
-          },
-        ));
+    return FutureBuilder(
+      future: getConversationsAPI(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(
+                child: CircularProgressIndicator()
+            );
+          }
+          ;
+          if (snapshot.hasError) {
+            return Text("Error");
+          }
+          ;
+          conversations = snapshot.data as List<Conversation>;
+          return Scaffold(
+            appBar: buildAppBar(conversations),
+            body: ConversationScreenBody(
+                conversations: conversations),
+          );
+        }
+    );
   }
 
-  AppBar buildAppBar() {
+  AppBar buildAppBar(conversations) {
     return AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: primaryColor,
         title: Text(
             "Messages",
@@ -246,7 +249,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (contex) => SearchConversationScreen(conversations: conversations
+                    )),
+              );
+            },
           ),
           IconButton(
             icon: Icon(Icons.settings),
