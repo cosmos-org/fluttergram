@@ -5,6 +5,7 @@ import '../../util/util.dart';
 import 'package:fluttergram/default_screen.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import '../../socket/custom_socket.dart';
+
 class LogInPage extends StatefulWidget {
   const LogInPage({Key? key}) : super(key: key);
   @override
@@ -14,6 +15,9 @@ class LogInPage extends StatefulWidget {
 class _LogInState extends State<LogInPage> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool showPassword = false;
+  bool _validatePhone = true;
+  bool _validatePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -39,23 +43,38 @@ class _LogInState extends State<LogInPage> {
                 Container(
                   padding: EdgeInsets.all(10),
                   child: TextField(
-                    keyboardType: TextInputType.number,
                     controller: phoneController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Phone',
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Phone No.',
+                        errorBorder: OutlineInputBorder(),
+                        errorText: _validatePhone ? null : "Invalid phone number"
                     ),
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: TextField(
-                    obscureText: true,
+                    obscureText: !showPassword,
                     controller: passwordController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Password',
-                    ),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                        errorText: _validatePassword ? null : "Invalid password",
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              showPassword = !showPassword;
+                            });
+                          },
+                          icon: !showPassword
+                              ? Icon(
+                                  Icons.visibility,
+                                  color: Colors.grey,
+                                )
+                              : Icon(Icons.visibility_off, color: Colors.grey),
+                        )),
                   ),
                 ),
                 Container(
@@ -65,55 +84,62 @@ class _LogInState extends State<LogInPage> {
                       style: ElevatedButton.styleFrom(
                           primary: pressedColor,
                           textStyle: TextStyle(color: secondaryColor)),
-                      child: Text('Log in'),
+                      child: Text('LOG IN', style: TextStyle(fontWeight: FontWeight.bold)),
                       onPressed: () async {
                         String phone = phoneController.text;
                         String password = passwordController.text;
-                        var currentUserAndToken = await logIn(phone, password);
-                        if (currentUserAndToken[0].id != "-1") {
-                          User currentUser = currentUserAndToken[0];
-                          String token = currentUserAndToken[1];
-                          await setToken(token);
-                          await setCurrentUserId(currentUser.id);
-                          await initGlobalCustomSocket(currentUser.id);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DefaultScreen(currentScreen: 0,)),
-                          );
-                        } else {
-                          logInAlert(context, "error",
-                              "Logged in unsuccessfully.", "Retry");
-                        }
-                      },
-                    )
-                ),
-                Container(
-                    child: Row(
-                      children: <Widget>[
-                        const Text("Haven't got any account?",
-                            style: TextStyle(fontSize: 13)),
-                        TextButton(
-                          style: TextButton.styleFrom(primary: primaryColor),
-                          child: const Text(
-                            'Create a new one',
-                            style: TextStyle(
-                                fontSize: 15, decoration: TextDecoration.underline),
-                          ),
-                          onPressed: () {
+                        setState(() {
+                          _validatePassword = passwordValidation(password)[0];
+                          _validatePhone = phoneValidation(phone)[0];
+                        });
+                        if (_validatePhone && _validatePassword) {
+                          var currentUserAndToken = await logIn(
+                              phone, password);
+                          if (currentUserAndToken[0].id != "-1") {
+                            User currentUser = currentUserAndToken[0];
+                            String token = currentUserAndToken[1];
+                            await setToken(token);
+                            await setCurrentUserId(currentUser.id);
+                            await initGlobalCustomSocket(currentUser.id);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SignUpPage()),
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      DefaultScreen(
+                                        currentScreen: 0,
+                                      )),
                             );
-                          },
-                        )
-                      ],
-                      mainAxisAlignment: MainAxisAlignment.center,
-                    ))
+                          } else {
+                            logInAlert(context, "error",
+                                "Logged in unsuccessfully.", "Retry");
+                          }
+                        }
+                      },
+                    )),
+                Container(
+                    child: Row(
+                  children: <Widget>[
+                    const Text("Haven't got any account?",
+                        style: TextStyle(fontSize: 13)),
+                    TextButton(
+                      style: TextButton.styleFrom(primary: primaryColor),
+                      child: const Text(
+                        'Create a new one',
+                        style: TextStyle(
+                            fontSize: 15, decoration: TextDecoration.underline),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignUpPage()),
+                        );
+                      },
+                    )
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                ))
               ],
-            )
-        )
-    );
+            )));
   }
 }
 
@@ -129,11 +155,22 @@ class _SignUpState extends State<SignUpPage> {
   TextEditingController lastNameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+
+  bool _showPassword = false;
+  bool _validatePhone = true;
+  bool _validatePassword = true;
+  bool _validateConfirmPassword = true;
+  bool _validateFirstName = true;
+  bool _validateLastName = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("COSMOS")),
+        appBar: AppBar(
+          title: Center(child: Text('COSMOS')),
+          backgroundColor: primaryColor,
+        ),
         body: Padding(
             padding: EdgeInsets.all(10),
             child: ListView(
@@ -145,8 +182,8 @@ class _SignUpState extends State<SignUpPage> {
                       'Sign up',
                       style: TextStyle(fontSize: 20),
                     )),
-                signUpContainer(firstNameController, "First Name"),
-                signUpContainer(lastNameController, "Last Name"),
+                signUpContainer(firstNameController, "First Name", _validateFirstName),
+                signUpContainer(lastNameController, "Last Name", _validateLastName),
                 Container(
                   padding: EdgeInsets.all(10),
                   child: TextField(
@@ -155,17 +192,44 @@ class _SignUpState extends State<SignUpPage> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Phone No.',
+                      errorBorder: OutlineInputBorder(),
+                      errorText: _validatePhone ? null : "Invalid phone number"
                     ),
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.all(10),
                   child: TextField(
-                    obscureText: true,
+                    obscureText: !_showPassword,
                     controller: passwordController,
                     decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                        errorText: _validatePassword ? null : "Invalid password",
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _showPassword = !_showPassword;
+                            });
+                          },
+                          icon: !_showPassword
+                              ? Icon(
+                                  Icons.visibility,
+                                  color: Colors.grey,
+                                )
+                              : Icon(Icons.visibility_off, color: Colors.grey),
+                        )),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: TextField(
+                    obscureText: true,
+                    controller: confirmPasswordController,
+                    decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Password',
+                      labelText: 'Confirm Password',
+                      errorText: _validateConfirmPassword ? null : "Confirm password does not match",
                     ),
                   ),
                 ),
@@ -176,39 +240,41 @@ class _SignUpState extends State<SignUpPage> {
                       style: ElevatedButton.styleFrom(
                           primary: pressedColor,
                           textStyle: TextStyle(color: secondaryColor)),
-                      child: Text('Sign Up'),
+                      child: Text('SIGN UP', style: TextStyle(fontWeight: FontWeight.bold),),
                       onPressed: () async {
                         String phone = phoneController.text;
                         String password = passwordController.text;
+                        String confirmPassword = confirmPasswordController.text;
                         String username = firstNameController.text +
                             " " +
                             lastNameController.text;
 
-                        // String body = '{"username": "$username", '
-                        //     '"phonenumber": "$phone",'
-                        //     '"password": "$password"}';
-                        // Map<String, String> headers = {"Content-type": "application/json"};
-                        // Response resp = await post(Uri.parse(signupUrl), headers: headers, body: body);
-                        // int statusCode = resp.statusCode;
-                        // print(statusCode);
-                        int statusCode =
-                        await signUp(username, phone, password);
-                        if (statusCode < 300) {
-                          signUpAlert(context, "success",
-                              "Sign Up Successfully", "Let's Log in");
-                        } else {
-                          signUpAlert(context, "error",
-                              "Sign up unsuccessfully", "Retry");
+                        setState(() {
+                          _validatePhone = phoneValidation(phone)[0];
+                          _validatePassword = passwordValidation(password)[0];
+                          _validateConfirmPassword = confirmPasswordValidation(confirmPassword, password)[0];
+                          _validateFirstName = firstNameController.text != "";
+                          _validateLastName = lastNameController.text != "";
+                        });
+
+                        if (_validateFirstName && _validateLastName && _validatePhone && _validatePassword && _validateConfirmPassword) {
+                          int statusCode =
+                          await signUp(username, phone, password);
+                          if (statusCode < 300) {
+                            signUpAlert(context, "success",
+                                "Sign Up Successfully", "Let's Log in");
+                          } else {
+                            signUpAlert(context, "error",
+                                "Unable to sign up.", "Retry");
+                          }
                         }
                       },
                     ))
               ],
-            )
-        )
-    );
+            )));
   }
 
-  Container signUpContainer(TextEditingController controller, String label) {
+  Container signUpContainer(TextEditingController controller, String label, bool _validate) {
     return Container(
       padding: EdgeInsets.all(10),
       child: TextField(
@@ -216,13 +282,13 @@ class _SignUpState extends State<SignUpPage> {
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           labelText: label,
+          errorText: _validate ? null : "This field can not be empty!",
+          errorBorder: OutlineInputBorder()
         ),
       ),
     );
   }
 }
-
-inputValidation(String username, String phone, String password) {}
 
 logInAlert(BuildContext context, String type, String message, String button) {
   Color textColor = primaryColor;

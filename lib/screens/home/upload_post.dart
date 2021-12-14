@@ -1,294 +1,16 @@
 import 'dart:convert';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttergram/constants.dart';
+import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/util/util.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:fluttergram/controllers/post_controller.dart';
-
+import 'package:video_player/video_player.dart';
 import '../../default_screen.dart';
-// import 'location.dart';
-// import 'package:geocoder/geocoder.dart';
-
-// class Uploader extends StatefulWidget {
-//   _Uploader createState() => _Uploader();
-// }
-//
-// class _Uploader extends State<Uploader> {
-//   var file = null;
-//   //Strings required to save address
-//   // Address address;
-//
-//   Map<String, double> currentLocation = Map();
-//   TextEditingController descriptionController = TextEditingController();
-//   TextEditingController locationController = TextEditingController();
-//   ImagePicker imagePicker = ImagePicker();
-//
-//   bool uploading = false;
-//
-//   @override
-//   initState() {
-//     //variables with location assigned as 0.0
-//     currentLocation['latitude'] = 0.0;
-//     currentLocation['longitude'] = 0.0;
-//     // initPlatformState(); //method to call location
-//     super.initState();
-//   }
-//
-//   // //method to get Location and save into variables
-//   // initPlatformState() async {
-//   //   Address first = await getUserLocation();
-//   //   setState(() {
-//   //     address = first;
-//   //   });
-//   // }
-//
-//   Widget build(BuildContext context) {
-//     return file == null
-//         ? Scaffold(
-//             appBar: AppBar(
-//                 backgroundColor: primaryColor,
-//                 leading: IconButton(
-//                     icon: Icon(Icons.arrow_back, color: secondaryColor),
-//                     onPressed: () {
-//                       Navigator.pop(context);
-//                     }),
-//                 title: const Text(
-//                   'Select Image',
-//                   style: const TextStyle(color: secondaryColor),
-//                 )),
-//             body: Center(
-//               child: IconButton(
-//                   icon: Icon(Icons.add_photo_alternate),
-//                   onPressed: () => {_selectImage(context)}),
-//             ))
-//         : Scaffold(
-//             resizeToAvoidBottomInset: false,
-//             appBar: AppBar(
-//               backgroundColor: secondaryColor,
-//               leading: IconButton(
-//                   icon: Icon(Icons.arrow_back, color: Colors.black),
-//                   onPressed: clearImage),
-//               title: const Text(
-//                 'Post to',
-//                 style: const TextStyle(color: Colors.black),
-//               ),
-//               actions: <Widget>[
-//                 FlatButton(
-//                     onPressed: () {
-//                       print(descriptionController.text);
-//                       print(locationController.text);
-//                       // TODO Create new Post API
-//                     },
-//                     child: Text(
-//                       "Post",
-//                       style: TextStyle(
-//                           color: primaryColor,
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 16.0),
-//                     ))
-//               ],
-//             ),
-//             body: ListView(
-//               children: <Widget>[
-//                 PostForm(
-//                   imageFile: file,
-//                   descriptionController: descriptionController,
-//                   locationController: locationController,
-//                   loading: uploading,
-//                 ),
-//                 Divider(), //scroll view where we will show location to users
-//                 // SingleChildScrollView(
-//                 //   scrollDirection: Axis.horizontal,
-//                 //   padding: EdgeInsets.only(right: 5.0, left: 5.0),
-//                 //   child: Row(
-//                 //     children: <Widget>[
-//                 //       buildLocationButton(address.featureName),
-//                 //       buildLocationButton(address.subLocality),
-//                 //       buildLocationButton(address.locality),
-//                 //       buildLocationButton(address.subAdminArea),
-//                 //       buildLocationButton(address.adminArea),
-//                 //       buildLocationButton(address.countryName),
-//                 //     ],
-//                 //   ),
-//                 // ),
-//                 // (address == null) ? Container() : Divider(),
-//               ],
-//             ));
-//   }
-//
-//   //method to build buttons with location.
-//   buildLocationButton(String locationName) {
-//     if (locationName != null ?? locationName.isNotEmpty) {
-//       return InkWell(
-//         onTap: () {
-//           locationController.text = locationName;
-//         },
-//         child: Center(
-//           child: Container(
-//             //width: 100.0,
-//             height: 30.0,
-//             padding: EdgeInsets.only(left: 8.0, right: 8.0),
-//             margin: EdgeInsets.only(right: 3.0, left: 3.0),
-//             decoration: BoxDecoration(
-//               color: Colors.grey[200],
-//               borderRadius: BorderRadius.circular(5.0),
-//             ),
-//             child: Center(
-//               child: Text(
-//                 locationName,
-//                 style: TextStyle(color: Colors.grey),
-//               ),
-//             ),
-//           ),
-//         ),
-//       );
-//     } else {
-//       return Container();
-//     }
-//   }
-//
-//   _selectImage(BuildContext parentContext) async {
-//     return showDialog<Null>(
-//       context: parentContext,
-//       barrierDismissible: false, // user must tap button!
-//
-//       builder: (BuildContext context) {
-//         return SimpleDialog(
-//           title: const Text('Create a Post'),
-//           children: <Widget>[
-//             // SimpleDialogOption(
-//             //     child: const Text('Take a photo'),
-//             //     onPressed: () async {
-//             //       Navigator.pop(context);
-//             //       XFile? imageFile = (await imagePicker.pickImage(
-//             //           source: ImageSource.camera,
-//             //           maxWidth: 1920,
-//             //           maxHeight: 1200,
-//             //           imageQuality: 80));
-//             //       setState(() {
-//             //         file = File(imageFile!.path);
-//             //       });
-//             //     }),
-//             SimpleDialogOption(
-//                 child: const Text('Choose from Gallery'),
-//                 onPressed: () async {
-//                   Navigator.of(context).pop();
-//                   XFile? imageFile = (await imagePicker.pickImage(
-//                       source: ImageSource.gallery,
-//                       maxWidth: 1920,
-//                       maxHeight: 1200,
-//                       imageQuality: 80));
-//                   setState(() {
-//                     file = File(imageFile!.path);
-//                   });
-//                 }),
-//             SimpleDialogOption(
-//               child: const Text("Cancel"),
-//               onPressed: () {
-//                 Navigator.pop(context);
-//               },
-//             )
-//           ],
-//         );
-//       },
-//     );
-//   }
-//
-//   void clearImage() {
-//     setState(() {
-//       file = null;
-//     });
-//   }
-//
-//   // void postImage() {
-//   //   setState(() {
-//   //     uploading = true;
-//   //   });
-//   //   uploadImage(file).then((String data) {
-//   //     // postToFireStore(
-//   //     //     mediaUrl: data,
-//   //     //     description: descriptionController.text,
-//   //     //     location: locationController.text);
-//   //   }).then((_) {
-//   //     setState(() {
-//   //       // file = null;
-//   //       uploading = false;
-//   //     });
-//   //   });
-//   // }
-// }
-//
-// class PostForm extends StatelessWidget {
-//   final imageFile;
-//   final TextEditingController descriptionController;
-//   final TextEditingController locationController;
-//   final bool loading;
-//   PostForm(
-//       {this.imageFile,
-//       required this.descriptionController,
-//       required this.loading,
-//       required this.locationController});
-//
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: <Widget>[
-//         loading
-//             ? LinearProgressIndicator()
-//             : Padding(padding: EdgeInsets.only(top: 0.0)),
-//         Divider(),
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceAround,
-//           children: <Widget>[
-//             CircleAvatar(
-//                 // TODO Get User's Avatar
-//                 // backgroundImage: NetworkImage(currentUserModel.photoUrl),
-//                 ),
-//             Container(
-//               width: 250.0,
-//               child: TextField(
-//                 controller: descriptionController,
-//                 decoration: InputDecoration(
-//                     hintText: "Write a caption...", border: InputBorder.none),
-//               ),
-//             ),
-//             Container(
-//               height: 45.0,
-//               width: 45.0,
-//               child: AspectRatio(
-//                 aspectRatio: 487 / 451,
-//                 child: Container(
-//                   decoration: BoxDecoration(
-//                       image: DecorationImage(
-//                     fit: BoxFit.fill,
-//                     alignment: FractionalOffset.topCenter,
-//                     image: imageFile != null
-//                         ? FileImage(imageFile)
-//                         : FileImage(File("assets/whatsapp_Back.png")),
-//                   )),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//         Divider(),
-//         ListTile(
-//           leading: Icon(Icons.pin_drop),
-//           title: Container(
-//             width: 250.0,
-//             child: TextField(
-//               controller: locationController,
-//               decoration: InputDecoration(
-//                   hintText: "Where was this photo taken?",
-//                   border: InputBorder.none),
-//             ),
-//           ),
-//         )
-//       ],
-//     );
-//   }
-// }
 
 class CreatePost extends StatefulWidget {
   @override
@@ -299,107 +21,167 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController descriptionController = new TextEditingController();
   TextEditingController locationController = new TextEditingController();
   List<File> images = [];
+  List<File> videos = [];
   bool loading = false;
   ImagePicker imagePicker = new ImagePicker();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-            backgroundColor: primaryColor,
-            leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: secondaryColor),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-            title: const Center(
-                child: Text(
-              'New Post',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: secondaryColor),
-            )),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () async {
-                    String description = descriptionController.text;
-                    List<String> encodeImages = await encodeFiles(images);
-                    // List<String> encodeVideos = await encodeFiles(videos);
-                    int statusCode = await createPost(description, encodeImages, []);
-                    print(statusCode);
-                    if (statusCode < 300) {
-                      Navigator.pop(context);
-                    }
-                    // TODO Alert posting failed
-                  },
-                  child: Text(
-                    "Post",
-                    style: TextStyle(
-                        color: secondaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0),
-                  ))
-            ]),
-        body: Column(
-          children: <Widget>[
-            loading
-                ? LinearProgressIndicator()
-                : Padding(padding: EdgeInsets.only(top: 0.0)),
-            Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                CircleAvatar(
-                    // TODO Get User's Avatar
-                    // backgroundImage: NetworkImage(currentUserModel.photoUrl),
-                    ),
-                Container(
-                  width: 250.0,
-                  child: TextField(
-                    controller: descriptionController,
-                    decoration: InputDecoration(
-                        hintText: "Write a caption...",
-                        border: InputBorder.none),
+    return FutureBuilder<User>(
+        future: getCurrentUser(),
+        builder: (ctx, snapshot) {
+          return Scaffold(
+              appBar: AppBar(
+                  backgroundColor: primaryColor,
+                  leading: IconButton(
+                      icon: Icon(Icons.arrow_back, color: secondaryColor),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
+                  title: const Center(
+                      child: Text(
+                    'New Post',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: secondaryColor),
+                  )),
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () async {
+                          String description = descriptionController.text;
+                          List<String> encodeImages = await encodeFiles(images);
+                          // List<String> encodeVideos = await encodeFiles(videos);
+                          int statusCode =
+                              await createPost(description, encodeImages, []);
+                          print(statusCode);
+                          if (statusCode < 300) {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        DefaultScreen(currentScreen: 0)),
+                                ModalRoute.withName("/Home"));
+                          }
+                          // TODO Alert posting failed
+                        },
+                        child: Text(
+                          "Post",
+                          style: TextStyle(
+                              color: secondaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0),
+                        ))
+                  ]),
+              body: Column(
+                children: <Widget>[
+                  loading
+                      ? LinearProgressIndicator()
+                      : Padding(padding: EdgeInsets.only(top: 0.0)),
+                  Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      snapshot.data != null
+                          ? CircleAvatar(
+                              backgroundImage: getImageProviderNetWork(
+                                  snapshot.data!.avatar!.fileName))
+                          : const SizedBox(),
+                      Container(
+                        width: 250.0,
+                        child: TextField(
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                              hintText: "Write a caption...",
+                              border: InputBorder.none),
+                        ),
+                      ),
+                      // Container(
+                      //   height: 45.0,
+                      //   width: 45.0,
+                      //   child: AspectRatio(
+                      //     aspectRatio: 487 / 451,
+                      //     child: Container(
+                      //       decoration: BoxDecoration(
+                      //           image: DecorationImage(
+                      //         fit: BoxFit.fill,
+                      //         alignment: FractionalOffset.topCenter,
+                      //         image: images.isNotEmpty
+                      //             ? FileImage(images[0])
+                      //             : FileImage(File("assets/whatsapp_Back.png")),
+                      //       )),
+                      //     ),
+                      //   ),
+                      // ),
+                      Center(
+                        child: IconButton(
+                            icon: Icon(Icons.add_photo_alternate),
+                            onPressed: () => {_selectImage(context)}),
+                      ),
+                    ],
                   ),
-                ),
-                Container(
-                  height: 45.0,
-                  width: 45.0,
-                  child: AspectRatio(
-                    aspectRatio: 487 / 451,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        fit: BoxFit.fill,
-                        alignment: FractionalOffset.topCenter,
-                        image: images.isNotEmpty
-                            ? FileImage(images[0])
-                            : FileImage(File("assets/whatsapp_Back.png")),
-                      )),
+                  Divider(),
+                  ListTile(
+                    leading: Icon(Icons.pin_drop),
+                    title: Container(
+                      width: 250.0,
+                      child: TextField(
+                        controller: locationController,
+                        decoration: InputDecoration(
+                            hintText: "Where was this photo taken?",
+                            border: InputBorder.none),
+                      ),
                     ),
                   ),
-                ),
-                Center(
-                  child: IconButton(
-                      icon: Icon(Icons.add_photo_alternate),
-                      onPressed: () => {_selectImage(context)}),
-                ),
-              ],
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.pin_drop),
-              title: Container(
-                width: 250.0,
-                child: TextField(
-                  controller: locationController,
-                  decoration: InputDecoration(
-                      hintText: "Where was this photo taken?",
-                      border: InputBorder.none),
-                ),
-              ),
-            )
-          ],
-        ));
+                  images.isNotEmpty
+                      ? Center(
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              enlargeCenterPage: true,
+                              enableInfiniteScroll: false,
+                            ),
+                            items: images
+                                .map((img) => ClipRRect(
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Image.file(img),
+                                          )
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                  videos.isNotEmpty
+                      ? Center(
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              enlargeCenterPage: true,
+                              enableInfiniteScroll: false,
+                            ),
+                            items: videos
+                                .map((vid) => ClipRRect(
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: <Widget>[
+                                          Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: VideoPlayer(
+                                                  VideoPlayerController.file(
+                                                      vid)))
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        )
+                      : const SizedBox.shrink()
+                ],
+              ));
+        });
   }
 
   _selectImage(BuildContext parentContext) async {
@@ -412,7 +194,7 @@ class _CreatePostState extends State<CreatePost> {
           title: const Text('Create a Post'),
           children: <Widget>[
             SimpleDialogOption(
-                child: const Text('Take a photo'),
+                child: const Text('Open Camera'),
                 onPressed: () async {
                   Navigator.pop(context);
                   XFile? imageFile = (await imagePicker.pickImage(
@@ -425,20 +207,36 @@ class _CreatePostState extends State<CreatePost> {
                   });
                 }),
             SimpleDialogOption(
-                child: const Text('Choose from Gallery'),
+                child: const Text('Upload photos'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  XFile? xFile = (await imagePicker.pickImage(
-                      source: ImageSource.gallery,
-                      maxWidth: 1920,
-                      maxHeight: 1200,
-                      imageQuality: 80));
+                  List<XFile>? selectedImages =
+                      await imagePicker.pickMultiImage(
+                    maxWidth: 1920,
+                    maxHeight: 1200,
+                    imageQuality: 80,
+                  );
+                  if (selectedImages!.isNotEmpty &&
+                      selectedImages.length <= 4) {
+                    setState(() {
+                      images.addAll(
+                          selectedImages.map((xImg) => File(xImg.path)));
+                    });
+                  } else {
+                    setState(() {
+                      images = [];
+                    });
+                    //TODO Alert for exceeding number of images
+                  }
+                }),
+            SimpleDialogOption(
+                child: const Text('Upload video'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  XFile? videoFile = (await imagePicker.pickVideo(
+                      source: ImageSource.gallery));
                   setState(() {
-                    if (images.length < 4) {
-                      images.add(File(xFile!.path));
-                    } else {
-                      //TODO Alert for exceeding number of images
-                    }
+                    videos.add(File(videoFile!.path));
                   });
                 }),
             SimpleDialogOption(
