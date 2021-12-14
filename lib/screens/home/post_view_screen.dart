@@ -188,7 +188,6 @@ class _PageState extends State<Page> {
                                   backgroundColor: primaryColor,
                                   primary: primaryColor),
                               onPressed: () {
-                                print("alooo");
                                 createComment(post, commentController.text);
                                 String createdAt = "Just now";
                                 Comment newComment = Comment(
