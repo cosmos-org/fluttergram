@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/constants.dart';
+import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
-import 'package:fluttergram/screens/home/create_post.dart';
+import 'package:fluttergram/screens/home/post.dart';
+import 'package:fluttergram/screens/home/post_container.dart';
+import 'package:fluttergram/screens/home/upload_post.dart';
+import 'package:fluttergram/screens/login/login_screen.dart';
+import 'package:fluttergram/screens/profile/change_password.dart';
 import 'package:fluttergram/util/util.dart';
 import 'edit_profile.dart';
 
@@ -15,6 +21,23 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  void choiceAction(String choice){
+    if(choice == Constants.Changepassword){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChangePassword()
+          )
+      );
+    }else if(choice == Constants.SignOut){
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) => LogInPage()),
+          ModalRoute.withName('/')
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,58 +51,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         else{
           final profile = snapshot.data!;
-          return buildApp(profile);
+          return profileHeaderWidget(context, profile);
         }
       }
     );
   }
+}
 
-  Widget buildImage({required String path}) {
-    final image = getImageProviderNetWork(path);
-    return ClipOval(
-        child: Material(
-          color: Colors.transparent,
-          child: Ink.image(
-            image: image,
-            fit: BoxFit.cover,
-            width: 128,
-            height: 128,
-          ),
-        )
-    );
-  }
+class Constants {
+  static const String Changepassword = 'Change password';
+  static const String SignOut = 'Sign out';
 
-  Widget buildText({required String text})=>
-      Text(text, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold));
+  static const List<String> choices = <String>[
+    Changepassword,
+    SignOut
+  ];
+}
 
-  Widget buildAbout(String string) => Container(
-    padding: EdgeInsets.fromLTRB(48, 10, 0, 20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        buildText(text: string),
-      ],
-    ),
-  );
-
-  Widget buildButton(User user) => ElevatedButton(
-    style: ElevatedButton.styleFrom(
-        shape: StadiumBorder(),
-        onPrimary: Colors.black,
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-        primary: Colors.white30
-    ),
-    onPressed: () {
+Widget profileHeaderWidget(BuildContext context, Profile profile) {
+  void choiceAction(String choice){
+    if(choice == Constants.Changepassword){
       Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => EditProfile(user: user))
+          MaterialPageRoute(
+              builder: (context) => ChangePassword()
+          )
       );
-    },
-    child: Text('Edit profile', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-  );
-
-  Widget buildApp(Profile profile) => Scaffold(
+    }else if(choice == Constants.SignOut){
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LogInPage()
+          ),
+          ModalRoute.withName("/Login")
+      );
+    }
+  }
+  return Scaffold(
     appBar: AppBar(
       backgroundColor: primaryColor,
       centerTitle: true,
@@ -95,49 +103,255 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
       ),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.more_horiz,
-            color: secondaryColor,
-          ),
-          onPressed: () {
-            // do something
+        PopupMenuButton<String>(
+          onSelected: choiceAction,
+          itemBuilder: (BuildContext context){
+            return Constants.choices.map((String choice){
+              return PopupMenuItem<String>(
+                value: choice,
+                child: Text(choice),
+              );
+            }).toList();
           },
-        ),
+        )
       ],
     ),
-    body: ListView(
-      physics: BouncingScrollPhysics(),
-      children: [
-        Container(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(children: [
-                Positioned(
-                  top: 50,
-                  right: 280,
-                  child: buildImage(path: profile.user.avatar!.fileName),
+    body: SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(color: Colors.white),
+        child: Padding(
+            padding: const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 10,
                 ),
-              ]
-              ),
-              Column(children:[
-                buildText(text: profile.numFriends.toString()),
-                buildText(text: 'Friends')
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Color(0xff74EDED),
+                      backgroundImage:
+                      getImageProviderNetWork(profile.user.avatar!.fileName),
+                    ),
+                    Row(
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              profile.numPosts.toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              "Posts",
+                              style: TextStyle(
+                                fontSize: 15,
+                                letterSpacing: 0.4,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              profile.numFriends.toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              "Friends",
+                              style: TextStyle(
+                                letterSpacing: 0.4,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              profile.user.gender!,
+                              style: TextStyle(
+                                letterSpacing: 0.4,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              "Gender",
+                              style: TextStyle(
+                                letterSpacing: 0.4,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  profile.user.username,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  profile.user.description!,
+                  style: TextStyle(
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                actions(context, profile.user),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 85,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: highlightItems.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                    AssetImage(highlightItems[index].thumbnail),
+                                    radius: 28,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  highlightItems[index].title,
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                myPost()
               ],
-              ),
-
-              Column(children:[
-                buildText(text: profile.numPosts.toString()),
-                buildText(text: 'Posts')
-              ])
-            ],
-          ),
+            )
         ),
-        buildAbout(profile.user.description!),
-        Center(child: buildButton(profile.user)),
-      ],
-    ),
+      ),
+    )
   );
 }
+
+Widget myPost() {
+  return FutureBuilder<List<Post>>(
+    future: getMyPosts(),
+    builder: (ctx, snapshot) {
+      if (snapshot.connectionState != ConnectionState.done) {
+        return Center(
+            child: CircularProgressIndicator()
+        );
+      };
+      if (snapshot.hasError) {
+        return Text("Error");
+      };
+      List<Post> list = snapshot.data as List<Post>;
+      // return PostContainer(post: list[0]);
+      return Wrap(
+        spacing: 10, // set spacing here
+        children: createPostList(list),
+      );
+    }
+  );
+}
+
+Widget actions(BuildContext context, User user) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Expanded(
+        child: OutlinedButton(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Text("Edit Profile", style: TextStyle(color: Colors.black)),
+          ),
+          style: OutlinedButton.styleFrom(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: Size(0, 30),
+              side: BorderSide(
+                color: primaryColor,
+              )),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditProfile(user: user))
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+class Highlight {
+  String thumbnail;
+  String title;
+  Highlight({required this.thumbnail, required this.title});
+}
+
+List<Highlight> highlightItems = [
+  Highlight(thumbnail: 'assets/images/bike.jpg', title: "My Bike 🏍"),
+  Highlight(thumbnail: 'assets/images/cooking.jpg', title: "Cooking 🔪"),
+  Highlight(thumbnail: 'assets/images/nature.jpg', title: "Nature 🏞"),
+  Highlight(thumbnail: 'assets/images/pet.jpg', title: "Pet ❤️"),
+  Highlight(thumbnail: 'assets/images/swimming.jpg', title: "Pool 🌊"),
+  Highlight(thumbnail: 'assets/images/yoga.jpg', title: "Yoga 💪🏻"),
+];
+
+
+
+
+
+

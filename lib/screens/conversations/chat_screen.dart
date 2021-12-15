@@ -8,8 +8,10 @@ import '../../controllers/conversation/conversation_controller.dart';
 import '../../constants.dart';
 import '../../util/util.dart';
 import '../../socket/custom_socket.dart';
+
 import 'package:emoji_picker/emoji_picker.dart';
 import '../../controllers/conversation/message_stream_controller.dart';
+
 
 
 
@@ -30,6 +32,7 @@ class ChatScreenState extends State<ChatScreen> {
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
   String currentUserId = '';
+
   late int currentPage;
   late MessageStreamModel _messageStreamModel;
   late EmojiPicker cachedPicker;
@@ -64,6 +67,7 @@ class ChatScreenState extends State<ChatScreen> {
         _messageStreamModel.loadMore(page: this.currentPage);
       }
     });
+
 
     getCurrentUserId().then((value){
       currentUserId  =value;
@@ -406,17 +410,17 @@ class ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          show ? cachedPicker : Container(),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // Align(
+                  //   alignment: Alignment.bottomCenter,
+                  //   child: Container(
+                  //     child: Column(
+                  //       mainAxisAlignment: MainAxisAlignment.end,
+                  //       children: [
+                  //         show ? cachedPicker : Container(),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               onWillPop: () {
@@ -516,17 +520,17 @@ class ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget emojiSelect() {
-    return EmojiPicker(
-        rows: 4,
-        columns: 7,
-        onEmojiSelected: (emoji, category) {
-          print(emoji);
-          setState(() {
-            _controller.text = _controller.text + emoji.emoji;
-          });
-        });
-  }
+  // Widget emojiSelect() {
+  //   return EmojiPicker(
+  //       rows: 4,
+  //       columns: 7,
+  //       onEmojiSelected: (emoji, category) {
+  //         print(emoji);
+  //         setState(() {
+  //           _controller.text = _controller.text + emoji.emoji;
+  //         });
+  //       });
+  // }
 }
 
 

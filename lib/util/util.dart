@@ -118,4 +118,40 @@ Future<String> getToken() async {
   return prefs.getString('token').toString();
 }
 
+List passwordValidation(String password) {
+  if(password == "") return [false, "Invalid password"];
+  RegExp passwordRegex = new RegExp("");
+  if (!passwordRegex.hasMatch(password)) return [false, "Invalid password"];
+  return [true, "valid"];
+}
+
+List confirmPasswordValidation(String confirmPassword, String password) {
+  if(confirmPassword != password) return [false, "Confirm password does not match"];
+  return [true, "valid"];
+}
+
+List phoneValidation(String phone) {
+  if(phone == "") return [false, "valid"];
+  // RegExp phoneRegex = new RegExp(r"(84|0[3|5|7|8|9])+([0-9]{8})\b");
+  // if (!phoneRegex.hasMatch(phone)) return [false, "Invalid phone number!"];
+  return [true, "valid"];
+}
+
+List inputValidation(String screen, String username, String phone,
+    String password, String retypePassword) {
+  RegExp phoneRegex = new RegExp(r"^\d{5}$");
+  RegExp passwordRegex = new RegExp("");
+  if (!phoneRegex.hasMatch(phone)) return [false, "Invalid phone number!"];
+  switch (screen) {
+    case "login":
+      if (!passwordRegex.hasMatch(password)) return [false, "Invalid password!"];
+      break;
+    case "signup":
+      if (!passwordRegex.hasMatch(password) || !passwordRegex.hasMatch(retypePassword)) return [false, "Invalid password"];
+      if (password != retypePassword) return [false, "Unmatched confirm password"];
+      break;
+  }
+  return [true, "Valid"];
+}
+
 

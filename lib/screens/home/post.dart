@@ -12,14 +12,16 @@ class Posts extends StatelessWidget {
       future: getPosts(),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return CircularProgressIndicator();
+          return Center(
+              child: CircularProgressIndicator()
+          );
         };
         if (snapshot.hasError) {
           return Text("Error");
         };
         List<Post> list = snapshot.data as List<Post>;
         // return PostContainer(post: list[0]);
-        return  Container(
+        return Container(
             child: SingleChildScrollView(
             child: Wrap(
               spacing: 10, // set spacing here

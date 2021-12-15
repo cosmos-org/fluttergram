@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/models/image_model.dart';
 import 'package:fluttergram/models/video_model.dart';
@@ -8,7 +10,7 @@ class Post {
   final String described, createdAt;
   final List<Image> images;
   final List<Video> videos;
-  final List<User> like;
+  final List<String> like;
   final int countComments;
 
   Post({
@@ -30,7 +32,7 @@ class Post {
       images: List<Image>.generate(json['images'].length,(int index) => Image.fromJson(jsonConvert(json['images'][index]))),
       videos: List<Video>.generate(json['videos'].length,(int index) => Video.fromJson(jsonConvert(json['videos'][index]))),
       // Image.fromJson(json['avatar'] ?? {}),
-      like: List<User>.generate(json['like'].length,(int index) => User.fromJson({})),
+      like: List<String>.from(json['like'].map((x)=>x)),
       countComments:json['countComments'] ?? 0 ,
     );
     return a;
