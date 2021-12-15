@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 import '../socket/custom_socket.dart';
@@ -151,6 +153,12 @@ List inputValidation(String screen, String username, String phone,
       break;
   }
   return [true, "Valid"];
+}
+
+Future<String> encodeFile(File file) async {
+  var bytes = (await file.readAsBytes());
+  String base64Encode = base64.encode(bytes);
+  return base64Encode;
 }
 
 
