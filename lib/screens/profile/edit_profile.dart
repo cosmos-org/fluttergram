@@ -97,7 +97,7 @@ class _EditProfileState extends State<EditProfile>{
                           shape: BoxShape.circle,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: imageFileAvt.path != ''?
+                              image: imageFileAvt.path!=''?
                               FileImage(imageFileAvt) as ImageProvider:getImageProviderNetWork(imageFilePath)
                           )
                       ),
@@ -244,7 +244,7 @@ class _EditProfileState extends State<EditProfile>{
                   });
                 }),
             SimpleDialogOption(
-                child: const Text('Upload photos'),
+                child: const Text('Upload photo'),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   List<XFile>? selectedImages =
