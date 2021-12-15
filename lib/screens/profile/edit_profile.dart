@@ -7,18 +7,19 @@ import 'package:image_picker/image_picker.dart';
 import '../../constants.dart';
 import '../../default_screen.dart';
 
-
-class EditProfile extends StatefulWidget{
+class EditProfile extends StatefulWidget {
   final User user;
   const EditProfile({
-    Key? key, required this.user,
+    Key? key,
+    required this.user,
     // required this.onPressed
   }) : super(key: key);
   @override
-  State<StatefulWidget> createState() => _EditProfileState(user.avatar!.fileName);
+  State<StatefulWidget> createState() =>
+      _EditProfileState(user.avatar!.fileName);
 }
 
-class _EditProfileState extends State<EditProfile>{
+class _EditProfileState extends State<EditProfile> {
   ImagePicker imagePicker = new ImagePicker();
   File imageFileAvt = new File('');
   String imageFilePath;
@@ -29,7 +30,8 @@ class _EditProfileState extends State<EditProfile>{
     return buildApp(widget.user);
   }
 
-  Container editProfileContainer(TextEditingController controller, String label) {
+  Container editProfileContainer(
+      TextEditingController controller, String label) {
     return Container(
       padding: EdgeInsets.all(10),
       child: TextField(
@@ -40,7 +42,7 @@ class _EditProfileState extends State<EditProfile>{
         ),
       ),
     );
-}
+  }
 
   Widget buildApp(User user) {
     TextEditingController usernameController = TextEditingController();
@@ -84,8 +86,8 @@ class _EditProfileState extends State<EditProfile>{
                       height: 130,
                       decoration: BoxDecoration(
                           border: Border.all(
-                              width: 4,
-                              color: primaryColor,
+                            width: 4,
+                            color: primaryColor,
                           ),
                           boxShadow: [
                             BoxShadow(
@@ -97,36 +99,32 @@ class _EditProfileState extends State<EditProfile>{
                           shape: BoxShape.circle,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: imageFileAvt.path!=''?
-                              FileImage(imageFileAvt) as ImageProvider:getImageProviderNetWork(imageFilePath)
-                          )
-                      ),
+                              image: imageFileAvt.path != ''
+                                  ? FileImage(imageFileAvt) as ImageProvider
+                                  : getImageProviderNetWork(imageFilePath))),
                     ),
                     Positioned(
                         bottom: 0,
                         right: 0,
                         child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4,
-                              color: secondaryColor
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(width: 4, color: secondaryColor),
+                              color: primaryColor,
                             ),
-                            color: primaryColor,
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                            ),
-                            padding: EdgeInsets.zero,
-                            onPressed: () {_selectImage(context);},
-                          )
-
-                        )
-                    ),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ),
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                _selectImage(context);
+                              },
+                            ))),
                   ],
                 ),
               ),
@@ -135,17 +133,20 @@ class _EditProfileState extends State<EditProfile>{
               ),
               buildTextField("Username", user.username, usernameController),
               buildTextField("Gender", user.gender!, genderController),
-              buildTextField("Bio", user.description.toString(), descriptionController),
+              buildTextField(
+                  "Bio", user.description.toString(), descriptionController),
               SizedBox(
                 height: 35,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  OutlineButton(
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      padding: EdgeInsets.symmetric(horizontal: 50),
+                    ),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -153,36 +154,38 @@ class _EditProfileState extends State<EditProfile>{
                         style: TextStyle(
                             fontSize: 14,
                             letterSpacing: 2.2,
-                            color: Colors.black
-                        )
-                    ),
+                            color: Colors.black)),
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     onPressed: () async {
                       String username = usernameController.text;
                       String description = descriptionController.text;
                       String gender = genderController.text;
-                      if (user.gender == "Secret"){
+                      if (user.gender == "Secret") {
                         gender = "secret";
-                      } else if(user.gender == "Male"){
+                      } else if (user.gender == "Male") {
                         gender = "male";
-                      } else if(user.gender == "Female") {
+                      } else if (user.gender == "Female") {
                         gender = "female";
                       }
-                      int statusCode = await edit(username, description, gender, imageEncode);
-                      if (statusCode < 300){
+                      int statusCode = await edit(
+                          username, description, gender, imageEncode);
+                      if (statusCode < 300) {
                         Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (BuildContext context) => DefaultScreen(currentScreen: 3)),
-                            ModalRoute.withName('/')
-                        );
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    DefaultScreen(currentScreen: 3)),
+                            ModalRoute.withName('/'));
                       }
                     },
-                    color: primaryColor,
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                    style: ElevatedButton.styleFrom(
+                      primary: primaryColor,
+                      padding: EdgeInsets.symmetric(horizontal: 50),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
                     child: Text(
                       "SAVE",
                       style: TextStyle(
@@ -200,7 +203,8 @@ class _EditProfileState extends State<EditProfile>{
     );
   }
 
-  Widget buildTextField(String labelText, String placeholder, TextEditingController tec) {
+  Widget buildTextField(
+      String labelText, String placeholder, TextEditingController tec) {
     tec.text = placeholder;
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
@@ -214,8 +218,7 @@ class _EditProfileState extends State<EditProfile>{
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black,
-            )
-        ),
+            )),
       ),
     );
   }
@@ -238,30 +241,30 @@ class _EditProfileState extends State<EditProfile>{
                       maxWidth: 1920,
                       maxHeight: 1200,
                       imageQuality: 80));
-                  imageEncode = await encodeFile(imageFileAvt);
                   setState(() {
                     imageFileAvt = File(imageFile!.path);
                   });
+                  imageEncode = await encodeFile(imageFileAvt);
                 }),
             SimpleDialogOption(
                 child: const Text('Upload photo'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  List<XFile>? selectedImages =
-                  await imagePicker.pickMultiImage(
+                  XFile? selectedImages = await imagePicker.pickImage(
                     maxWidth: 1920,
                     maxHeight: 1200,
                     imageQuality: 80,
+                    source: ImageSource.gallery,
                   );
-                  imageEncode = await encodeFile(imageFileAvt);
-                  if (selectedImages!.length == 1) {
-                    setState((){
-                      imageFileAvt = File(selectedImages[0].path);
+
+                  if (selectedImages != null) {
+                    setState(() {
+                      imageFileAvt = File(selectedImages.path);
                     });
-                  }
-                  else{
+                  } else {
                     changeAvtAlert(context, "Please choose a image");
                   }
+                  imageEncode = await encodeFile(imageFileAvt);
                 }),
             SimpleDialogOption(
               child: const Text("Cancel"),
@@ -275,7 +278,7 @@ class _EditProfileState extends State<EditProfile>{
     );
   }
 
-  changeAvtAlert(BuildContext context, String message){
+  changeAvtAlert(BuildContext context, String message) {
     Color textColor = errorColor;
     Widget okButton = TextButton(
       child: Text("OK", style: TextStyle(color: textColor)),
@@ -303,5 +306,3 @@ class _EditProfileState extends State<EditProfile>{
     );
   }
 }
-
-
