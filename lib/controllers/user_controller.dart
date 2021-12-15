@@ -139,10 +139,16 @@ Future<Profile> show() async{
   return p;
 }
 
-Future edit(String username, String description, String gender) async{
+Future edit(String username, String description, String gender, String imageEncode) async{
   String token = await getToken();
   String url = hostname + userEditInforEndpoint;
-  String param = '{"username": "$username", "description": "$description", "gender": "$gender"}';
+  String param;
+  if (imageEncode==''){
+    param = '{"username": "$username", "description": "$description", "gender": "$gender"}';
+  }
+  else {
+    param = '{"username": "$username", "description": "$description", "gender": "$gender", "avatar": "data:image/jpeg;base64,$imageEncode"}';
+  }
   Map<String, String> headers = <String, String>{
     'Content-Type': 'application/json; charset=UTF-8',
     'authorization': 'bearer ' + token,
