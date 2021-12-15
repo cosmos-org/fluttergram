@@ -49,11 +49,14 @@ Future<List<Conversation>> getConversationsAPI() async {
 
     var ls = <Conversation>[];
     // for element
+    int i = 0;
     for (var element in resp['data'])
       // resp['data'].foreach((element)
         {
           // print('call from conversation');
+
           var messages = await getMessagesAPI(element['_id'],0);
+
           // var messages = <Message>[];
           // print('load conver');
           // print(z);

@@ -33,7 +33,7 @@ class Conversation {
       isActive: json['isActive'] ?? true,
       isSeen: json['isSeen'] ?? false,
       messages : json['messages'] ?? [],
-      partnerUser: User.fromJson(jsonConvert(json['partnerUser'])),
+      partnerUser: User.fromJson(jsonConvert(json['partnerUser'] ?? {})),
         sender: json['sender'] ??  0
     );
     return a;
