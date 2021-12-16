@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
@@ -143,6 +144,15 @@ Future edit(String username, String description, String gender, String imageEnco
   String token = await getToken();
   String url = hostname + userEditInforEndpoint;
   String param;
+  if (gender=='Male'){
+    gender = 'male';
+  }
+  if (gender=='Female'){
+    gender = 'female';
+  }
+  if (gender=='Secret'){
+    gender = 'secret';
+  }
   if (imageEncode==''){
     param = '{"username": "$username", "description": "$description", "gender": "$gender"}';
   }

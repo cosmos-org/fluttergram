@@ -25,6 +25,7 @@ class _EditProfileState extends State<EditProfile> {
   String imageFilePath;
   _EditProfileState(this.imageFilePath);
   String imageEncode = '';
+  String genderText = '';
   @override
   Widget build(BuildContext context) {
     return buildApp(widget.user);
@@ -47,7 +48,6 @@ class _EditProfileState extends State<EditProfile> {
   Widget buildApp(User user) {
     TextEditingController usernameController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
-    TextEditingController genderController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -132,9 +132,26 @@ class _EditProfileState extends State<EditProfile> {
                 height: 35,
               ),
               buildTextField("Username", user.username, usernameController),
-              buildTextField("Gender", user.gender!, genderController),
-              buildTextField(
-                  "Bio", user.description.toString(), descriptionController),
+              buildTextField("Bio", user.description.toString(), descriptionController),
+              Text(
+                'Gender',
+
+              ),
+              DropdownButton<String>(
+                isExpanded: true,
+                value: genderText!=''?genderText:user.gender,
+                items: <String>['Secret', 'Male', 'Female'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text('$value'),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    genderText = value!;
+                  });
+                },
+              ),
               SizedBox(
                 height: 35,
               ),
@@ -160,16 +177,11 @@ class _EditProfileState extends State<EditProfile> {
                     onPressed: () async {
                       String username = usernameController.text;
                       String description = descriptionController.text;
-                      String gender = genderController.text;
-                      if (user.gender == "Secret") {
-                        gender = "secret";
-                      } else if (user.gender == "Male") {
-                        gender = "male";
-                      } else if (user.gender == "Female") {
-                        gender = "female";
+                      if (genderText == ''){
+                        genderText = user.gender!;
                       }
                       int statusCode = await edit(
-                          username, description, gender, imageEncode);
+                          username, description, genderText, imageEncode);
                       if (statusCode < 300) {
                         Navigator.pushAndRemoveUntil(
                             context,
@@ -203,8 +215,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget buildTextField(
-      String labelText, String placeholder, TextEditingController tec) {
+  Widget buildTextField(String labelText, String placeholder, TextEditingController tec) {
     tec.text = placeholder;
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
