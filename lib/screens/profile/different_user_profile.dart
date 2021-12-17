@@ -260,7 +260,6 @@ Widget profileHeaderWidget(
                                 removeFriendAlert(context, 'Do you want to remove $username from your friend list?');
                                 break;
                               case 'Add friend':
-                                print("add friend");
                                 buttonText = 'Cancel request';
                                 callback(buttonText);
                                 await requestFriend(profile.user.id);

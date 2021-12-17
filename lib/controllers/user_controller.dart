@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
@@ -119,13 +118,7 @@ Future<Profile> show() async{
   }
   List<User> lf = await getFriends();
   List<Post> lp = await getPosts();
-  int numFriends = 0, numPosts = 0;
-  for(var element in lf) {
-    numFriends++;
-  }
-  for(var element in lp){
-    numPosts++;
-  }
+  int numFriends = lf.length, numPosts = lp.length;
   Profile p = Profile(user, numPosts, numFriends, lp);
   return p;
 }
@@ -142,10 +135,7 @@ Future<Profile> showAnotherProfile(String userId) async{
     user.gender = "Female";
   }
   List<Post> lp = await getPostsByUserId(userId);
-  int numFriends = 0, numPosts = 0;
-  for(var element in lp){
-    numPosts++;
-  }
+  int numFriends = 0, numPosts = lp.length;
   Profile p = Profile(user, numPosts, numFriends, lp);
   return p;
 }
@@ -251,7 +241,7 @@ Future<String> getStatusUser(String userId) async{
     }
   }
   switch (status) {
-    case 'friends':
+    case 'friend':
       return 'Remove friend';
     case 'friendRequest':
       return 'Accept friend';
@@ -265,7 +255,7 @@ Future<String> getStatusUser(String userId) async{
 Future<bool> removeFriend(String userId) async {
   String token = await getToken();
   String url = hostname + friendSetRemove;
-  String param = '{"user_id:" "$userId"}';
+  String param = '{"user_id": "$userId"}';
   final response = await post(Uri.parse(url),
     headers: <String, String>{
       'Content-Type': 'application/json',
