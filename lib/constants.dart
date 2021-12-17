@@ -34,6 +34,12 @@ const userChangePasswordEndpoint = "/api/v1/users/change-password";
 const userGetAnotherEndpoint = "/api/v1/users/show/";
 //API For Friend
 const friendGetListEndpoint = "/api/v1/friends/list";
+const friendGetListsRequestsEndPoint = "/api/v1/friends/get-requested-friend";
+const friendGetListsSentRequestEndPoint = "/api/v1/friends/get-sent-request";
+const friendSetRemove = "/api/v1/friends/set-remove";
+const friendSetRequest = "/api/v1/friends/set-request-friend";
+const friendSetAccept = "/api/v1/friends/set-accept";
+const friendSetRemoveRequest = "/api/v1/friends/set-remove-request";
 
 //API For Post
 const postGetListEndpoint = "/api/v1/posts/list";
