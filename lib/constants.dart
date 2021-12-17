@@ -17,8 +17,8 @@ const normalFontWeight = FontWeight.normal;
 const boldFontWeight = FontWeight.bold;
 
 
-// const hostname = "http://localhost:8000";
-// const socketHostname = "http://localhost:7070";
+const hostname = "http://localhost:8000";
+const socketHostname = "http://localhost:7070";
 
 // const hostname = "http://10.0.2.2:8000";
 // const socketHostname = "http://10.0.2.2:7070";

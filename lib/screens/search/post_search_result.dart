@@ -57,6 +57,6 @@ class PostSearched extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PostContainer(post: post);
+    return PostContainer(post: post, currentScreen: 1,);
   }
 }

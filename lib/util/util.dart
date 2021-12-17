@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
-import '../socket/custom_socket.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:intl/intl.dart';
+import 'dart:io' as Io;
+
 const String getFileUrl = hostname+ '/files/';
 String dateTimeFormat(String dateMongo){
   final t = DateTime.parse(dateMongo);
@@ -92,6 +92,13 @@ NetworkImage getImageProviderNetWork(fileName) {
   return NetworkImage(
     getFileUrl + fileName,
   );
+}
+
+String encodeImage(fileName) {
+  // Image image = Image.network( getFileUrl + fileName);
+  // File file =
+  final bytes = Io.File(getFileUrl + fileName).readAsBytesSync();
+  return base64Encode(bytes);
 }
 
 Future<void> setCurrentUserId(String currentUserId) async {

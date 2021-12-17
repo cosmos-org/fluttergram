@@ -9,8 +9,10 @@ import '../../default_screen.dart';
 
 class EditPost extends StatefulWidget{
   final Post post;
+  final int currentScreen;
   const EditPost({
     Key? key, required this.post,
+    required this.currentScreen,
     // required this.onPressed
   }) : super(key: key);
   @override
@@ -21,11 +23,12 @@ class _EditPostState extends State<EditPost> {
 
   @override
   Widget build(BuildContext context) {
-    return buildApp(widget.post);
+    return buildApp(widget.post, widget.currentScreen);
   }
 
-  Widget buildApp(Post post) {
+  Widget buildApp(Post post, int currentScreen) {
     TextEditingController describeController = TextEditingController();
+    describeController.text = post.described;
     FocusNode describedNode = FocusNode();
     return Scaffold(
         appBar: AppBar(
@@ -46,8 +49,13 @@ class _EditPostState extends State<EditPost> {
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
                     editPost(post, describeController.text);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                DefaultScreen(currentScreen: currentScreen)),
+                        ModalRoute.withName('/'));
                   },
                   style: ElevatedButton.styleFrom(
                       primary: primaryColor,

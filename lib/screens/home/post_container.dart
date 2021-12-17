@@ -8,12 +8,18 @@ import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post_view_screen.dart';
 import '../../constants.dart';
+import '../../default_screen.dart';
 import '../../util/util.dart';
 import 'edit_post.dart';
 
 class PostContainer extends StatelessWidget {
   final Post post;
-  const PostContainer({Key? key, required this.post}) : super(key: key);
+  final int currentScreen;
+  const PostContainer({
+    Key? key,
+    required this.post,
+    required this.currentScreen,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +33,7 @@ class PostContainer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _PostHeader(post: post),
+                _PostHeader(post: post, currentScreen: currentScreen,),
                 const SizedBox(height: 4.0),
                 Text(post.described),
                 post.images.isNotEmpty
@@ -69,10 +75,11 @@ class PostContainer extends StatelessWidget {
 
 class _PostHeader extends StatelessWidget {
   final Post post;
-
+  final int currentScreen;
   const _PostHeader({
     Key? key,
     required this.post,
+    required this.currentScreen,
   }) : super(key: key);
 
   @override
@@ -142,11 +149,11 @@ class _PostHeader extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EditPost(post: post)),
+                          builder: (context) => EditPost(post: post, currentScreen: currentScreen,)),
                     );
                     break;
                   case 'Delete':
-                    showDeleteAlertDialog(context, post);
+                    showDeleteAlertDialog(context, post, currentScreen);
                     break;
                   case 'Report':
                     showReportAlertDialog(context, post);
@@ -186,24 +193,13 @@ class PostStats extends StatefulWidget {
 
 class _PostStats extends State<PostStats> {
   final Post post;
-
   _PostStats({
     required this.post,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-        future: isLiked(post),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (!snapshot.hasData) {
-            // while data is loading:
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            bool isLiked = snapshot.data!;
-            return Column(
+    return Column(
               children: [
                 Row(
                   children: [
@@ -242,7 +238,7 @@ class _PostStats extends State<PostStats> {
                             children: [
                               Icon(
                                 Icons.thumb_up_alt_rounded,
-                                color: isLiked ? likeColor : unlikeColor,
+                                color: post.isLikedBy ? likeColor : unlikeColor,
                                 size: 20.0,
                               ),
                               const SizedBox(width: 4.0),
@@ -251,9 +247,9 @@ class _PostStats extends State<PostStats> {
                           ),
                         ),
                         onTap: () {
-                          // setState(() {
-                          //   isLikedBy = !isLikedBy;
-                          // });
+                          setState(() {
+                            post.isLikedBy = !post.isLikedBy;
+                          });
                           likePost(post);
                         },
                       ),
@@ -300,12 +296,12 @@ class _PostStats extends State<PostStats> {
                 ])
               ],
             );
-          }
-        });
+        //   }
+        // });
   }
 }
 
-showDeleteAlertDialog(BuildContext context, Post post) {
+showDeleteAlertDialog(BuildContext context, Post post, int currentScreen) {
   // set up the buttons
   Widget cancelButton = TextButton(
     child: Text("Cancel"),
@@ -317,8 +313,12 @@ showDeleteAlertDialog(BuildContext context, Post post) {
     child: Text("OK"),
     onPressed: () {
       deletePost(post);
-      Navigator.of(context).pop();
-    },
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  DefaultScreen(currentScreen: currentScreen)),
+          ModalRoute.withName('/'));    },
   );
 
   // set up the AlertDialog

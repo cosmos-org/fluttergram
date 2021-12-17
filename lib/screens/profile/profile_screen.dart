@@ -300,7 +300,7 @@ Widget myPost() {
       // return PostContainer(post: list[0]);
       return Wrap(
         spacing: 10, // set spacing here
-        children: createPostList(list),
+        children: createPostList(list, 3),
       );
     }
   );
