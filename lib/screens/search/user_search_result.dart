@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/screens/profile/different_user_profile.dart';
 import '../../constants.dart';
+import '../../default_screen.dart';
 import '../../util/util.dart';
 const String getFileUrl = hostname+ '/files/';
 
 class UserSearchedList extends StatelessWidget {
   final List<User> users;
-
-
   UserSearchedList({Key? key, required this.users});
 
   @override
@@ -57,8 +59,23 @@ class UserSearched extends StatelessWidget {
           BoxConstraints(minHeight: MediaQuery.of(context).size.height),
 
           child: InkWell(
-            onTap: () {
-              print('tapped');
+            onTap: () async{
+              if (user.id == await getCurrentUserId()){
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            DefaultScreen(currentScreen: 3)),
+                    ModalRoute.withName('/'));
+              }
+              else {
+                Profile profile = await showAnotherProfile(user.id);
+                String status = await getStatusUser(user.id);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DUserProfileScreen(profile: profile, status: status))
+                );
+              }
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

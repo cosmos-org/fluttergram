@@ -6,7 +6,6 @@ import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post.dart';
-import 'package:fluttergram/screens/home/post_container.dart';
 import 'package:fluttergram/screens/home/upload_post.dart';
 import 'package:fluttergram/screens/login/login_screen.dart';
 import 'package:fluttergram/screens/profile/change_password.dart';

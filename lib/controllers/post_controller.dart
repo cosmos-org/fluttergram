@@ -23,11 +23,27 @@ Future<List<Post>> getPosts() async {
   return ls;
 }
 
+Future<List<Post>> getPostsByUserId(String userId) async {
+  String token = await getToken();
+  final response = await http.get(
+      Uri.parse(hostname + postGetListEndpoint + '?page=0' + '&userId=' + userId),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+  var ls = <Post>[];
+  for (var element in resp['data']) {
+    ls.add(Post.fromJson(element));
+  }
+  return ls;
+}
+
 Future<List<Post>> getMyPosts() async {
   String token = await getToken();
   String myId = await getCurrentUserId();
   final response = await http.get(
-      Uri.parse(hostname + postGetListEndpoint + '?page=0' + '?userId=' + myId),
+      Uri.parse(hostname + postGetListEndpoint + '?page=0' + '&userId=' + myId),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'authorization': 'bearer ' + token,
