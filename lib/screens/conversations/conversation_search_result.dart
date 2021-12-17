@@ -17,7 +17,7 @@ class ConversationSearchedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 550,
+      height: 399,
       child:ListView.builder(
           itemCount: conversations.length,
           itemBuilder: (_, index) => InkWell(
@@ -41,7 +41,7 @@ class ConversationSearchedList extends StatelessWidget {
                   );
                 }
               }, // move to chat screen
-              child: ConversationSearched(conversation: conversations[index]!)
+              child: ConversationSearched(conversation: conversations[index])
           )
       )
     );
@@ -70,6 +70,9 @@ class ConversationSearched extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blue),
+      ),
       margin: const EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: Padding(
         padding:

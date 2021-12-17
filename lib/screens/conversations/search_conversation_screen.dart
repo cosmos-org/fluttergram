@@ -43,7 +43,10 @@ class _SearchConversationScreenState extends State<SearchConversationScreen> {
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+            margin: const EdgeInsets.only(left: 20.0, right: 20.0,top: 50,bottom: 0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blue),
+            ),
             child:TextField(
 //    ...,other fields
                 decoration: InputDecoration(
@@ -64,9 +67,10 @@ class _SearchConversationScreenState extends State<SearchConversationScreen> {
                 }
             ),
           ),
-          SizedBox(
-            height:  20,
-          ),
+          // SizedBox(
+          //   decoration: ,
+          //   height:  5,
+          // ),
           ConversationSearchResultsListView(searchTerm: selectedTerm,conversations:widget.conversations),
         ],),
       );
@@ -82,15 +86,7 @@ class ConversationSearchResultsListView extends StatelessWidget {
     @required this.searchTerm,
     @required this.conversations,
   }) : super(key: key);
-  List<User> extractUserFromConversations(List<Conversation> convers){
-   var  userLs = <User>[];
-    for (var element in convers)
-      // resp['data'].foreach((element)
-        {
-      userLs.add(element.partnerUser ?? User.fromJson({}));
-    };
-    return userLs;
-  }
+
   @override
   Widget build(BuildContext context) {
     if (searchTerm == null) {
@@ -128,7 +124,12 @@ class ConversationSearchResultsListView extends StatelessWidget {
           // data loaded:
           final conversations = snapshot.data!;
           if (conversations.length > 0)
-            return ConversationSearchedList(conversations: conversations);
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+              ),
+              child: ConversationSearchedList(conversations: conversations),
+            );
           else
             return  Center(
               child: Text(

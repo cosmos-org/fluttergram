@@ -3,18 +3,19 @@ import '../../models/conversation_model.dart';
 import 'dart:async';
 import 'conversation_controller.dart';
 class MessageStreamModel{
-  late Stream<List<Message>> stream;
+  late Stream<bool> stream;
   late bool hasMore;
   late bool _isLoading;
   late Conversation _data;
-  late StreamController<List<Message>> _controller;
+  late StreamController<bool> _controller;
   late String chatId;
   MessageStreamModel(t_chatId,conversation) {
-    _controller = StreamController<List<Message>>.broadcast();
+    _controller = StreamController<bool>.broadcast();
     _data = conversation;
+
     _isLoading = false;
-    stream = _controller.stream.map((List<Message> msgList) {
-      return msgList;
+    stream = _controller.stream.map((bool signal) {
+      return signal;
     });
     hasMore = true;
     chatId = t_chatId;
@@ -41,13 +42,12 @@ class MessageStreamModel{
       // {
       //   _data.insert(0, msg);
       // };
-      print('pre data');
-      print(_data.messages.length);
+
       _data.messages.addAll(msgList);
-      print('post data');
-      print(_data.messages.length);
-      hasMore = (msgList.length > 0);
-      _controller.add(_data.messages);
+
+      hasMore = (msgList.length >= 50);
+
+      _controller.add(_data.messages.length > 0);
     });
 
   }

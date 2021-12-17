@@ -55,9 +55,9 @@ Future<List<Conversation>> getConversationsAPI() async {
         {
           // print('call from conversation');
 
-          var messages = await getMessagesAPI(element['_id'],0);
+          // var messages = await getMessagesAPI(element['_id'],0);
 
-          // var messages = <Message>[];
+          var messages = <Message>[];
           // print('load conver');
           // print(z);
           ls.add(Conversation.fromJson(handleJson(element,messages)));
@@ -134,7 +134,7 @@ Future<List<Conversation>> searchConversationAPI(String keyword,List<Conversatio
     var  userLs = <String>[];
     for (var element in convers)
         {
-      userLs.add(element.partnerUser!.id! ?? '');
+      userLs.add(element.partnerUser!.id!);
     };
     return userLs;
   }

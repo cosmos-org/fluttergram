@@ -54,7 +54,6 @@ class ChatScreenState extends State<ChatScreen> {
         rows: 4,
         columns: 7,
         onEmojiSelected: (emoji, category) {
-          print(emoji);
           setState(() {
             _controller.text = _controller.text + emoji.emoji;
             sendButton = true;
@@ -62,7 +61,9 @@ class ChatScreenState extends State<ChatScreen> {
         });
 
     _scrollController.addListener(() {
+
       if (_scrollController.position.maxScrollExtent == _scrollController.offset) {
+
         this.currentPage = this.currentPage + 1;
         _messageStreamModel.loadMore(page: this.currentPage);
       }
@@ -71,7 +72,6 @@ class ChatScreenState extends State<ChatScreen> {
 
     getCurrentUserId().then((value){
       currentUserId  =value;
-
       setState((){
         return;
       });
@@ -95,11 +95,7 @@ class ChatScreenState extends State<ChatScreen> {
       return;
     });
   }
-  // void handleNewMessageFromCurrent(Message msg){
-  //   setState((){
-  //     return;
-  //   });
-  // }
+
   void sendMessage(String text) async {
     var chatId =  widget.conversation.id;
     var receiveUserId = widget.conversation.partnerUser!.id;
@@ -120,9 +116,7 @@ class ChatScreenState extends State<ChatScreen> {
     }
 
   }
-  Future<void> nth(){
-    return Future.value();
-  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -236,14 +230,16 @@ class ChatScreenState extends State<ChatScreen> {
                           builder:(BuildContext _context,AsyncSnapshot _snapshot){
 
                           if (!_snapshot.hasData){
+
                               return Center(child: CircularProgressIndicator());
                           } else{
                             // loadMore(_snapshot.data);
-                            print('current ms ls');
-                            print(widget.conversation.messages.length);
+
+
                             return RefreshIndicator(
-                              onRefresh: nth,
+                              onRefresh: () {return Future.value();},
                               child:ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
                                 reverse: true,
                                 shrinkWrap: true,
                                 controller: _scrollController,
@@ -255,6 +251,7 @@ class ChatScreenState extends State<ChatScreen> {
                                       height: 70,
                                     );
                                   }else if (index == widget.conversation.messages.length  && _messageStreamModel.hasMore){
+
                                     return Padding(
                                       padding: EdgeInsets.symmetric(vertical: 32.0),
                                       child: Center(child: CircularProgressIndicator()),
@@ -318,7 +315,6 @@ class ChatScreenState extends State<ChatScreen> {
                                     maxLines: 5,
                                     minLines: 1,
                                     onChanged: (value) {
-                                      print(value);
                                       if (value.length > 0) {
                                         setState(() {
                                           sendButton = true;
