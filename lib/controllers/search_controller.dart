@@ -60,6 +60,7 @@ Future<List<Post>> getSearchPostResultAPI( keyword) async {
     for (var element in resp['data'])
       // resp['data'].foreach((element)
         {
+          print(element);
        ls.add(Post.fromJson(element));
     };
     // );

@@ -14,7 +14,12 @@ import 'edit_post.dart';
 
 class PostContainer extends StatelessWidget {
   final Post post;
-  const PostContainer({Key? key, required this.post}) : super(key: key);
+  final int currentScreen;
+  const PostContainer({
+    Key? key,
+    required this.post,
+    required this.currentScreen,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,7 @@ class PostContainer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _PostHeader(post: post),
+                _PostHeader(post: post, currentScreen: currentScreen,),
                 const SizedBox(height: 4.0),
                 Text(post.described),
                 post.images.isNotEmpty
@@ -70,10 +75,11 @@ class PostContainer extends StatelessWidget {
 
 class _PostHeader extends StatelessWidget {
   final Post post;
-
+  final int currentScreen;
   const _PostHeader({
     Key? key,
     required this.post,
+    required this.currentScreen,
   }) : super(key: key);
 
   @override
@@ -143,11 +149,11 @@ class _PostHeader extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EditPost(post: post)),
+                          builder: (context) => EditPost(post: post, currentScreen: currentScreen,)),
                     );
                     break;
                   case 'Delete':
-                    showDeleteAlertDialog(context, post);
+                    showDeleteAlertDialog(context, post, currentScreen);
                     break;
                   case 'Report':
                     showReportAlertDialog(context, post);
@@ -187,15 +193,12 @@ class PostStats extends StatefulWidget {
 
 class _PostStats extends State<PostStats> {
   final Post post;
-  bool isLikedBy = false;
   _PostStats({
     required this.post,
-    // this.isLikedBy = await (isLiked(this.post));
   });
 
   @override
   Widget build(BuildContext context) {
-    isLikedBy = (isLiked(post)) as bool;
     return Column(
               children: [
                 Row(
@@ -235,7 +238,7 @@ class _PostStats extends State<PostStats> {
                             children: [
                               Icon(
                                 Icons.thumb_up_alt_rounded,
-                                color: isLikedBy ? likeColor : unlikeColor,
+                                color: post.isLikedBy ? likeColor : unlikeColor,
                                 size: 20.0,
                               ),
                               const SizedBox(width: 4.0),
@@ -244,9 +247,9 @@ class _PostStats extends State<PostStats> {
                           ),
                         ),
                         onTap: () {
-                          // setState(() {
-                          //   isLikedBy = !isLikedBy;
-                          // });
+                          setState(() {
+                            post.isLikedBy = !post.isLikedBy;
+                          });
                           likePost(post);
                         },
                       ),
@@ -298,7 +301,7 @@ class _PostStats extends State<PostStats> {
   }
 }
 
-showDeleteAlertDialog(BuildContext context, Post post) {
+showDeleteAlertDialog(BuildContext context, Post post, int currentScreen) {
   // set up the buttons
   Widget cancelButton = TextButton(
     child: Text("Cancel"),
@@ -314,7 +317,7 @@ showDeleteAlertDialog(BuildContext context, Post post) {
           context,
           MaterialPageRoute(
               builder: (BuildContext context) =>
-                  DefaultScreen(currentScreen: 0)),
+                  DefaultScreen(currentScreen: currentScreen)),
           ModalRoute.withName('/'));    },
   );
 
