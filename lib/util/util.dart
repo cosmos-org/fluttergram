@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 import '../socket/custom_socket.dart';
@@ -19,6 +21,7 @@ String getStaticURL(String fileName){
 
 //Calculate time-ago format of a mongo-date-string
 String timeAgo(String dateMongo) {
+  if (dateMongo == '') return '';
   final t = DateTime.parse(dateMongo);
   Duration diff = DateTime.now().difference(t);
   if (diff.inDays > 365)
@@ -151,6 +154,12 @@ List inputValidation(String screen, String username, String phone,
       break;
   }
   return [true, "Valid"];
+}
+
+Future<String> encodeFile(File file) async {
+  var bytes = (await file.readAsBytes());
+  String base64Encode = base64.encode(bytes);
+  return base64Encode;
 }
 
 

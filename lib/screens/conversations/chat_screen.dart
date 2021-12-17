@@ -3,30 +3,18 @@ import 'package:fluttergram/models/conversation_model.dart';
 import 'package:fluttergram/models/message_model.dart';
 import '../../models/user_model.dart';
 // Controllers
-import '../../controllers/conversation_controller.dart';
+import '../../controllers/conversation/conversation_controller.dart';
 // Others
 import '../../constants.dart';
 import '../../util/util.dart';
 import '../../socket/custom_socket.dart';
-// import 'package:emoji_picker/emoji_picker.dart';
-import 'package:flutter_svg/svg.dart';
-class MessageCard extends StatelessWidget {
-  const MessageCard({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
+import 'package:emoji_picker/emoji_picker.dart';
+import '../../controllers/conversation/message_stream_controller.dart';
 
-class ChatScreenBody extends StatelessWidget {
-  const ChatScreenBody({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
+
+
 
 
 class ChatScreen extends StatefulWidget {
@@ -45,28 +33,45 @@ class ChatScreenState extends State<ChatScreen> {
   ScrollController _scrollController = ScrollController();
   String currentUserId = '';
 
-  // late EmojiPicker cachedPicker;
+  late int currentPage;
+  late MessageStreamModel _messageStreamModel;
+  late EmojiPicker cachedPicker;
+  // Future<void> lm() {
+  //   print('on ref');
+  //   this.currentPage = this.currentPage + 1;
+  //   return _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
+  //   // setState((){
+  //   //   this.currentPage = this.currentPage + 1;
+  //   //   _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
+  //   // });
+  //
+  // }
   @override
   void initState() {
-    super.initState();
-    // cachedPicker = EmojiPicker(
-    //     rows: 4,
-    //     columns: 7,
-    //     onEmojiSelected: (emoji, category) {
-    //       print(emoji);
-    //       setState(() {
-    //         _controller.text = _controller.text + emoji.emoji;
-    //         sendButton = true;
-    //       });
-    //     });
+    currentPage = 0;
+    _messageStreamModel = MessageStreamModel(widget.conversation.id,widget.conversation);
+    cachedPicker = EmojiPicker(
+        rows: 4,
+        columns: 7,
+        onEmojiSelected: (emoji, category) {
+          setState(() {
+            _controller.text = _controller.text + emoji.emoji;
+            sendButton = true;
+          });
+        });
+
+    _scrollController.addListener(() {
+
+      if (_scrollController.position.maxScrollExtent == _scrollController.offset) {
+
+        this.currentPage = this.currentPage + 1;
+        _messageStreamModel.loadMore(page: this.currentPage);
+      }
+    });
+
+
     getCurrentUserId().then((value){
       currentUserId  =value;
-      _scrollController.animateTo(
-          _scrollController
-              .position.maxScrollExtent,
-          duration:
-          Duration(milliseconds: 300),
-          curve: Curves.easeOut);
       setState((){
         return;
       });
@@ -79,7 +84,9 @@ class ChatScreenState extends State<ChatScreen> {
         });
       }
     });
+    super.initState();
   }
+
   void handleNewMessage(Message msg){
     if (!msg.checkMsgUserId(widget.conversation.partnerUser!.id)) {
       return;
@@ -88,27 +95,26 @@ class ChatScreenState extends State<ChatScreen> {
       return;
     });
   }
-  void handleNewMessageFromCurrent(Message msg){
-    setState((){
-      return;
-    });
-  }
+
   void sendMessage(String text) async {
     var chatId =  widget.conversation.id;
     var receiveUserId = widget.conversation.partnerUser!.id;
     Message sentMsg = await sendMessageAPI(text, chatId, receiveUserId );
     if(sentMsg.id != '') {
       globalCustomSocket.sendMessage(sentMsg,receiveUserId);
-      handleNewMessageFromCurrent(sentMsg);
+      setState((){
+        sendButton = false;
+      });
+      // if (_scrollController.position.pixels != 0) {
+      //   _scrollController.animateTo(
+      //       _scrollController
+      //           .position.minScrollExtent,
+      //       duration:
+      //       Duration(milliseconds: 300),
+      //       curve: Curves.easeOut);
+      // }
     }
-    if (_scrollController.position.pixels != 0) {
-      _scrollController.animateTo(
-          _scrollController
-              .position.maxScrollExtent,
-          duration:
-          Duration(milliseconds: 300),
-          curve: Curves.easeOut);
-    }
+
   }
 
   @override
@@ -219,41 +225,69 @@ class ChatScreenState extends State<ChatScreen> {
                 children: [
                   Expanded(
                     // height: MediaQuery.of(context).size.height - 150,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      controller: _scrollController,
-                      itemCount: widget.conversation.messages.length + 1,
-                      itemBuilder: (context, index)  {
-                        if (index == widget.conversation.messages.length) {
-                          return Container(
-                            height: 70,
-                          );
-                        }
-                        if (widget.conversation.messages[index].checkMsgUserId(this.currentUserId)) {
-                          return OwnMessageCard(
-                            message: widget.conversation.messages[index].content.toString(),
-                            time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
-                          );
-                        } else {
+                    child: StreamBuilder(
+                          stream: _messageStreamModel.stream,
+                          builder:(BuildContext _context,AsyncSnapshot _snapshot){
 
-                          return Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                CircleAvatar(
-                                  backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
-                                  radius: 12,
-                                ),
-                                ReplyCard(
-                                  message: widget.conversation.messages[index].content.toString(),
-                                  time: dateTimeFormat(widget.conversation.messages[index].createdAt.toString()),
-                                )
-                              ]
-                          );
-                        }
-                      },
+                          if (!_snapshot.hasData){
+
+                              return Center(child: CircularProgressIndicator());
+                          } else{
+                            // loadMore(_snapshot.data);
+
+
+                            return RefreshIndicator(
+                              onRefresh: () {return Future.value();},
+                              child:ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                reverse: true,
+                                shrinkWrap: true,
+                                controller: _scrollController,
+                                itemCount: widget.conversation.messages.length + 2,
+                                itemBuilder: (context, ind)  {
+                                  int index = ind - 1;
+                                  if (index ==  -1 ) {
+                                    return Container(
+                                      height: 70,
+                                    );
+                                  }else if (index == widget.conversation.messages.length  && _messageStreamModel.hasMore){
+
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 32.0),
+                                      child: Center(child: CircularProgressIndicator()),
+                                    );
+                                  } else if (index == widget.conversation.messages.length  && !_messageStreamModel.hasMore){
+                                    return Container();
+                                  }
+                                  if ( widget.conversation.messages[index].checkMsgUserId(this.currentUserId)) {
+                                    return OwnMessageCard(
+                                      message:  widget.conversation.messages[index].content.toString(),
+                                      time: dateTimeFormat( widget.conversation.messages[index].createdAt.toString()),
+                                    );
+                                  } else {
+
+                                    return Row(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
+                                            radius: 12,
+                                          ),
+                                          ReplyCard(
+                                            message:  widget.conversation.messages[index].content.toString(),
+                                            time: dateTimeFormat( widget.conversation.messages[index].createdAt.toString()),
+                                          )
+                                        ]
+                                    );
+                                  }
+                                },
+                              )
+                            );
+                          }
+                      }
                     ),
                   ),
                   Align(
@@ -281,7 +315,6 @@ class ChatScreenState extends State<ChatScreen> {
                                     maxLines: 5,
                                     minLines: 1,
                                     onChanged: (value) {
-                                      print(value);
                                       if (value.length > 0) {
                                         setState(() {
                                           sendButton = true;
@@ -359,18 +392,9 @@ class ChatScreenState extends State<ChatScreen> {
                                     ),
                                     onPressed: () {
                                       if (sendButton) {
-                                        _scrollController.animateTo(
-                                            _scrollController
-                                                .position.maxScrollExtent,
-                                            duration:
-                                            Duration(milliseconds: 300),
-                                            curve: Curves.easeOut);
                                         sendMessage(
                                             _controller.text);
                                         _controller.clear();
-                                        setState(() {
-                                          sendButton = false;
-                                        });
                                       }
                                     },
                                   ),

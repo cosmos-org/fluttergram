@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/constants.dart';
+import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post.dart';
@@ -113,172 +115,194 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
         )
       ],
     ),
-    body: Container(
-      width: double.infinity,
-      decoration: BoxDecoration(color: Colors.white),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+    body: SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(color: Colors.white),
+        child: Padding(
+            padding: const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Color(0xff74EDED),
-                  backgroundImage:
-                  getImageProviderNetWork(profile.user.avatar!.fileName),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Color(0xff74EDED),
+                      backgroundImage:
+                      getImageProviderNetWork(profile.user.avatar!.fileName),
+                    ),
+                    Row(
                       children: [
-                        Text(
-                          profile.numPosts.toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          "Posts",
-                          style: TextStyle(
-                            fontSize: 15,
-                            letterSpacing: 0.4,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          profile.numFriends.toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          "Friends",
-                          style: TextStyle(
-                            letterSpacing: 0.4,
-                            fontSize: 15,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          profile.user.gender!,
-                          style: TextStyle(
-                            letterSpacing: 0.4,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          "Gender",
-                          style: TextStyle(
-                            letterSpacing: 0.4,
-                            fontSize: 15,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                  ],
-                )
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Text(
-              profile.user.username,
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                letterSpacing: 0.4,
-              ),
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Text(
-              profile.user.description!,
-              style: TextStyle(
-                letterSpacing: 0.4,
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            actions(context, profile.user),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 85,
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: highlightItems.length,
-                itemBuilder: (context, index) {
-                  return Row(
-                    children: [
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.grey,
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: CircleAvatar(
-                                backgroundImage:
-                                AssetImage(highlightItems[index].thumbnail),
-                                radius: 28,
+                        Column(
+                          children: [
+                            Text(
+                              profile.numPosts.toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              highlightItems[index].title,
-                              style: TextStyle(fontSize: 13),
+                            Text(
+                              "Posts",
+                              style: TextStyle(
+                                fontSize: 15,
+                                letterSpacing: 0.4,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              profile.numFriends.toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
+                            Text(
+                              "Friends",
+                              style: TextStyle(
+                                letterSpacing: 0.4,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              profile.user.gender!,
+                              style: TextStyle(
+                                letterSpacing: 0.4,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              "Gender",
+                              style: TextStyle(
+                                letterSpacing: 0.4,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  profile.user.username,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  profile.user.description!,
+                  style: TextStyle(
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                actions(context, profile.user),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 85,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: highlightItems.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                    AssetImage(highlightItems[index].thumbnail),
+                                    radius: 28,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  highlightItems[index].title,
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
                           )
                         ],
-                      ),
-                      SizedBox(
-                        width: 10,
-                      )
-                    ],
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: Posts(),
+                      );
+                    },
+                  ),
+                ),
+                myPost()
+              ],
             )
-          ],
         ),
       ),
     )
+  );
+}
+
+Widget myPost() {
+  return FutureBuilder<List<Post>>(
+    future: getMyPosts(),
+    builder: (ctx, snapshot) {
+      if (snapshot.connectionState != ConnectionState.done) {
+        return Center(
+            child: CircularProgressIndicator()
+        );
+      };
+      if (snapshot.hasError) {
+        return Text("Error");
+      };
+      List<Post> list = snapshot.data as List<Post>;
+      // return PostContainer(post: list[0]);
+      return Wrap(
+        spacing: 10, // set spacing here
+        children: createPostList(list),
+      );
+    }
   );
 }
 
@@ -324,5 +348,9 @@ List<Highlight> highlightItems = [
   Highlight(thumbnail: 'assets/images/swimming.jpg', title: "Pool 🌊"),
   Highlight(thumbnail: 'assets/images/yoga.jpg', title: "Yoga 💪🏻"),
 ];
+
+
+
+
 
 

@@ -17,14 +17,21 @@ const normalFontWeight = FontWeight.normal;
 const boldFontWeight = FontWeight.bold;
 
 
-// const hostname = "http://localhost:8000";
+// const hostname = "https://murmuring-inlet-24969.herokuapp.com";
+// const socketHostname = "https://tranquil-garden-75087.herokuapp.com:7070";
+
+
+// const hostname = "http://localhost:8000"; //10.0.2.2
 // const socketHostname = "http://localhost:7070";
 
-const hostname = "http://10.0.2.2:8000";
+
+const hostname = "http://10.0.2.2:8000"; //10.0.2.2
 const socketHostname = "http://10.0.2.2:7070";
+
 
 // const hostname = "https://murmuring-inlet-24969.herokuapp.com";
 // const socketHostname = "https://tranquil-garden-75087.herokuapp.com";
+
 //API For Users
 const userSignUpEndpoint = "/api/v1/users/register/";
 const userLogInEndpoint = "/api/v1/users/login/";
@@ -34,6 +41,12 @@ const userChangePasswordEndpoint = "/api/v1/users/change-password";
 const userGetAnotherEndpoint = "/api/v1/users/show/";
 //API For Friend
 const friendGetListEndpoint = "/api/v1/friends/list";
+const friendGetListsRequestsEndPoint = "/api/v1/friends/get-requested-friend";
+const friendGetListsSentRequestEndPoint = "/api/v1/friends/get-sent-request";
+const friendSetRemove = "/api/v1/friends/set-remove";
+const friendSetRequest = "/api/v1/friends/set-request-friend";
+const friendSetAccept = "/api/v1/friends/set-accept";
+const friendSetRemoveRequest = "/api/v1/friends/set-remove-request";
 
 //API For Post
 const postGetListEndpoint = "/api/v1/posts/list";

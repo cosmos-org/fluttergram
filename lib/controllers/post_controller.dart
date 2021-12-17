@@ -23,6 +23,39 @@ Future<List<Post>> getPosts() async {
   return ls;
 }
 
+Future<List<Post>> getPostsByUserId(String userId) async {
+  String token = await getToken();
+  final response = await http.get(
+      Uri.parse(hostname + postGetListEndpoint + '?page=0' + '&userId=' + userId),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+  var ls = <Post>[];
+  for (var element in resp['data']) {
+    ls.add(Post.fromJson(element));
+  }
+  return ls;
+}
+
+Future<List<Post>> getMyPosts() async {
+  String token = await getToken();
+  String myId = await getCurrentUserId();
+  final response = await http.get(
+      Uri.parse(hostname + postGetListEndpoint + '?page=0' + '&userId=' + myId),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+  var ls = <Post>[];
+  for (var element in resp['data']) {
+    ls.add(Post.fromJson(element));
+  }
+  return ls;
+}
+
 Future<bool> isLiked(Post post) async {
   String id = await getCurrentUserId();
   for (var userId in post.like) {
@@ -114,7 +147,7 @@ Future<int> createPost(
   String token = await getToken();
   String url = hostname + postCreateEndpoint;
   String images_value = "[]",
-      video_value = "[]";
+      videos_value = "[]";
   if (images.isNotEmpty) {
     images_value = '[';
     for (int i = 0; i < images.length; i++) {
@@ -128,11 +161,18 @@ Future<int> createPost(
   }
 
   if (videos.isNotEmpty) {
-    String video_1 = videos[0];
-    video_value = '[$video_1]';
+    videos_value = '[';
+    for (int i = 0; i < videos.length; i++) {
+      String b64 = videos[i];
+      videos_value += '"data:video/mp4;base64,$b64"';
+      if (i != videos.length - 1) {
+        videos_value += ', ';
+      } else
+        videos_value += ']';
+    }
   }
   String body =
-      '{"described": "$description", "images": $images_value, "videos": $video_value}';
+      '{"described": "$description", "images": $images_value, "videos": $videos_value}';
 
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
