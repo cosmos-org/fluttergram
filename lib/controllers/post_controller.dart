@@ -106,6 +106,7 @@ Future<void> editPost(Post post, String described) async{
   String url = hostname + postEditEndpoint + post.id;
   List<String> images = [];
   List<String> videos =[];
+  print(described);
   for(var image in post.images){
       images.add(encodeImage(image.fileName));
   }

@@ -95,10 +95,10 @@ NetworkImage getImageProviderNetWork(fileName) {
 }
 
 String encodeImage(fileName) {
-  // Image image = Image.network( getFileUrl + fileName);
-  // File file =
   final bytes = Io.File(getFileUrl + fileName).readAsBytesSync();
-  return base64Encode(bytes);
+  String base64 = base64Encode(bytes);
+  print(base64);
+  return base64;
 }
 
 Future<void> setCurrentUserId(String currentUserId) async {
