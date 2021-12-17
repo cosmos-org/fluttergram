@@ -13,6 +13,9 @@ class Image {
       'fileSize': fileSize,
     };
   }
+  Map toJson(){
+    return {'type': type, 'id': id, 'fileName':fileName, 'fileSize': fileSize};
+  }
   Image({
     required this.id,
     required this.type,

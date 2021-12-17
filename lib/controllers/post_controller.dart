@@ -44,10 +44,10 @@ Future<bool> isLiked(Post post) async {
   String id = await getCurrentUserId();
   for (var userId in post.like) {
     if (userId == id) {
-      return true;
+      return Future<bool>.value(true);
     }
   }
-  return false;
+  return Future<bool>.value(false);
 }
 
 Future<void> likePost(Post post) async {
@@ -99,8 +99,14 @@ Future<void> createComment(Post post, String content) async{
 Future<void> editPost(Post post, String described) async{
   String token = await getToken();
   String url = hostname + postEditEndpoint + post.id;
-  String images = post.images.toString();
-  String videos = post.videos.toString();
+  List<String> images = [];
+  List<String> videos =[];
+  for(var image in post.images){
+      images.add(jsonEncode(image));
+  }
+  for(var video in post.videos){
+    videos.add(jsonEncode(video));
+  }
   String body = '{"described": "$described", "images": "$images", "videos": "$videos"}';
 
   final response = await http.post(Uri.parse(url),

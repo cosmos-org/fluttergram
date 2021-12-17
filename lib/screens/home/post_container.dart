@@ -8,6 +8,7 @@ import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post_view_screen.dart';
 import '../../constants.dart';
+import '../../default_screen.dart';
 import '../../util/util.dart';
 import 'edit_post.dart';
 
@@ -186,24 +187,16 @@ class PostStats extends StatefulWidget {
 
 class _PostStats extends State<PostStats> {
   final Post post;
-
+  bool isLikedBy = false;
   _PostStats({
     required this.post,
+    // this.isLikedBy = await (isLiked(this.post));
   });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-        future: isLiked(post),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (!snapshot.hasData) {
-            // while data is loading:
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            bool isLiked = snapshot.data!;
-            return Column(
+    isLikedBy = (isLiked(post)) as bool;
+    return Column(
               children: [
                 Row(
                   children: [
@@ -242,7 +235,7 @@ class _PostStats extends State<PostStats> {
                             children: [
                               Icon(
                                 Icons.thumb_up_alt_rounded,
-                                color: isLiked ? likeColor : unlikeColor,
+                                color: isLikedBy ? likeColor : unlikeColor,
                                 size: 20.0,
                               ),
                               const SizedBox(width: 4.0),
@@ -300,8 +293,8 @@ class _PostStats extends State<PostStats> {
                 ])
               ],
             );
-          }
-        });
+        //   }
+        // });
   }
 }
 
@@ -317,8 +310,12 @@ showDeleteAlertDialog(BuildContext context, Post post) {
     child: Text("OK"),
     onPressed: () {
       deletePost(post);
-      Navigator.of(context).pop();
-    },
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  DefaultScreen(currentScreen: 0)),
+          ModalRoute.withName('/'));    },
   );
 
   // set up the AlertDialog

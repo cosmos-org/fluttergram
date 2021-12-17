@@ -26,6 +26,7 @@ class _EditPostState extends State<EditPost> {
 
   Widget buildApp(Post post) {
     TextEditingController describeController = TextEditingController();
+    describeController.text = post.described;
     FocusNode describedNode = FocusNode();
     return Scaffold(
         appBar: AppBar(
@@ -46,8 +47,13 @@ class _EditPostState extends State<EditPost> {
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
                     editPost(post, describeController.text);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                DefaultScreen(currentScreen: 0)),
+                        ModalRoute.withName('/'));
                   },
                   style: ElevatedButton.styleFrom(
                       primary: primaryColor,
