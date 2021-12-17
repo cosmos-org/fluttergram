@@ -354,13 +354,14 @@ Widget myPost(String userId, String status) {
           // return PostContainer(post: list[0]);
           return Wrap(
             spacing: 10, // set spacing here
-            children: createPostList(list),
+            children: createPostList(list, 3),
           );
         });
   } else
     return SizedBox.shrink();
 }
 
+// class ActionButton extends StatefulWidget {
 // class ActionButton extends StatefulWidget {
 //   String status;
 //   Profile profile;
