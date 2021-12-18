@@ -12,17 +12,30 @@ import '../../default_screen.dart';
 import '../../util/util.dart';
 import 'edit_post.dart';
 
-class PostContainer extends StatelessWidget {
+
+
+class PostContainer extends StatefulWidget {
   final Post post;
   final int currentScreen;
-  const PostContainer({
-    Key? key,
-    required this.post,
-    required this.currentScreen,
-  }) : super(key: key);
+  PostContainer({Key? key, required this.post, required this.currentScreen})
+      : super(key: key);
+
+  @override
+  _PostContainer createState() => _PostContainer(post, currentScreen);
+}
+
+class _PostContainer extends State<PostContainer> {
+  Post post;
+  int currentScreen;
+  String numLikes = '';
+  String numComments = '';
+
+  _PostContainer(this.post, this.currentScreen);
 
   @override
   Widget build(BuildContext context) {
+    numLikes = post.like.length.toString();
+    numComments = post.countComments.toString();
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5.0),
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -66,7 +79,7 @@ class PostContainer extends StatelessWidget {
             : const SizedBox.shrink(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: PostStats(post: post),
+          child: PostStats(post: post, numLikes: numLikes, numComments: numComments)
         ),
       ]),
     );
@@ -182,21 +195,42 @@ class _PostHeader extends StatelessWidget {
 
 class PostStats extends StatefulWidget {
   final Post post;
-  const PostStats({
+  String numLikes;
+  String numComments;
+
+  PostStats({
     Key? key,
     required this.post,
+    required this.numLikes,
+    required this.numComments,
   }) : super(key: key);
 
   @override
-  _PostStats createState() => _PostStats(post: post);
+  _PostStats createState() => _PostStats(post: post, numLikes: numLikes, numComments: numComments,);
 }
 
 class _PostStats extends State<PostStats> {
   final Post post;
+  String numLikes;
+  String numComments;
   _PostStats({
     required this.post,
+    required this.numLikes,
+    required this.numComments,
   });
 
+  void callBackNumLikes(int tmp){
+    setState(() {
+      var num = int.parse(numLikes);
+      numLikes = (num + tmp).toString();
+    });
+  }
+  void callBackNumComments(){
+    setState((){
+      var num = int.parse(numComments);
+      numComments = (num + 1).toString();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -210,14 +244,14 @@ class _PostStats extends State<PostStats> {
                     const SizedBox(width: 4.0),
                     Expanded(
                       child: Text(
-                        '${post.like.length}',
+                        numLikes,
                         style: TextStyle(
                           color: Colors.grey[600],
                         ),
                       ),
                     ),
                     Text(
-                      '${post.countComments} Comments',
+                      '${numComments} Comments',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -251,6 +285,13 @@ class _PostStats extends State<PostStats> {
                             post.isLikedBy = !post.isLikedBy;
                           });
                           likePost(post);
+                          if (post.isLikedBy){
+                            callBackNumLikes(1);
+                          }
+                          else{
+                            callBackNumLikes(-1);
+                          };
+
                         },
                       ),
                     ),
@@ -274,6 +315,7 @@ class _PostStats extends State<PostStats> {
                                     listComment: listComment,
                                     user: user)),
                           );
+                          callBackNumComments();
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0),

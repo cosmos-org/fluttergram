@@ -68,7 +68,7 @@ class Story extends StatelessWidget {
                       ),
                   ),
                   Text(
-                    user.username,
+                    user.username.split(' ').last,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 12.0,
