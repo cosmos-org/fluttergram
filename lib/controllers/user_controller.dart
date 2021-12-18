@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/util/util.dart';

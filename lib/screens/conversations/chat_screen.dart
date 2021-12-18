@@ -36,15 +36,7 @@ class ChatScreenState extends State<ChatScreen> {
   late int currentPage;
   late MessageStreamModel _messageStreamModel;
   late EmojiPicker cachedPicker;
-  // Future<void> lm() {
-  //   print('on ref');
-  //   this.currentPage = this.currentPage + 1;
-  //   return _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
-  //   // setState((){
-  //   //   this.currentPage = this.currentPage + 1;
-  //   //   _messageStreamModel.loadMore(clearCachedData: false, page: this.currentPage);
-  //   // });
-  //
+
   // }
   @override
   void initState() {
@@ -228,7 +220,11 @@ class ChatScreenState extends State<ChatScreen> {
                     child: StreamBuilder(
                           stream: _messageStreamModel.stream,
                           builder:(BuildContext _context,AsyncSnapshot _snapshot){
-
+                          if (_snapshot.hasError) {
+                            return Center(
+                              child: Text("Error")
+                            );
+                          };
                           if (!_snapshot.hasData){
 
                               return Center(child: CircularProgressIndicator());
@@ -406,17 +402,17 @@ class ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-                  // Align(
-                  //   alignment: Alignment.bottomCenter,
-                  //   child: Container(
-                  //     child: Column(
-                  //       mainAxisAlignment: MainAxisAlignment.end,
-                  //       children: [
-                  //         show ? cachedPicker : Container(),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          show ? cachedPicker : Container(),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
               onWillPop: () {

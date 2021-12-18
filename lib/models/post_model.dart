@@ -12,6 +12,7 @@ class Post {
   final List<Video> videos;
   final List<String> like;
   final int countComments;
+  bool isLikedBy;
 
   Post({
     required this.id,
@@ -21,7 +22,8 @@ class Post {
     this.images = const [],
     this.videos = const [],
     this.like = const [],
-    this.countComments = 0
+    this.countComments = 0,
+    this.isLikedBy = false,
   });
   factory Post.fromJson(Map<String, dynamic> json){
     var a = Post(
@@ -34,12 +36,13 @@ class Post {
       // Image.fromJson(json['avatar'] ?? {}),
       like: List<String>.from(json['like'].map((x)=>x)),
       countComments:json['countComments'] ?? 0 ,
+        isLikedBy: false
     );
     return a;
   }
 
   @override
   String toString() {
-    return 'Post{id: $id, author: $author, described: $described, createdAt: $createdAt, images: $images, videos: $videos, like: $like, countComments: $countComments}';
+    return 'Post{id: $id, author: $author, described: $described, createdAt: $createdAt, images: $images, videos: $videos, like: $like, countComments: $countComments}, isLikedBy: $isLikedBy';
   }
 }

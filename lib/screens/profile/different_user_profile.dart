@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/constants.dart';
-import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
@@ -354,13 +354,14 @@ Widget myPost(String userId, String status) {
           // return PostContainer(post: list[0]);
           return Wrap(
             spacing: 10, // set spacing here
-            children: createPostList(list),
+            children: createPostList(list, 3),
           );
         });
   } else
     return SizedBox.shrink();
 }
 
+// class ActionButton extends StatefulWidget {
 // class ActionButton extends StatefulWidget {
 //   String status;
 //   Profile profile;

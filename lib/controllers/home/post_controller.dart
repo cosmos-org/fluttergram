@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 Future<List<Post>> getPosts() async {
   String token = await getToken();
+  String id = await getCurrentUserId();
 
   final response = await http.get(
       Uri.parse(hostname + postGetListEndpoint + '?page=0'),
@@ -18,10 +19,44 @@ Future<List<Post>> getPosts() async {
 
   var ls = <Post>[];
   for (var element in resp['data']) {
-    ls.add(Post.fromJson(element));
+    Post p = Post.fromJson(element);
+    p.isLikedBy = false;
+    for(var userId in p.like){
+      if (userId == id){
+        p.isLikedBy = true;
+      }
+    }
+    ls.add(p);
   }
   return ls;
 }
+
+Future<List<Post>> getPostsByPage(int page) async {
+  String token = await getToken();
+  String id = await getCurrentUserId();
+
+  final response = await http.get(
+      Uri.parse(hostname + postGetListEndpoint + '?page='+ page.toString()),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+
+  var ls = <Post>[];
+  for (var element in resp['data']) {
+    Post p = Post.fromJson(element);
+    p.isLikedBy = false;
+    for(var userId in p.like){
+      if (userId == id){
+        p.isLikedBy = true;
+      }
+    }
+    ls.add(p);
+  }
+  return ls;
+}
+
 
 Future<List<Post>> getPostsByUserId(String userId) async {
   String token = await getToken();
@@ -39,6 +74,22 @@ Future<List<Post>> getPostsByUserId(String userId) async {
   return ls;
 }
 
+Future<Post> getPostById(String postId) async {
+  String token = await getToken();
+
+  final response = await http.get(
+      Uri.parse(hostname + postGetByIDEndpoint + postId),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+
+  Post p = Post.fromJson(resp['data']);
+
+  return p;
+}
+
 Future<List<Post>> getMyPosts() async {
   String token = await getToken();
   String myId = await getCurrentUserId();
@@ -51,20 +102,18 @@ Future<List<Post>> getMyPosts() async {
   var resp = jsonDecode(response.body);
   var ls = <Post>[];
   for (var element in resp['data']) {
-    ls.add(Post.fromJson(element));
+    Post p = Post.fromJson(element);
+    p.isLikedBy = false;
+    for(var userId in p.like){
+      if (userId == myId){
+        p.isLikedBy = true;
+      }
+    }
+    ls.add(p);
   }
   return ls;
 }
 
-Future<bool> isLiked(Post post) async {
-  String id = await getCurrentUserId();
-  for (var userId in post.like) {
-    if (userId == id) {
-      return true;
-    }
-  }
-  return false;
-}
 
 Future<void> likePost(Post post) async {
   String token = await getToken();
@@ -98,7 +147,6 @@ Future<void> deletePost(Post post) async{
       });
 }
 
-
 Future<void> createComment(Post post, String content) async{
   String token = await getToken();
   String url = hostname + postCreateCommentEndpoint + post.id;
@@ -115,9 +163,16 @@ Future<void> createComment(Post post, String content) async{
 Future<void> editPost(Post post, String described) async{
   String token = await getToken();
   String url = hostname + postEditEndpoint + post.id;
-  String images = post.images.toString();
-  String videos = post.videos.toString();
+  List<String> images = [];
+  List<String> videos =[];
+  for(var image in post.images){
+      // images.add(encodeImage(image.fileName));
+  }
+  for(var video in post.videos){
+    videos.add(jsonEncode(video));
+  }
   String body = '{"described": "$described", "images": "$images", "videos": "$videos"}';
+
 
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
@@ -125,6 +180,8 @@ Future<void> editPost(Post post, String described) async{
         'authorization': 'bearer ' + token,
       },
       body: body);
+  dynamic respBody = jsonDecode(response.body);
+
 }
 
 Future<List<Comment>> getComment(Post post) async{

@@ -2,6 +2,7 @@ import '../../models/message_model.dart';
 import '../../models/conversation_model.dart';
 import 'dart:async';
 import 'conversation_controller.dart';
+import 'package:fluttergram/constants.dart';
 class MessageStreamModel{
   late Stream<bool> stream;
   late bool hasMore;
@@ -45,7 +46,7 @@ class MessageStreamModel{
 
       _data.messages.addAll(msgList);
 
-      hasMore = (msgList.length >= 50);
+      hasMore = (msgList.length == numberMsgPerPage);
 
       _controller.add(_data.messages.length > 0);
     });

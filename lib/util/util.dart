@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
-import '../socket/custom_socket.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+
+
 const String getFileUrl = hostname+ '/files/';
 String dateTimeFormat(String dateMongo){
   final t = DateTime.parse(dateMongo);
@@ -160,6 +163,22 @@ Future<String> encodeFile(File file) async {
   var bytes = (await file.readAsBytes());
   String base64Encode = base64.encode(bytes);
   return base64Encode;
+}
+Future<String> encodeImage(fileName) async {
+  String imageUrl = getFileUrl + fileName;
+  File file = await urlToFile(imageUrl);
+  return encodeFile(file);
+}
+
+
+Future<File> urlToFile(String imageUrl) async {
+  var rng = new Random();
+  Directory tempDir = await getTemporaryDirectory();
+  String tempPath = tempDir.path;
+  File file = new File('$tempPath'+ (rng.nextInt(100)).toString() +'.png');
+  http.Response response = await http.get(Uri.parse(imageUrl));
+  await file.writeAsBytes(response.bodyBytes);
+  return file;
 }
 
 

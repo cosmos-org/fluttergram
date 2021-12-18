@@ -11,6 +11,9 @@ class Video {
     this.fileType = '',
     this.fileSize = 0,
   });
+  Map toJson(){
+    return {'type': type, 'id': id, 'fileName':fileName, 'fileSize': fileSize};
+  }
 
   factory Video.fromJson(Map<String, dynamic> json){
     var a= Video(
