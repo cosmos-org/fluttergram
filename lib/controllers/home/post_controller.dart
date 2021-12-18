@@ -31,6 +31,33 @@ Future<List<Post>> getPosts() async {
   return ls;
 }
 
+Future<List<Post>> getPostsByPage(int page) async {
+  String token = await getToken();
+  String id = await getCurrentUserId();
+
+  final response = await http.get(
+      Uri.parse(hostname + postGetListEndpoint + '?page='+ page.toString()),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+
+  var ls = <Post>[];
+  for (var element in resp['data']) {
+    Post p = Post.fromJson(element);
+    p.isLikedBy = false;
+    for(var userId in p.like){
+      if (userId == id){
+        p.isLikedBy = true;
+      }
+    }
+    ls.add(p);
+  }
+  return ls;
+}
+
+
 Future<List<Post>> getPostsByUserId(String userId) async {
   String token = await getToken();
   final response = await http.get(
@@ -145,7 +172,7 @@ Future<void> editPost(Post post, String described) async{
     videos.add(jsonEncode(video));
   }
   String body = '{"described": "$described", "images": "$images", "videos": "$videos"}';
-  print(body);
+
 
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
@@ -154,7 +181,7 @@ Future<void> editPost(Post post, String described) async{
       },
       body: body);
   dynamic respBody = jsonDecode(response.body);
-  print(respBody);
+
 }
 
 Future<List<Comment>> getComment(Post post) async{
