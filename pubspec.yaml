@@ -51,6 +51,8 @@ dependencies:
   async: ^2.4.0
   http: ^0.13.0
   cached_network_image: ^2.0.0
+  provider: ^5.0.0
+  chewie: ^1.2.2
 #  location: ^4.1.1
 #  geocoder: ^0.2.1
   flare_flutter: ^2.0.6

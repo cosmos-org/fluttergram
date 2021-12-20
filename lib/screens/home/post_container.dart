@@ -7,6 +7,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttergram/controllers/post_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post_view_screen.dart';
+import 'package:fluttergram/screens/home/video.dart';
+import 'package:video_player/video_player.dart';
 import '../../constants.dart';
 import '../../default_screen.dart';
 import '../../util/util.dart';
@@ -21,7 +23,7 @@ class PostContainer extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PostContainer createState() => _PostContainer(post, currentScreen);
+  _PostContainer createState() => _PostContainer(post, currentScreen, post.described);
 }
 
 class _PostContainer extends State<PostContainer> {
@@ -29,8 +31,15 @@ class _PostContainer extends State<PostContainer> {
   int currentScreen;
   String numLikes = '';
   String numComments = '';
+  String described;
 
-  _PostContainer(this.post, this.currentScreen);
+  void callBackDescribed(String text){
+    setState((){
+      described = text;
+    });
+  }
+
+  _PostContainer(this.post, this.currentScreen, this.described);
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +55,9 @@ class _PostContainer extends State<PostContainer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _PostHeader(post: post, currentScreen: currentScreen,),
+                _PostHeader(post: post, currentScreen: currentScreen,callBackDescribed: callBackDescribed),
                 const SizedBox(height: 4.0),
-                Text(post.described),
+                Text(described),
                 post.images.isNotEmpty
                     ? const SizedBox.shrink()
                     : const SizedBox(height: 6.0),
@@ -76,7 +85,15 @@ class _PostContainer extends State<PostContainer> {
                       .toList(),
                 ),
               )
-            : const SizedBox.shrink(),
+            // : const SizedBox.shrink(),
+        : Padding(
+            padding: const EdgeInsets.all(12.0),
+            child:  ChewieListItem(
+                      videoPlayerController: VideoPlayerController.network(
+                        'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+                  ), looping: true,
+            )
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PostStats(post: post, numLikes: numLikes, numComments: numComments)
@@ -89,10 +106,13 @@ class _PostContainer extends State<PostContainer> {
 class _PostHeader extends StatelessWidget {
   final Post post;
   final int currentScreen;
-  const _PostHeader({
+  Function callBackDescribed;
+
+  _PostHeader({
     Key? key,
     required this.post,
     required this.currentScreen,
+    required this.callBackDescribed
   }) : super(key: key);
 
   @override
@@ -162,7 +182,7 @@ class _PostHeader extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EditPost(post: post, currentScreen: currentScreen,)),
+                          builder: (context) => EditPost(post: post, currentScreen: currentScreen,callBackDescribed: callBackDescribed)),
                     );
                     break;
                   case 'Delete':
@@ -313,9 +333,9 @@ class _PostStats extends State<PostStats> {
                                 builder: (context) => PostView(
                                     post: post,
                                     listComment: listComment,
-                                    user: user)),
+                                    user: user,
+                                    callBackNumComments: callBackNumComments)),
                           );
-                          callBackNumComments();
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0),

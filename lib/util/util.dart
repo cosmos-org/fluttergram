@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 
 
 const String getFileUrl = hostname+ '/files/';
@@ -163,21 +165,20 @@ Future<String> encodeFile(File file) async {
   String base64Encode = base64.encode(bytes);
   return base64Encode;
 }
-Future<String> encodeImage(fileName) async {
-  String imageUrl = getFileUrl + fileName;
-  File file = await urlToFile(imageUrl);
+
+Future<String> encodeImage(String fileName) async {
+  File file = await ImageUrlToFile(fileName);
   return encodeFile(file);
 }
 
-
-Future<File> urlToFile(String imageUrl) async {
-  var rng = new Random();
-  Directory tempDir = await getTemporaryDirectory();
-  String tempPath = tempDir.path;
-  File file = new File('$tempPath'+ (rng.nextInt(100)).toString() +'.png');
-  http.Response response = await http.get(Uri.parse(imageUrl));
-  await file.writeAsBytes(response.bodyBytes);
+Future<File> ImageUrlToFile(String fileName) async {
+  String imageUrl = getFileUrl + fileName;
+  final http.Response responseData = await http.get(Uri.parse(imageUrl));
+  var unit8list = responseData.bodyBytes;
+  var buffer = unit8list.buffer;
+  ByteData byteData = ByteData.view(buffer);
+  var tempDir = await getTemporaryDirectory();
+  File file = await File('${tempDir.path}/img').writeAsBytes(
+      buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
   return file;
 }
-
-

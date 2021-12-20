@@ -139,7 +139,9 @@ Future<void> editPost(Post post, String described) async{
   List<String> images = [];
   List<String> videos =[];
   for(var image in post.images){
-      // images.add(encodeImage(image.fileName));
+      String tmp = await encodeImage(image.fileName);
+      print(tmp);
+      images.add(tmp);
   }
   for(var video in post.videos){
     videos.add(jsonEncode(video));
@@ -147,14 +149,14 @@ Future<void> editPost(Post post, String described) async{
   String body = '{"described": "$described", "images": "$images", "videos": "$videos"}';
   print(body);
 
-  final response = await http.post(Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'authorization': 'bearer ' + token,
-      },
-      body: body);
-  dynamic respBody = jsonDecode(response.body);
-  print(respBody);
+  // final response = await http.post(Uri.parse(url),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json',
+  //       'authorization': 'bearer ' + token,
+  //     },
+  //     body: body);
+  // dynamic respBody = jsonDecode(response.body);
+  // print(respBody);
 }
 
 Future<List<Comment>> getComment(Post post) async{
