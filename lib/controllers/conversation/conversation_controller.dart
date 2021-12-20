@@ -1,13 +1,14 @@
-import '../models/conversation_model.dart';
-import '../models/message_model.dart';
+import '../../models/conversation_model.dart';
+import '../../models/message_model.dart';
 import 'package:http/http.dart' as http;
-import '../models/user_model.dart';
-import '../util/util.dart';
+import '../../models/user_model.dart';
+import '../../util/util.dart';
 import 'package:fluttergram/constants.dart';
 import 'dart:convert';
 final String getChatsURL = hostname + '/api/v1/chats/getChats';
 final String getMessagesURL = hostname + '/api/v1/chats/getMessages';
 final String sendMessageURL = hostname + '/api/v1/chats/send';
+final String searchUsersURL = hostname + '/api/v1/users/search';
 // final String searchPostsURL = hostname + '/api/v1/posts/search';
 
 
@@ -48,10 +49,17 @@ Future<List<Conversation>> getConversationsAPI() async {
 
     var ls = <Conversation>[];
     // for element
+    int i = 0;
     for (var element in resp['data'])
       // resp['data'].foreach((element)
         {
-          var messages = await getMessagesAPI(element['_id'],0);
+          // print('call from conversation');
+
+          // var messages = await getMessagesAPI(element['_id'],0);
+
+          var messages = <Message>[];
+          // print('load conver');
+          // print(z);
           ls.add(Conversation.fromJson(handleJson(element,messages)));
         };
     // );
@@ -61,6 +69,7 @@ Future<List<Conversation>> getConversationsAPI() async {
   else return [];
 
 }
+
 Future<List<Message>> getMessagesAPI(chatId,page) async {
   String token = await getToken();
   final response = await http
@@ -81,7 +90,8 @@ Future<List<Message>> getMessagesAPI(chatId,page) async {
       ls.add(messageFromRespJson(element));
     };
     // );
-    ls = List.from(ls.reversed);
+    // ls = List.from(ls.reversed);
+
     return ls;
   }
   else return [];
@@ -117,4 +127,56 @@ Future<Message> sendMessageAPI(String content,String chatId,String  receiveId) a
     else Message(id: '');
   }
   return Message(id: '');
+}
+
+Future<List<Conversation>> searchConversationAPI(String keyword,List<Conversation> conversationList)  async {
+  List<String> extractUserFromConversations(List<Conversation> convers){
+    var  userLs = <String>[];
+    for (var element in convers)
+        {
+      userLs.add(element.partnerUser!.id!);
+    };
+    return userLs;
+  }
+  var chattingUser = extractUserFromConversations(conversationList);
+  String currentId = await getCurrentUserId();
+  String token = await getToken();
+  final response = await http
+      .post(Uri.parse(searchUsersURL),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'authorization': 'bearer ' + token,
+    },
+    body: jsonEncode(<String, String>{
+      'keyword': keyword,
+    }),
+  );
+  var resp = jsonDecode(response.body);
+
+  if (checkMessageResponse(resp['message'])) {
+
+    var finalConversationSearchList = <Conversation>[];
+    // for element
+    for (var element in resp['data'])
+        {
+          // print(element['_id']);
+          bool found = false; //check whether user have chat with current user
+          chattingUser.asMap().forEach((index,value)  {
+          if (value == element['_id']){
+              found = true;
+              finalConversationSearchList.add(conversationList[index]);
+          }
+          });
+            if (!found) {
+              if (element['_id'] == currentId) continue;
+              Map<String,dynamic> new_element = {};
+              new_element['partnerUser'] = element;
+              finalConversationSearchList.add(Conversation.fromJson(new_element));
+            }
+        }
+    return finalConversationSearchList;
+  }
+
+  else return [];
+
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';

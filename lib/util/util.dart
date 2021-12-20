@@ -26,6 +26,7 @@ String getStaticURL(String fileName){
 
 //Calculate time-ago format of a mongo-date-string
 String timeAgo(String dateMongo) {
+  if (dateMongo == '') return '';
   final t = DateTime.parse(dateMongo);
   Duration diff = DateTime.now().difference(t);
   if (diff.inDays > 365)
