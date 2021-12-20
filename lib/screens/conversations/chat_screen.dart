@@ -89,9 +89,12 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage(String text) async {
+    print('send msg');
     var chatId =  widget.conversation.id;
     var receiveUserId = widget.conversation.partnerUser!.id;
     Message sentMsg = await sendMessageAPI(text, chatId, receiveUserId );
+    print('sent Msg');
+    print(sentMsg);
     if(sentMsg.id != '') {
       globalCustomSocket.sendMessage(sentMsg,receiveUserId);
       setState((){
