@@ -28,7 +28,7 @@ Message messageFromRespJson(json){
 }
 
 Future<List<Conversation>> getConversationsAPI() async {
-  Map<String, dynamic> handleJson(json,messages){
+  Map<String, dynamic> handleConversationJson(json,messages){
     json['lastMessageTimeAgo'] =  timeAgo(json['lastMessageTime']);
     json['messages'] = messages ?? [];
     json['isActive'] = true;
@@ -60,7 +60,7 @@ Future<List<Conversation>> getConversationsAPI() async {
           var messages = <Message>[];
           // print('load conver');
           // print(z);
-          ls.add(Conversation.fromJson(handleJson(element,messages)));
+          ls.add(Conversation.fromJson(handleConversationJson(element,messages)));
         };
     // );
     return ls;

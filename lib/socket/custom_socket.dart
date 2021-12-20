@@ -61,7 +61,9 @@ class CustomSocket{
     conversationScreenBodyState.handleNewMessageFromCurrent(msg, receiveUserId);
   }
 
-
+  // void pushNewConverSation(Conversation conversation){
+  //   conversationScreenBodyState.handleNewMessage(msg);
+  // }
 
   @override
   String toString() {

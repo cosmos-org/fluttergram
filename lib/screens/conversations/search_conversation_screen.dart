@@ -59,9 +59,7 @@ class _SearchConversationScreenState extends State<SearchConversationScreen> {
                     suffixIcon: Icon(Icons.search)
                 ),
                 onChanged: (value) {
-                  print(value);
                   setState((){
-                    print(value);
                     selectedTerm = value;
                   });
                 }

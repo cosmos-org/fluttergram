@@ -225,7 +225,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           }
           ;
           if (snapshot.hasError) {
-            return Text("Error");
+            return Center(child:Text("Error"));
           }
           ;
           conversations = snapshot.data as List<Conversation>;

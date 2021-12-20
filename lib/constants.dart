@@ -7,7 +7,7 @@ const secondaryColor = Colors.white;
 const pressedColor = Color(0xFF0D47A1);
 const warningColor = Colors.deepOrange;
 const errorColor = Colors.red;
-String test = 'test';
+
 const defaultPadding = 20.0;
 
 const usernameFontSize = 20.0;
@@ -18,11 +18,11 @@ const boldFontWeight = FontWeight.bold;
 
 
 
-// const hostname = "http://localhost:8000";
-// const socketHostname = "http://localhost:7070";
+const hostname = "http://localhost:8000";
+const socketHostname = "http://localhost:7070";
 //
-const hostname = "http://10.0.2.2:8000";
-const socketHostname = "http://10.0.2.2:7070";
+// const hostname = "http://10.0.2.2:8000";
+// const socketHostname = "http://10.0.2.2:7070";
 
 // const hostname = "https://murmuring-inlet-24969.herokuapp.com";
 // const socketHostname = "https://tranquil-garden-75087.herokuapp.com";

@@ -31,7 +31,6 @@ class ConversationSearchedList extends StatelessWidget {
                         )),
                   );
                 } else {
-                  print('tappped');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
