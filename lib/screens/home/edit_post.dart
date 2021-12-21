@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/util/util.dart';
@@ -10,10 +10,11 @@ import '../../default_screen.dart';
 class EditPost extends StatefulWidget{
   final Post post;
   final int currentScreen;
-  const EditPost({
+  Function callBackDescribed;
+  EditPost({
     Key? key, required this.post,
     required this.currentScreen,
-    // required this.onPressed
+    required this.callBackDescribed,
   }) : super(key: key);
   @override
   State<StatefulWidget> createState() => _EditPostState();
@@ -23,10 +24,10 @@ class _EditPostState extends State<EditPost> {
 
   @override
   Widget build(BuildContext context) {
-    return buildApp(widget.post, widget.currentScreen);
+    return buildApp(widget.post, widget.currentScreen, widget.callBackDescribed);
   }
 
-  Widget buildApp(Post post, int currentScreen) {
+  Widget buildApp(Post post, int currentScreen, Function callBackDescribed) {
     TextEditingController describeController = TextEditingController();
     describeController.text = post.described;
     FocusNode describedNode = FocusNode();
@@ -50,12 +51,8 @@ class _EditPostState extends State<EditPost> {
               ElevatedButton(
                   onPressed: () {
                     editPost(post, describeController.text);
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                DefaultScreen(currentScreen: currentScreen)),
-                        ModalRoute.withName('/'));
+                    callBackDescribed(describeController.text);
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                       primary: primaryColor,

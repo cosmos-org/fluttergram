@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';
@@ -11,28 +11,32 @@ class PostView extends StatefulWidget {
   final Post post;
   final List<Comment> listComment;
   final User user;
+  Function callBackNumComments;
   PostView(
       {Key? key,
       required this.post,
       required this.listComment,
-      required this.user})
+      required this.user,
+      required this.callBackNumComments})
       : super(key: key);
   @override
   State<StatefulWidget> createState() =>
-      _PostViewState(post: post, listComment: listComment, user: user);
+      _PostViewState(post: post, listComment: listComment, user: user, callBackNumComments: callBackNumComments);
 }
 
 class _PostViewState extends State<PostView> {
   final Post post;
   List<Comment> listComment;
   User user;
+  Function callBackNumComments;
 
   _PostViewState(
-      {required this.post, required this.listComment, required this.user});
+      {required this.post, required this.listComment, required this.user,
+      required this.callBackNumComments});
 
   @override
   Widget build(BuildContext context) {
-    return Page(user, listComment, post);
+    return Page(user, listComment, post, callBackNumComments);
   }
 }
 
@@ -66,11 +70,11 @@ class Page extends StatefulWidget {
   final User user;
   final List<Comment> listComment;
   final Post post;
-
-  Page(this.user, this.listComment, this.post);
+  Function callBackNumComments;
+  Page(this.user, this.listComment, this.post, this.callBackNumComments);
 
   @override
-  State<StatefulWidget> createState() => _PageState(post, listComment, user);
+  State<StatefulWidget> createState() => _PageState(post, listComment, user,callBackNumComments);
 }
 
 class _PageState extends State<Page> {
@@ -78,8 +82,8 @@ class _PageState extends State<Page> {
   List<Comment> listComment;
   User user;
   ScrollController controller = new ScrollController();
-
-  _PageState(this.post, this.listComment, this.user);
+  Function callBackNumComments;
+  _PageState(this.post, this.listComment, this.user, this.callBackNumComments);
 
   @override
   Widget build(BuildContext context) {
@@ -196,6 +200,7 @@ class _PageState extends State<Page> {
                                     postId: post.id,
                                     content: commentController.text,
                                     createdAt: createdAt);
+                                callBackNumComments();
                                 setState(() {
                                   this.listComment.add(newComment);
                                   controller

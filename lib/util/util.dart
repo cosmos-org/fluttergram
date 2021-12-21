@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import 'dart:io' as Io;
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+
 
 const String getFileUrl = hostname+ '/files/';
 String dateTimeFormat(String dateMongo){
@@ -21,6 +26,7 @@ String getStaticURL(String fileName){
 
 //Calculate time-ago format of a mongo-date-string
 String timeAgo(String dateMongo) {
+  if (dateMongo == '') return '';
   final t = DateTime.parse(dateMongo);
   Duration diff = DateTime.now().difference(t);
   if (diff.inDays > 365)
@@ -94,13 +100,6 @@ NetworkImage getImageProviderNetWork(fileName) {
   );
 }
 
-String encodeImage(fileName) {
-  // Image image = Image.network( getFileUrl + fileName);
-  // File file =
-  final bytes = Io.File(getFileUrl + fileName).readAsBytesSync();
-  return base64Encode(bytes);
-}
-
 Future<void> setCurrentUserId(String currentUserId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   if (currentUserId != Null) {
@@ -168,4 +167,19 @@ Future<String> encodeFile(File file) async {
   return base64Encode;
 }
 
+Future<String> encodeImage(String fileName) async {
+  File file = await ImageUrlToFile(fileName);
+  return encodeFile(file);
+}
 
+Future<File> ImageUrlToFile(String fileName) async {
+  String imageUrl = getFileUrl + fileName;
+  final http.Response responseData = await http.get(Uri.parse(imageUrl));
+  var unit8list = responseData.bodyBytes;
+  var buffer = unit8list.buffer;
+  ByteData byteData = ByteData.view(buffer);
+  var tempDir = await getTemporaryDirectory();
+  File file = await File('${tempDir.path}/img').writeAsBytes(
+      buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+  return file;
+}

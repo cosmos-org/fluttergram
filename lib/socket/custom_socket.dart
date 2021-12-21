@@ -47,6 +47,7 @@ class CustomSocket{
     socket.connect();
     socket.emit(socketSignInEvent, this.currentUserId);
     socket.onConnect((data) {
+      print('connected socket');
       socket.on(socketMessageEvent, (socketMsg) {
         Message msg = Message.fromJson(socketMsg);
         conversationScreenBodyState.handleNewMessage(msg);
@@ -60,7 +61,9 @@ class CustomSocket{
     conversationScreenBodyState.handleNewMessageFromCurrent(msg, receiveUserId);
   }
 
-
+  // void pushNewConverSation(Conversation conversation){
+  //   conversationScreenBodyState.handleNewMessage(msg);
+  // }
 
   @override
   String toString() {

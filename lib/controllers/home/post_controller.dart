@@ -31,6 +31,33 @@ Future<List<Post>> getPosts() async {
   return ls;
 }
 
+Future<List<Post>> getPostsByPage(int page) async {
+  String token = await getToken();
+  String id = await getCurrentUserId();
+
+  final response = await http.get(
+      Uri.parse(hostname + postGetListEndpoint + '?page='+ page.toString()),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+
+  var ls = <Post>[];
+  for (var element in resp['data']) {
+    Post p = Post.fromJson(element);
+    p.isLikedBy = false;
+    for(var userId in p.like){
+      if (userId == id){
+        p.isLikedBy = true;
+      }
+    }
+    ls.add(p);
+  }
+  return ls;
+}
+
+
 Future<List<Post>> getPostsByUserId(String userId) async {
   String token = await getToken();
   final response = await http.get(
@@ -45,6 +72,22 @@ Future<List<Post>> getPostsByUserId(String userId) async {
     ls.add(Post.fromJson(element));
   }
   return ls;
+}
+
+Future<Post> getPostById(String postId) async {
+  String token = await getToken();
+
+  final response = await http.get(
+      Uri.parse(hostname + postGetByIDEndpoint + postId),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+  var resp = jsonDecode(response.body);
+
+  Post p = Post.fromJson(resp['data']);
+
+  return p;
 }
 
 Future<List<Post>> getMyPosts() async {
@@ -123,13 +166,14 @@ Future<void> editPost(Post post, String described) async{
   List<String> images = [];
   List<String> videos =[];
   for(var image in post.images){
-      images.add(encodeImage(image.fileName));
+      // String tmp = await encodeImage(image.fileName);
+      // print(tmp);
+      // images.add(tmp);
   }
   for(var video in post.videos){
-    videos.add(jsonEncode(video));
+    // videos.add(jsonEncode(video));
   }
   String body = '{"described": "$described", "images": "$images", "videos": "$videos"}';
-  print(body);
 
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
@@ -138,7 +182,7 @@ Future<void> editPost(Post post, String described) async{
       },
       body: body);
   dynamic respBody = jsonDecode(response.body);
-  print(respBody);
+
 }
 
 Future<List<Comment>> getComment(Post post) async{

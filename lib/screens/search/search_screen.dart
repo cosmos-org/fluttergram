@@ -87,8 +87,10 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(),
+      // appBar: buildAppBar(),
       body: FloatingSearchBar(
+
+        // leadingActions: [const Icon(Icons.view_list)],
         controller: controller,
         body: FloatingSearchBarScrollNotifier(
           child: SearchResultsListView(
@@ -194,7 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return AppBar(
         backgroundColor: primaryColor,
         title:  Center(
-          child: Text('COSMOS'),
+          child: Text('Search'),
         ),
         leading: IconButton(
           icon: Icon(Icons.add_circle_outline),

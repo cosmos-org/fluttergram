@@ -4,25 +4,47 @@ import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post_view_screen.dart';
+import 'package:fluttergram/screens/home/video.dart';
+import 'package:video_player/video_player.dart';
 import '../../constants.dart';
 import '../../default_screen.dart';
 import '../../util/util.dart';
 import 'edit_post.dart';
 
-class PostContainer extends StatelessWidget {
+
+
+class PostContainer extends StatefulWidget {
   final Post post;
   final int currentScreen;
-  const PostContainer({
-    Key? key,
-    required this.post,
-    required this.currentScreen,
-  }) : super(key: key);
+  PostContainer({Key? key, required this.post, required this.currentScreen})
+      : super(key: key);
+
+  @override
+  _PostContainer createState() => _PostContainer(post, currentScreen, post.described);
+}
+
+class _PostContainer extends State<PostContainer> {
+  Post post;
+  int currentScreen;
+  String numLikes = '';
+  String numComments = '';
+  String described;
+
+  void callBackDescribed(String text){
+    setState((){
+      described = text;
+    });
+  }
+
+  _PostContainer(this.post, this.currentScreen, this.described);
 
   @override
   Widget build(BuildContext context) {
+    numLikes = post.like.length.toString();
+    numComments = post.countComments.toString();
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5.0),
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -33,9 +55,9 @@ class PostContainer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _PostHeader(post: post, currentScreen: currentScreen,),
+                _PostHeader(post: post, currentScreen: currentScreen,callBackDescribed: callBackDescribed),
                 const SizedBox(height: 4.0),
-                Text(post.described),
+                Text(described),
                 post.images.isNotEmpty
                     ? const SizedBox.shrink()
                     : const SizedBox(height: 6.0),
@@ -63,10 +85,18 @@ class PostContainer extends StatelessWidget {
                       .toList(),
                 ),
               )
-            : const SizedBox.shrink(),
+            // : const SizedBox.shrink(),
+        : Padding(
+            padding: const EdgeInsets.all(12.0),
+            child:  ChewieListItem(
+                      videoPlayerController: VideoPlayerController.network(
+                        'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+                  ), looping: true,
+            )
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: PostStats(post: post),
+          child: PostStats(post: post, numLikes: numLikes, numComments: numComments)
         ),
       ]),
     );
@@ -76,10 +106,13 @@ class PostContainer extends StatelessWidget {
 class _PostHeader extends StatelessWidget {
   final Post post;
   final int currentScreen;
-  const _PostHeader({
+  Function callBackDescribed;
+
+  _PostHeader({
     Key? key,
     required this.post,
     required this.currentScreen,
+    required this.callBackDescribed
   }) : super(key: key);
 
   @override
@@ -149,7 +182,7 @@ class _PostHeader extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EditPost(post: post, currentScreen: currentScreen,)),
+                          builder: (context) => EditPost(post: post, currentScreen: currentScreen,callBackDescribed: callBackDescribed)),
                     );
                     break;
                   case 'Delete':
@@ -182,21 +215,42 @@ class _PostHeader extends StatelessWidget {
 
 class PostStats extends StatefulWidget {
   final Post post;
-  const PostStats({
+  String numLikes;
+  String numComments;
+
+  PostStats({
     Key? key,
     required this.post,
+    required this.numLikes,
+    required this.numComments,
   }) : super(key: key);
 
   @override
-  _PostStats createState() => _PostStats(post: post);
+  _PostStats createState() => _PostStats(post: post, numLikes: numLikes, numComments: numComments,);
 }
 
 class _PostStats extends State<PostStats> {
   final Post post;
+  String numLikes;
+  String numComments;
   _PostStats({
     required this.post,
+    required this.numLikes,
+    required this.numComments,
   });
 
+  void callBackNumLikes(int tmp){
+    setState(() {
+      var num = int.parse(numLikes);
+      numLikes = (num + tmp).toString();
+    });
+  }
+  void callBackNumComments(){
+    setState((){
+      var num = int.parse(numComments);
+      numComments = (num + 1).toString();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -210,14 +264,14 @@ class _PostStats extends State<PostStats> {
                     const SizedBox(width: 4.0),
                     Expanded(
                       child: Text(
-                        '${post.like.length}',
+                        numLikes,
                         style: TextStyle(
                           color: Colors.grey[600],
                         ),
                       ),
                     ),
                     Text(
-                      '${post.countComments} Comments',
+                      '${numComments} Comments',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -251,6 +305,13 @@ class _PostStats extends State<PostStats> {
                             post.isLikedBy = !post.isLikedBy;
                           });
                           likePost(post);
+                          if (post.isLikedBy){
+                            callBackNumLikes(1);
+                          }
+                          else{
+                            callBackNumLikes(-1);
+                          };
+
                         },
                       ),
                     ),
@@ -272,7 +333,8 @@ class _PostStats extends State<PostStats> {
                                 builder: (context) => PostView(
                                     post: post,
                                     listComment: listComment,
-                                    user: user)),
+                                    user: user,
+                                    callBackNumComments: callBackNumComments)),
                           );
                         },
                         child: Container(

@@ -8,7 +8,7 @@ import 'package:fluttergram/util/util.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
-import 'package:fluttergram/controllers/post_controller.dart';
+import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:video_player/video_player.dart';
 import '../../default_screen.dart';
 
