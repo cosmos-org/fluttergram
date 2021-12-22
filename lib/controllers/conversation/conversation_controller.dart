@@ -6,6 +6,7 @@ import '../../util/util.dart';
 import 'package:fluttergram/constants.dart';
 import 'dart:convert';
 final String getChatsURL = hostname + '/api/v1/chats/getChats';
+final String getChatByUserIdURL = hostname + '/api/v1/chats/getChatByUserId/';
 final String getMessagesURL = hostname + '/api/v1/chats/getMessages';
 final String sendMessageURL = hostname + '/api/v1/chats/send';
 final String searchUsersURL = hostname + '/api/v1/users/search';
@@ -179,4 +180,33 @@ Future<List<Conversation>> searchConversationAPI(String keyword,List<Conversatio
 
   else return [];
 
+}
+
+Future<Conversation> getConversationsByPartnerUserIdAPI(String partnerUserId) async {
+  Map<String, dynamic> handleConversationJson(json,messages){
+    json['lastMessageTimeAgo'] =  timeAgo(json['lastMessageTime']);
+    json['messages'] = messages ?? [];
+    json['isActive'] = true;
+    json['isSeen'] = true;
+    return json;
+  }
+  String token = await getToken();
+  final response = await http
+      .get(Uri.parse(getChatByUserIdURL + partnerUserId),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'authorization': 'bearer ' + token,
+    },
+  );
+  var resp = jsonDecode(response.body);
+  late Conversation conversation;
+  if (checkMessageResponse(resp['message'])) {
+    var messages = <Message>[];
+    conversation = Conversation.fromJson(handleConversationJson(resp['data'],messages));
+
+  }
+  else conversation =  Conversation.fromJson({});
+  print('get conver by partner id');
+  print(conversation);
+  return conversation;
 }
