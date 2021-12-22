@@ -60,6 +60,7 @@ Future<List<Conversation>> getConversationsAPI() async {
           var messages = <Message>[];
           // print('load conver');
           // print(z);
+          print(element['partnerUser']['_id']);
           ls.add(Conversation.fromJson(handleConversationJson(element,messages)));
         };
     // );
