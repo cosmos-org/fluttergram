@@ -22,6 +22,11 @@ class _DefaultScreenState extends State<DefaultScreen> {
     ConversationScreen(),
     ProfileScreen(),
   ];
+  void callback (int screen){
+    setState((){
+      _currentScreen = screen;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
