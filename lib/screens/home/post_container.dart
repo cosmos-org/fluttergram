@@ -133,12 +133,33 @@ class _PostHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                post.author.username,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
+              InkWell(
+                child: Text(
+                  post.author.username,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+                onTap: () async{
+                //   if (user.id == await getCurrentUserId()){
+                //     Navigator.pushAndRemoveUntil(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (BuildContext context) =>
+                //                 DefaultScreen(currentScreen: 3)),
+                //         ModalRoute.withName('/'));
+                //   }
+                //   else {
+                //     Profile profile = await showAnotherProfile(user.id);
+                //     String status = await getStatusUser(user.id);
+                //     Navigator.push(
+                //         context,
+                //         MaterialPageRoute(builder: (context) => DUserProfileScreen(profile: profile, status: status))
+                //     );
+                //   }
+                },
               ),
+
               Row(
                 children: [
                   Text(
@@ -321,7 +342,6 @@ class _PostStats extends State<PostStats> {
                       color: Colors.white,
                       child: InkWell(
                         onTap: () async {
-
                           List<Comment> listComment = await getComment(post);
                           for (var cm in listComment){
                             var userId = cm.author.id;
