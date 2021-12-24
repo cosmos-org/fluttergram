@@ -142,22 +142,21 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
     String fromUserId = msg.user!.id;
     List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == fromUserId).toList();
     Conversation conversationFound;
-    if (conversationFoundLs.length > 0){
+    if (conversationFoundLs.length > 0){ //if new msg from one of current chat
       conversationFound = conversationFoundLs[0];
       putConversationFirst(conversationFound);
       setState(() {
         conversationFound.updateWithNewMsg(msg);
       });
-    } else {
-      getConversationsAPI().then((value){
-        setState(()  {
-          widget.conversations= value;
+    } else {// if chat is new (friend relation has just been establish :))
+      getConversationsByPartnerUserIdAPI(fromUserId).then((Conversation conversation) {
+        setState(() {
+          widget.conversations.insert(0, conversation);
         });
       });
-
     }
   }
-  void handleNewMessageFromCurrent(Message msg, receiveUserId){
+  void handleNewMessageFromCurrent(Message msg, receiveUserId,updatedConversation){
     List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == receiveUserId).toList();
     Conversation conversationFound;
     if (conversationFoundLs.length > 0){
@@ -167,11 +166,10 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
         putConversationFirst(conversationFound);
       });
     } else {
-      getConversationsAPI().then((value){
-        setState(()  {
-          widget.conversations= value;
+        updatedConversation.updateWithNewMsg(msg);
+        setState(() {
+          widget.conversations.insert(0, updatedConversation);
         });
-      });
     }
   }
   @override

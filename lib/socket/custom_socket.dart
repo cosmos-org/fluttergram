@@ -55,10 +55,10 @@ class CustomSocket{
       });
     });
   }
-  void sendMessage(Message msg,receiveUserId){
+  void sendMessage(Message msg,receiveUserId,currentConversation){
     var socketMsg = msg.toMap();
     socket.emit(socketMessageEvent,{'socketMsg' : socketMsg ,'receiveUserId':receiveUserId} );
-    conversationScreenBodyState.handleNewMessageFromCurrent(msg, receiveUserId);
+    conversationScreenBodyState.handleNewMessageFromCurrent(msg, receiveUserId,currentConversation);
   }
 
   // void pushNewConverSation(Conversation conversation){

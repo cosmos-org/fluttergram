@@ -42,6 +42,13 @@ class ChatScreenState extends State<ChatScreen> {
   void initState() {
     currentPage = 0;
     _messageStreamModel = MessageStreamModel(widget.conversation.id,widget.conversation);
+    getCurrentUserId().then((value){
+      currentUserId  =value;
+      setState((){
+        return;
+      });
+    });
+    globalCustomSocket.initChatScreenState(this);
     cachedPicker = EmojiPicker(
         rows: 4,
         columns: 7,
@@ -61,14 +68,6 @@ class ChatScreenState extends State<ChatScreen> {
       }
     });
 
-
-    getCurrentUserId().then((value){
-      currentUserId  =value;
-      setState((){
-        return;
-      });
-    });
-    globalCustomSocket.initChatScreenState(this);
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         setState(() {
@@ -96,7 +95,7 @@ class ChatScreenState extends State<ChatScreen> {
     print('sent Msg');
     print(sentMsg);
     if(sentMsg.id != '') {
-      globalCustomSocket.sendMessage(sentMsg,receiveUserId);
+      globalCustomSocket.sendMessage(sentMsg,receiveUserId,widget.conversation);
       setState((){
         sendButton = false;
       });
