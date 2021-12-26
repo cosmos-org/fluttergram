@@ -1,47 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
-import 'package:fluttergram/screens/profile/friend_card.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 
 import '../../constants.dart';
+import 'friend_card.dart';
 
-class ListFriendsScreen extends StatefulWidget {
+class AwaitRequestsScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => ListFriendState();
+  State<StatefulWidget> createState() => AwaitRequestsState();
 }
 
-class ListFriendState extends State<ListFriendsScreen> {
+class AwaitRequestsState extends State<AwaitRequestsScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getFriends(),
+        future: getListFriendsRequest(),
         builder: (context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
-            List<User> friends = snapshot.data;
+            List<User> friendRequests = snapshot.data;
             return Container(
                 child: ListView.builder(
-              itemCount: friends.length,
+              itemCount: friendRequests.length,
               itemBuilder: (_, index) => FocusedMenuHolder(
                   blurSize: 0.3,
                   blurBackgroundColor: secondaryColor,
                   menuWidth: 200,
                   menuItems: <FocusedMenuItem>[
                     FocusedMenuItem(
-                        title: Text("Unfriend",
-                            style: TextStyle(color: errorColor)),
-                        onPressed: () {
-                          removeFriend(friends[index].id);
-                          setState(() {
-                            friends.remove(index);
-                          });
-                        }),
+                        title:
+                            Text("Block", style: TextStyle(color: errorColor)),
+                        onPressed: () {})
                   ],
-                  onPressed: () {},
-                  child: FriendCard(friend: friends[index], tabIndex: 1)),
+                  onPressed: () {
+                    // TODO Move to other's profile
+                  },
+                  child: FriendCard(
+                    friend: friendRequests[index],
+                    tabIndex: 2,
+                  )),
             ));
           }
         });

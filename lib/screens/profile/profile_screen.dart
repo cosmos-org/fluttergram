@@ -9,7 +9,7 @@ import 'package:fluttergram/screens/home/post.dart';
 import 'package:fluttergram/screens/home/upload_post.dart';
 import 'package:fluttergram/screens/login/login_screen.dart';
 import 'package:fluttergram/screens/profile/change_password.dart';
-import 'package:fluttergram/screens/profile/list_friends.dart';
+import 'package:fluttergram/screens/profile/friends.dart';
 import 'package:fluttergram/util/util.dart';
 import 'edit_profile.dart';
 
@@ -146,36 +146,31 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
                           ),
                           Column(
                             children: [
-                              SizedBox(
-                                  child: Column(
-                                children: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ListFriendScreen()));
-                                      },
-                                      style: TextButton.styleFrom(
-                                          primary: Colors.black),
-                                      child: Text(
-                                        profile.numFriends.toString(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      )),
-                                  Text(
-                                    "Friends",
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FriendsScreen()));
+                                  },
+                                  style: TextButton.styleFrom(
+                                      primary: Colors.black),
+                                  child: Text(
+                                    profile.numFriends.toString(),
                                     style: TextStyle(
-                                      letterSpacing: 0.4,
+                                      color: Colors.black,
                                       fontSize: 15,
+                                      fontWeight: FontWeight.w700,
                                     ),
-                                  )
-                                ],
-                              )),
+                                  )),
+                              Text(
+                                "Friends",
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 15,
+                                ),
+                              )
                             ],
                           ),
                           SizedBox(
