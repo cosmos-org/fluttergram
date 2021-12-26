@@ -321,6 +321,7 @@ class _PostStats extends State<PostStats> {
                       color: Colors.white,
                       child: InkWell(
                         onTap: () async {
+
                           List<Comment> listComment = await getComment(post);
                           for (var cm in listComment){
                             var userId = cm.author.id;
