@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttergram/controllers/user_controller.dart';
-import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/profile/friend_requests.dart';
 import 'package:fluttergram/screens/profile/list_friends.dart';
 import 'package:fluttergram/screens/profile/sent_requests.dart';
@@ -9,11 +7,27 @@ import '../../constants.dart';
 import '../../default_screen.dart';
 
 class FriendsScreen extends StatefulWidget {
+  int currentTab;
+  FriendsScreen({Key? key, required this.currentTab}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => FriendsState();
+  State<StatefulWidget> createState() => FriendsState(currentTab);
 }
 
-class FriendsState extends State<FriendsScreen> {
+class FriendsState extends State<FriendsScreen>
+    with SingleTickerProviderStateMixin {
+  int _currentTab;
+  late TabController _tabController;
+  FriendsState(this._currentTab);
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController =
+        TabController(vsync: this, length: 3);
+    _tabController.animateTo(_currentTab);
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -40,6 +54,7 @@ class FriendsState extends State<FriendsScreen> {
             bottom: createTabBar(),
           ),
           body: TabBarView(
+            // controller: _tabController,
             children: [
               ListFriendsScreen(),
               AwaitRequestsScreen(),
@@ -57,7 +72,6 @@ class FriendsState extends State<FriendsScreen> {
           Icon(Icons.person_add_alt_1_sharp),
           Icon(Icons.arrow_forward_sharp)
         ],
-        onTap: (index) {
-        });
+        onTap: (index) {});
   }
 }

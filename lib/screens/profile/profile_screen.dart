@@ -146,16 +146,15 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
                           ),
                           Column(
                             children: [
-                              TextButton(
-                                  onPressed: () {
+                              InkWell(
+                                  onTap: () {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                FriendsScreen()));
+                                            builder: (context) => FriendsScreen(
+                                                  currentTab: 0,
+                                                )));
                                   },
-                                  style: TextButton.styleFrom(
-                                      primary: Colors.black),
                                   child: Text(
                                     profile.numFriends.toString(),
                                     style: TextStyle(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/screens/profile/different_user_profile.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 
@@ -35,8 +37,15 @@ class AwaitRequestsState extends State<AwaitRequestsScreen> {
                             Text("Block", style: TextStyle(color: errorColor)),
                         onPressed: () {})
                   ],
-                  onPressed: () {
-                    // TODO Move to other's profile
+                  onPressed: () async {
+                    Profile friendRequestProfile =
+                        await showAnotherProfile(friendRequests[index].id);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DUserProfileScreen(
+                                profile: friendRequestProfile,
+                                status: "Accept Friend")));
                   },
                   child: FriendCard(
                     friend: friendRequests[index],

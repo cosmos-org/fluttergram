@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/screens/profile/friends.dart';
 import 'package:fluttergram/util/util.dart';
 
 import '../../constants.dart';
@@ -42,7 +43,7 @@ class FriendCard extends StatelessWidget {
                             fontWeight: boldFontWeight),
                       ),
                       SizedBox(height: defaultPadding * 0.25),
-                      details(tabIndex),
+                      details(context, tabIndex),
                     ],
                   ),
                 ),
@@ -54,7 +55,7 @@ class FriendCard extends StatelessWidget {
     );
   }
 
-  details(int tabIndex) {
+  details(BuildContext context, int tabIndex) {
     switch (tabIndex) {
       case 1:
         return SizedBox();
@@ -70,6 +71,13 @@ class FriendCard extends StatelessWidget {
                     backgroundColor: MaterialStateProperty.all(primaryColor)),
                 onPressed: () {
                   acceptFriend(friend.id, "1");
+
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              FriendsScreen(currentTab: tabIndex - 1)),
+                      ModalRoute.withName('/'));
                 },
                 child: Text(
                   "Accept",
@@ -78,6 +86,12 @@ class FriendCard extends StatelessWidget {
             TextButton(
                 onPressed: () {
                   acceptFriend(friend.id, "2");
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              FriendsScreen(currentTab: tabIndex - 1)),
+                      ModalRoute.withName('/'));
                 },
                 child: Text("Cancel", style: TextStyle(color: primaryColor)))
           ],
@@ -91,6 +105,13 @@ class FriendCard extends StatelessWidget {
                 backgroundColor: MaterialStateProperty.all(primaryColor)),
             onPressed: () {
               removeRequestFriend(friend.id);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => FriendsScreen(
+                            currentTab: tabIndex - 1,
+                          )),
+                  ModalRoute.withName('/'));
             },
             child: Text(
               "Cancel",
