@@ -403,8 +403,46 @@ showDeleteAlertDialog(BuildContext context, Post post, int currentScreen) {
   );
 }
 
+class CustomReportDialog extends StatefulWidget {
+  const CustomReportDialog({Key? key}) : super(key: key);
+
+  @override
+  State<CustomReportDialog> createState() => _CustomReportDialogState();
+}
+
+class _CustomReportDialogState extends State<CustomReportDialog> {
+  String dropdownValue = 'False Information';
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      icon: const Icon(Icons.arrow_downward),
+      elevation: 16,
+      style: const TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+        });
+      },
+      items: <String>['False Information', 'Scam', 'Scam', 'Other']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+}
 showReportAlertDialog(BuildContext context, Post post) {
+  TextEditingController _controller = TextEditingController();
   // set up the buttons
+  String dropdownValue = 'False information';
   Widget cancelButton = TextButton(
     child: Text("Cancel"),
     onPressed: () {
@@ -414,14 +452,45 @@ showReportAlertDialog(BuildContext context, Post post) {
   Widget continueButton = TextButton(
       child: Text("OK"),
       onPressed: () {
-        reportPost(post);
+        String s = _controller.text;
+        print(s);
+        // reportPost(post,"0",'');
         Navigator.of(context).pop();
       });
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
     title: Text("Report Post"),
-    content: Text("Are you sure to report this post?"),
+    content: Expanded(
+      child: Column(
+          children: [
+            Row(
+              children: [
+                Text("Subject"),
+                SizedBox(
+                    width:10
+                ),
+                CustomReportDialog(),
+              ],
+            ),
+            Row(
+                children: [
+                  Text("Detail:"),
+                  SizedBox(
+                    width:10
+                  ),
+                  TextFormField(
+                    controller: _controller,
+                    textAlignVertical: TextAlignVertical.center,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 5,
+                    minLines: 1,
+                  )
+                ],
+            ),
+          ]
+      ),
+    ),
     actions: [
       cancelButton,
       continueButton,
