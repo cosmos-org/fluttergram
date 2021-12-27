@@ -9,6 +9,7 @@ import 'package:fluttergram/screens/home/post.dart';
 import 'package:fluttergram/screens/home/upload_post.dart';
 import 'package:fluttergram/screens/login/login_screen.dart';
 import 'package:fluttergram/screens/profile/change_password.dart';
+import 'package:fluttergram/screens/profile/friends.dart';
 import 'package:fluttergram/util/util.dart';
 import 'edit_profile.dart';
 
@@ -20,40 +21,32 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
-  void choiceAction(String choice){
-    if(choice == Constants.Changepassword){
+  void choiceAction(String choice) {
+    if (choice == Constants.Changepassword) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ChangePassword()
-          )
-      );
-    }else if(choice == Constants.SignOut){
+          context, MaterialPageRoute(builder: (context) => ChangePassword()));
+    } else if (choice == Constants.SignOut) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (BuildContext context) => LogInPage()),
-          ModalRoute.withName('/')
-      );
+          ModalRoute.withName('/'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Profile>(
-      future: show(),
-      builder: (ctx, snapshot){
-        if(!snapshot.hasData){
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        else{
-          final profile = snapshot.data!;
-          return profileHeaderWidget(context, profile);
-        }
-      }
-    );
+        future: show(),
+        builder: (ctx, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            final profile = snapshot.data!;
+            return profileHeaderWidget(context, profile);
+          }
+        });
   }
 }
 
@@ -61,249 +54,247 @@ class Constants {
   static const String Changepassword = 'Change password';
   static const String SignOut = 'Sign out';
 
-  static const List<String> choices = <String>[
-    Changepassword,
-    SignOut
-  ];
+  static const List<String> choices = <String>[Changepassword, SignOut];
 }
 
 Widget profileHeaderWidget(BuildContext context, Profile profile) {
-  void choiceAction(String choice){
-    if(choice == Constants.Changepassword){
+  void choiceAction(String choice) {
+    if (choice == Constants.Changepassword) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ChangePassword()
-          )
-      );
-    }else if(choice == Constants.SignOut){
+          context, MaterialPageRoute(builder: (context) => ChangePassword()));
+    } else if (choice == Constants.SignOut) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-              builder: (context) => LogInPage()
-          ),
-          ModalRoute.withName("/Login")
-      );
+          MaterialPageRoute(builder: (context) => LogInPage()),
+          ModalRoute.withName("/Login"));
     }
   }
+
   return Scaffold(
-    appBar: AppBar(
-      backgroundColor: primaryColor,
-      centerTitle: true,
-      title: Text(profile.user.username),
-      leading: IconButton(
-        icon: Icon(Icons.add_circle_outline),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CreatePost()),
-          );
-        },
-      ),
-      actions: <Widget>[
-        PopupMenuButton<String>(
-          onSelected: choiceAction,
-          itemBuilder: (BuildContext context){
-            return Constants.choices.map((String choice){
-              return PopupMenuItem<String>(
-                value: choice,
-                child: Text(choice),
-              );
-            }).toList();
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        centerTitle: true,
+        title: Text(profile.user.username),
+        leading: IconButton(
+          icon: Icon(Icons.add_circle_outline),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreatePost()),
+            );
           },
-        )
-      ],
-    ),
-    body: SingleChildScrollView(
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(color: Colors.white),
-        child: Padding(
-            padding: const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Color(0xff74EDED),
-                      backgroundImage:
-                      getImageProviderNetWork(profile.user.avatar!.fileName),
-                    ),
-                    Row(
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              profile.numPosts.toString(),
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              "Posts",
-                              style: TextStyle(
-                                fontSize: 15,
-                                letterSpacing: 0.4,
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              profile.numFriends.toString(),
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              "Friends",
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                fontSize: 15,
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              profile.user.gender!,
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              "Gender",
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                fontSize: 15,
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  profile.user.username,
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    letterSpacing: 0.4,
+        ),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: choiceAction,
+            itemBuilder: (BuildContext context) {
+              return Constants.choices.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(color: Colors.white),
+          child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  profile.user.description!,
-                  style: TextStyle(
-                    letterSpacing: 0.4,
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                actions(context, profile.user),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 85,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: highlightItems.length,
-                    itemBuilder: (context, index) {
-                      return Row(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Color(0xff74EDED),
+                        backgroundImage: getImageProviderNetWork(
+                            profile.user.avatar!.fileName),
+                      ),
+                      Row(
                         children: [
                           Column(
                             children: [
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Colors.grey,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: CircleAvatar(
-                                    backgroundImage:
-                                    AssetImage(highlightItems[index].thumbnail),
-                                    radius: 28,
-                                  ),
+                              Text(
+                                profile.numPosts.toString(),
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  highlightItems[index].title,
-                                  style: TextStyle(fontSize: 13),
+                              Text(
+                                "Posts",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  letterSpacing: 0.4,
                                 ),
                               )
                             ],
                           ),
                           SizedBox(
-                            width: 10,
-                          )
+                            width: 30,
+                          ),
+                          Column(
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => FriendsScreen(
+                                                  currentTab: 0,
+                                                )));
+                                  },
+                                  child: Text(
+                                    profile.numFriends.toString(),
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  )),
+                              Text(
+                                "Friends",
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 15,
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                profile.user.gender!,
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                "Gender",
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 15,
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
                         ],
-                      );
-                    },
+                      )
+                    ],
                   ),
-                ),
-                myPost()
-              ],
-            )
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    profile.user.username,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    profile.user.description!,
+                    style: TextStyle(
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  actions(context, profile.user),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    height: 85,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: highlightItems.length,
+                      itemBuilder: (context, index) {
+                        return Row(
+                          children: [
+                            Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 30,
+                                  backgroundColor: Colors.grey,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          highlightItems[index].thumbnail),
+                                      radius: 28,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    highlightItems[index].title,
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              width: 10,
+                            )
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  myPost()
+                ],
+              )),
         ),
-      ),
-    )
-  );
+      ));
 }
 
 Widget myPost() {
   return FutureBuilder<List<Post>>(
-    future: getMyPosts(),
-    builder: (ctx, snapshot) {
-      if (snapshot.connectionState != ConnectionState.done) {
-        return Center(
-            child: CircularProgressIndicator()
+      future: getMyPosts(),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return Center(child: CircularProgressIndicator());
+        }
+        ;
+        if (snapshot.hasError) {
+          return Text("Error");
+        }
+        ;
+        List<Post> list = snapshot.data as List<Post>;
+        // return PostContainer(post: list[0]);
+        return Wrap(
+          spacing: 10, // set spacing here
+          children: createPostList(list, 3),
         );
-      };
-      if (snapshot.hasError) {
-        return Text("Error");
-      };
-      List<Post> list = snapshot.data as List<Post>;
-      // return PostContainer(post: list[0]);
-      return Wrap(
-        spacing: 10, // set spacing here
-        children: createPostList(list, 3),
-      );
-    }
-  );
+      });
 }
 
 Widget actions(BuildContext context, User user) {
@@ -325,8 +316,8 @@ Widget actions(BuildContext context, User user) {
           onPressed: () {
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EditProfile(user: user))
-            );
+                MaterialPageRoute(
+                    builder: (context) => EditProfile(user: user)));
           },
         ),
       ),
@@ -348,9 +339,3 @@ List<Highlight> highlightItems = [
   Highlight(thumbnail: 'assets/images/swimming.jpg', title: "Pool 🌊"),
   Highlight(thumbnail: 'assets/images/yoga.jpg', title: "Yoga 💪🏻"),
 ];
-
-
-
-
-
-

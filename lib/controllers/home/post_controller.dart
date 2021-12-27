@@ -231,7 +231,6 @@ Future<int> createPost(
   }
   String body =
       '{"described": "$description", "images": $images_value, "videos": $videos_value}';
-
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',

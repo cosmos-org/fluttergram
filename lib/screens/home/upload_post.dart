@@ -37,7 +37,7 @@ class _CreatePostState extends State<CreatePost> {
                   leading: IconButton(
                       icon: Icon(Icons.arrow_back, color: secondaryColor),
                       onPressed: () {
-                        Navigator.pop(context);
+                        deletePostAlert(context);
                       }),
                   title: const Center(
                       child: Text(
@@ -50,9 +50,9 @@ class _CreatePostState extends State<CreatePost> {
                         onPressed: () async {
                           String description = descriptionController.text;
                           List<String> encodeImages = await encodeFiles(images);
-                          // List<String> encodeVideos = await encodeFiles(videos);
+                          List<String> encodeVideos = await encodeFiles(videos);
                           int statusCode =
-                              await createPost(description, encodeImages, []);
+                              await createPost(description, encodeImages, encodeVideos);
                           print(statusCode);
                           if (statusCode < 300) {
                             Navigator.pushAndRemoveUntil(
@@ -95,23 +95,6 @@ class _CreatePostState extends State<CreatePost> {
                               border: InputBorder.none),
                         ),
                       ),
-                      // Container(
-                      //   height: 45.0,
-                      //   width: 45.0,
-                      //   child: AspectRatio(
-                      //     aspectRatio: 487 / 451,
-                      //     child: Container(
-                      //       decoration: BoxDecoration(
-                      //           image: DecorationImage(
-                      //         fit: BoxFit.fill,
-                      //         alignment: FractionalOffset.topCenter,
-                      //         image: images.isNotEmpty
-                      //             ? FileImage(images[0])
-                      //             : FileImage(File("assets/whatsapp_Back.png")),
-                      //       )),
-                      //     ),
-                      //   ),
-                      // ),
                       Center(
                         child: IconButton(
                             icon: Icon(Icons.add_photo_alternate),
@@ -298,4 +281,78 @@ class _CreatePostState extends State<CreatePost> {
     }
     return encodedLists;
   }
+}
+
+deletePostAlert(BuildContext context) {
+  Color textColor = primaryColor;
+  // set up the button
+  Widget deleteButton = TextButton(
+    child: Text("Delete", style: TextStyle(color: errorColor)),
+    onPressed: () {
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    },
+  );
+
+  Widget cancelButton = TextButton(
+    child: Text("Cancel", style: TextStyle(color: textColor)),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    backgroundColor: secondaryColor,
+    title: Text("The post is not saved. Do you want to delete it?", style: TextStyle(color: textColor)),
+    actions: [
+      cancelButton,
+      deleteButton
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+postingFailAlert(context) {
+  Color textColor = primaryColor;
+  // set up the button
+  Widget backHomeButton = TextButton(
+    child: Text("Back to Home", style: TextStyle(color: textColor)),
+    onPressed: () {
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    },
+  );
+
+  Widget retryButton = TextButton(
+    child: Text("Retry", style: TextStyle(color: textColor)),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    backgroundColor: secondaryColor,
+    title: Text("Couldn't post. Something wrong!", style: TextStyle(color: textColor)),
+    actions: [
+      backHomeButton,
+      retryButton
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
