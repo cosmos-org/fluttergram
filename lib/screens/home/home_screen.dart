@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_alert),
+            icon: Icon(Icons.notifications),
             onPressed: () {},
           ),
         ]);
