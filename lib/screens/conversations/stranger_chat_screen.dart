@@ -244,7 +244,7 @@ class StrangerChatScreenState extends State<StrangerChatScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: buildBody(ctx, friendStatusValue) ?? [Container()],
+                          children: buildBody(ctx, friendStatusValue),
                         )),
                   ),
                 )),

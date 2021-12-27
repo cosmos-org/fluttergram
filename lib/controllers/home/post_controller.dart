@@ -125,16 +125,24 @@ Future<void> likePost(Post post) async {
       });
 }
 
-Future<void> reportPost(Post post) async{
+Future<bool> reportPost(Post post,String subject,String detail) async{
   String token = await getToken();
   String url = hostname + postReportEndpoint + post.id;
-  String body = '{"subject": "1", "details": ""}';
+  String body = '{"subject": "${subject}", "details": "${detail}"}';
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'authorization': 'bearer ' + token,
       },
       body: body);
+  int statusCode = response.statusCode;
+  dynamic respBody = jsonDecode(response.body);
+  if (statusCode < 300) {
+    if (checkMessageResponse(respBody['message'])) {return true;}
+    else return false;
+  } else {
+    return false;
+  }
 }
 
 Future<void> deletePost(Post post) async{
