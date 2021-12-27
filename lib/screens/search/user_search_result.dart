@@ -143,7 +143,7 @@ class UserSearched extends StatelessWidget {
                       SizedBox(
                         width: 8,
                       ),
-                      Text(user.description ?? 'About me',
+                      Text( (user.description != '') ? user.description ?? 'About me' : 'About me',
                         overflow: TextOverflow.ellipsis,)
                     ])),
                 Container(
@@ -159,7 +159,7 @@ class UserSearched extends StatelessWidget {
                       SizedBox(
                         width: 8,
                       ),
-                      Text(user.address ?? 'Viet Nam',
+                      Text( (user.address != '') ? user.address ?? 'Viet Nam' : 'Viet Nam',
                         overflow: TextOverflow.ellipsis,
                       )
                     ]))
