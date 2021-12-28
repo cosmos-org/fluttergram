@@ -242,7 +242,7 @@ Future<String> getStatusUser(String userId) async{
   }
   switch (status) {
     case 'friend':
-      return 'Remove friend';
+      return 'Message';
     case 'friendRequest':
       return 'Accept friend';
     case 'userSentRequest':

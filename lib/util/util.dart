@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 
+import '../default_screen.dart';
+
 
 const String getFileUrl = hostname+ '/files/';
 String dateTimeFormat(String dateMongo){
@@ -198,3 +200,4 @@ Future<File> ImageUrlToFile(String fileName) async {
       buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
   return file;
 }
+

@@ -52,9 +52,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 class Constants {
   static const String Changepassword = 'Change password';
+  static const String ListBlocked = 'List blocked user';
   static const String SignOut = 'Sign out';
 
-  static const List<String> choices = <String>[Changepassword, SignOut];
+  static const List<String> choices = <String>[Changepassword, ListBlocked, SignOut];
 }
 
 Widget profileHeaderWidget(BuildContext context, Profile profile) {
@@ -67,6 +68,8 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
           context,
           MaterialPageRoute(builder: (context) => LogInPage()),
           ModalRoute.withName("/Login"));
+    } else if (choice == Constants.ListBlocked) {
+      //SONMT
     }
   }
 
