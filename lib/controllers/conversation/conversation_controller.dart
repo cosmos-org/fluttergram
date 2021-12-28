@@ -135,7 +135,7 @@ Future<List<Conversation>> searchConversationAPI(String keyword,List<Conversatio
     var  userLs = <String>[];
     for (var element in convers)
         {
-      userLs.add(element.partnerUser!.id!);
+      userLs.add(element.partnerUser!.id);
     };
     return userLs;
   }
