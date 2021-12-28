@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/conversation_model.dart';
 import 'package:fluttergram/models/message_model.dart';
+import 'package:fluttergram/models/profile_model.dart';
+import 'package:fluttergram/screens/profile/different_user_profile.dart';
+import '../../default_screen.dart';
 import '../../models/user_model.dart';
 // Controllers
 import '../../controllers/conversation/conversation_controller.dart';
@@ -88,12 +92,9 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage(String text) async {
-    print('send msg');
     var chatId =  widget.conversation.id;
     var receiveUserId = widget.conversation.partnerUser!.id;
     Message sentMsg = await sendMessageAPI(text, chatId, receiveUserId );
-    print('sent Msg');
-    print(sentMsg);
     if(sentMsg.id != '') {
       globalCustomSocket.sendMessage(sentMsg,receiveUserId,widget.conversation);
       setState((){
@@ -154,12 +155,27 @@ class ChatScreenState extends State<ChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.conversation.partnerUser!.username,
-                        style: TextStyle(
-                          fontSize: 18.5,
-                          fontWeight: FontWeight.bold,
+                      InkWell(
+                        child: Text(
+                          widget.conversation.partnerUser!.username,
+                          style: TextStyle(
+                            fontSize: 18.5,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                        onTap: () async{
+                          if (widget.conversation.partnerUser!.id == await getCurrentUserId()){
+                            globalDefaultScreenRef.callbackDefaultScreen(3);
+                          }
+                          else {
+                            Profile profile = await showAnotherProfile(widget.conversation.partnerUser!.id);
+                            String status = await getStatusUser(widget.conversation.partnerUser!.id);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => DUserProfileScreen(profile: profile, status: status))
+                            );
+                          }
+                        },
                       ),
                       Text(
                         "Last seen just now",
@@ -177,7 +193,6 @@ class ChatScreenState extends State<ChatScreen> {
                 PopupMenuButton<String>(
                   padding: EdgeInsets.all(0),
                   onSelected: (value) {
-                    print(value);
                   },
                   itemBuilder: (BuildContext contesxt) {
                     return [

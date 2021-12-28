@@ -34,6 +34,8 @@ const userGetInforEndpoint = "/api/v1/users/show";
 const userEditInforEndpoint = "/api/v1/users/edit";
 const userChangePasswordEndpoint = "/api/v1/users/change-password";
 const userGetAnotherEndpoint = "/api/v1/users/show/";
+const userBlockEndpoint = "/api/v1/users/set-block-user";
+
 //API For Friend
 const friendGetListEndpoint = "/api/v1/friends/list";
 const friendGetListsRequestsEndPoint = "/api/v1/friends/get-requested-friend";

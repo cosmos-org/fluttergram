@@ -242,7 +242,7 @@ Future<String> getStatusUser(String userId) async{
   }
   switch (status) {
     case 'friend':
-      return 'Remove friend';
+      return 'Message';
     case 'friendRequest':
       return 'Accept friend';
     case 'userSentRequest':
@@ -313,6 +313,25 @@ Future<bool> removeRequestFriend(String userId) async {
   String token = await getToken();
   String url = hostname + friendSetRemoveRequest;
   String param = '{"user_id": "$userId"}';
+  final response = await post(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      },
+      body: param
+  );
+  if (response.statusCode<300){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+Future<bool> blockUser(String userId, String type) async{
+  String token = await getToken();
+  String url = hostname + userBlockEndpoint;
+  String param = '{"user_id": "$userId", "type": $type}';
   final response = await post(Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',

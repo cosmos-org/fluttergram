@@ -42,10 +42,8 @@ class AwaitRequestsState extends State<AwaitRequestsScreen> {
                         await showAnotherProfile(friendRequests[index].id);
                     Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => DUserProfileScreen(
-                                profile: friendRequestProfile,
-                                status: "Accept Friend")));
+                        MaterialPageRoute(builder: (context) => DUserProfileScreen(profile: friendRequestProfile, status: 'Accept friend'))
+                    );
                   },
                   child: FriendCard(
                     friend: friendRequests[index],

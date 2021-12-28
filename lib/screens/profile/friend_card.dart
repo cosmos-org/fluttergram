@@ -71,7 +71,6 @@ class FriendCard extends StatelessWidget {
                     backgroundColor: MaterialStateProperty.all(primaryColor)),
                 onPressed: () {
                   acceptFriend(friend.id, "1");
-
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

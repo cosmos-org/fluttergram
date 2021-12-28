@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttergram/constants.dart';
 import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/default_screen.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/screens/home/post.dart';
@@ -20,11 +22,6 @@ class DUserProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<DUserProfileScreen> {
   Profile _profile;
   String status;
-  void choiceAction(String choice) {
-    if (choice == Constants.Block) {
-      print('Block user');
-    }
-  }
 
   void callback (String statusAfter){
     setState((){
@@ -45,22 +42,22 @@ class Constants {
   static const List<String> choices = <String>[Block];
 }
 
-Widget profileHeaderWidget(
-    BuildContext context, Profile profile, String status, Function callback) {
-  void choiceAction(String choice) {
-    if (choice == Constants.Block) {
-      print("Block user");
-    }
-  }
+class Constants_friend {
+  static const String Block = 'Block';
+  static const String RemoveFriend = 'Remove fiend';
+  static const List<String> choices = <String>[Block, RemoveFriend];
+}
 
-  removeFriendAlert(BuildContext context, String message) {
-    Color textColor = primaryColor;
-    Widget cancelButton = TextButton(
-      child: Text("Cancel", style: TextStyle(color: textColor)),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
+Widget profileHeaderWidget(
+  BuildContext context, Profile profile, String status, Function callback) {
+    removeFriendAlert(BuildContext context, String message) {
+      Color textColor = primaryColor;
+      Widget cancelButton = TextButton(
+        child: Text("Cancel", style: TextStyle(color: textColor)),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
 
     Widget okButton = TextButton(
       child: Text("Ok", style: TextStyle(color: textColor)),
@@ -91,13 +88,53 @@ Widget profileHeaderWidget(
     );
   }
 
+    blockUserAlert(BuildContext context, String message) {
+      Color textColor = primaryColor;
+      Widget cancelButton = TextButton(
+        child: Text("Cancel", style: TextStyle(color: textColor)),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+
+      Widget okButton = TextButton(
+        child: Text("Ok", style: TextStyle(color: textColor)),
+        onPressed: () async{
+          if (await blockUser(profile.user.id, "true")){
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => DefaultScreen(currentScreen: 0)),
+                ModalRoute.withName('/'));
+          };
+        },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        backgroundColor: secondaryColor,
+        title: Text(message, style: TextStyle(color: textColor)),
+        actions: [
+          okButton,
+          cancelButton
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+
   acceptFriendAlert(BuildContext context, String message) {
     Color textColor = primaryColor;
     Widget yesButton = TextButton(
       child: Text("Yes", style: TextStyle(color: textColor)),
       onPressed: () async {
         if (await acceptFriend(profile.user.id, "1")){
-          callback('Remove friend');
+          callback('Message');
           Navigator.of(context).pop();
         };
       },
@@ -132,6 +169,17 @@ Widget profileHeaderWidget(
     );
   }
 
+    void choiceAction(String choice) {
+      if (choice == Constants.Block) {
+        String username = profile.user.username;
+        blockUserAlert(context, 'Do you want block $username?');
+      }
+      if (choice == Constants_friend.RemoveFriend) {
+        String username = profile.user.username;
+        removeFriendAlert(context, 'Do you want to remove $username from your friend list?');
+      }
+    }
+
   return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -141,7 +189,14 @@ Widget profileHeaderWidget(
           PopupMenuButton<String>(
             onSelected: choiceAction,
             itemBuilder: (BuildContext context) {
-              return Constants.choices.map((String choice) {
+              return status != 'Message' ?
+                Constants.choices.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList() :
+              Constants_friend.choices.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -258,9 +313,9 @@ Widget profileHeaderWidget(
                           onPressed: () async{
                             String buttonText = '';
                             switch (status) {
-                              case 'Remove friend':
-                                String username = profile.user.username;
-                                removeFriendAlert(context, 'Do you want to remove $username from your friend list?');
+                              case 'Message':
+                                //Di chuyen den screen chat cua 2 nguoi
+                                // HUYDQ
                                 break;
                               case 'Add friend':
                                 if (await requestFriend(profile.user.id)){
@@ -293,11 +348,10 @@ Widget profileHeaderWidget(
               )),
         ),
       ));
-
 }
 
 Widget story(String status) {
-  if (status == 'Remove friend') {
+  if (status == 'Message') {
     return Container(
       height: 85,
       child: ListView.builder(
@@ -343,7 +397,7 @@ Widget story(String status) {
 }
 
 Widget myPost(String userId, String status) {
-  if (status == 'Remove friend') {
+  if (status == 'Message') {
     return FutureBuilder<List<Post>>(
         future: getPostsByUserId(userId),
         builder: (ctx, snapshot) {
@@ -365,68 +419,6 @@ Widget myPost(String userId, String status) {
   } else
     return SizedBox.shrink();
 }
-
-// class ActionButton extends StatefulWidget {
-// class ActionButton extends StatefulWidget {
-//   String status;
-//   Profile profile;
-//   ActionButton(this.profile, this.status);
-//   @override
-//   State<StatefulWidget> createState() => ActionButtonState(profile, status);
-// }
-//
-// class ActionButtonState extends State<ActionButton> {
-//   Profile profile;
-//   String status;
-//   ActionButtonState(this.profile, this.status);
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//       children: [
-//         Expanded(
-//           child: OutlinedButton(
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 50),
-//               child: Text(status, style: TextStyle(color: Colors.black)),
-//             ),
-//             style: OutlinedButton.styleFrom(
-//                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-//                 minimumSize: Size(0, 30),
-//                 side: BorderSide(
-//                   color: primaryColor,
-//                 )),
-//             onPressed: () {
-//               String buttonText = '';
-//               switch (status) {
-//                 case 'Remove friend'://push alert, push again
-//                   String username = profile.user.username;
-//                   removeFriendAlert(context, 'Do you want to remove $username from your friend list?');
-//                   break;
-//                 case 'Add friend'://oke
-//                   buttonText = 'Friend requested';
-//                   break;
-//                 case 'Accept friend'://push again
-//                   buttonText = 'Remove friend';
-//                   break;
-//                 case 'Cancel request':
-//                   buttonText = 'Add friend';
-//                   break;
-//                 case 'Friend requested':
-//                   buttonText = 'Add friend';
-//                   break;
-//               }
-//               ;
-//               setState(() {
-//                 status = buttonText;
-//               });
-//             },
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
 
 class Highlight {
   String thumbnail;
