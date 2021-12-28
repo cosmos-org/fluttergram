@@ -17,20 +17,21 @@ class FriendsScreen extends StatefulWidget {
 class FriendsState extends State<FriendsScreen>
     with SingleTickerProviderStateMixin {
   int _currentTab;
-  late TabController _tabController;
+  bool state = true;
+  // late TabController _tabController;
   FriendsState(this._currentTab);
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController =
-        TabController(vsync: this, length: 3);
-    _tabController.animateTo(_currentTab);
-  }
+  // @override
+  // void initState() {
+  //   _tabController = TabController(vsync: this, length: 3);
+  //   _tabController.index = _currentTab;
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+        initialIndex: _currentTab,
         length: 3,
         child: Scaffold(
           appBar: AppBar(

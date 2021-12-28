@@ -9,10 +9,11 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
-
-import '../default_screen.dart';
-
-
+import 'package:fluttergram/default_screen.dart';
+late State<DefaultScreen> globalDefaultScreenRef;
+void saveDefaultScreenRef(State<DefaultScreen> t){
+  globalDefaultScreenRef = t;
+}
 const String getFileUrl = hostname+ '/files/';
 String dateTimeFormat(String dateMongo){
   final t = DateTime.parse(dateMongo);
@@ -200,4 +201,3 @@ Future<File> ImageUrlToFile(String fileName) async {
       buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
   return file;
 }
-

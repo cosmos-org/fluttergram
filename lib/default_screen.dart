@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttergram/util/util.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/search/search_screen.dart';
 import 'screens/conversations/conversation_screen.dart';
@@ -14,7 +15,10 @@ class DefaultScreen extends StatefulWidget {
 }
 
 class _DefaultScreenState extends State<DefaultScreen> {
-
+  @override
+  void initState() {
+    saveDefaultScreenRef(this);
+  }
   int _currentScreen = 0;
   final screens = [
     HomeScreen(),
