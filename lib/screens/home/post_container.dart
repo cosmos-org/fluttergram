@@ -132,12 +132,7 @@ class _PostHeader extends StatelessWidget {
             ),
             onTap: () async{
               if (post.author.id == await getCurrentUserId()){
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            DefaultScreen(currentScreen: 3)),
-                    ModalRoute.withName('/'));
+                globalDefaultScreenRef.callbackDefaultScreen(3);
               }
               else {
                 Profile profile = await showAnotherProfile(post.author.id);
@@ -165,12 +160,7 @@ class _PostHeader extends StatelessWidget {
                 ),
                 onTap: () async{
                   if (post.author.id == await getCurrentUserId()){
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                DefaultScreen(currentScreen: 3)),
-                        ModalRoute.withName('/'));
+                    globalDefaultScreenRef.callbackDefaultScreen(3);
                   }
                   else {
                     Profile profile = await showAnotherProfile(post.author.id);

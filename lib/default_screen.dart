@@ -11,14 +11,20 @@ class DefaultScreen extends StatefulWidget {
   DefaultScreen({Key? key, required this.currentScreen}) : super(key: key);
 
   @override
-  _DefaultScreenState createState() => _DefaultScreenState(currentScreen);
+  DefaultScreenState createState() => DefaultScreenState(currentScreen);
 }
 
-class _DefaultScreenState extends State<DefaultScreen> {
+class DefaultScreenState extends State<DefaultScreen> {
   @override
   void initState() {
     saveDefaultScreenRef(this);
+    super.initState();
   }
+
+  set currentScreen(int value) {
+    _currentScreen = value;
+  }
+
   int _currentScreen = 0;
   final screens = [
     HomeScreen(),
@@ -64,5 +70,5 @@ class _DefaultScreenState extends State<DefaultScreen> {
     );
   }
 
-  _DefaultScreenState(this._currentScreen);
+  DefaultScreenState(this._currentScreen);
 }

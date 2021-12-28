@@ -202,7 +202,6 @@ class StrangerChatScreenState extends State<StrangerChatScreen> {
                       PopupMenuButton<String>(
                         padding: EdgeInsets.all(0),
                         onSelected: (value) {
-                          print(value);
                         },
                         itemBuilder: (BuildContext contesxt) {
                           return [

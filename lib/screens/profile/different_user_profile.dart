@@ -308,7 +308,7 @@ Widget profileHeaderWidget(
 }
 
 Widget story(String status) {
-  if (status == 'Remove friend') {
+  if (status == 'Message') {
     return Container(
       height: 85,
       child: ListView.builder(
@@ -354,7 +354,7 @@ Widget story(String status) {
 }
 
 Widget myPost(String userId, String status) {
-  if (status == 'Remove friend') {
+  if (status == 'Message') {
     return FutureBuilder<List<Post>>(
         future: getPostsByUserId(userId),
         builder: (ctx, snapshot) {

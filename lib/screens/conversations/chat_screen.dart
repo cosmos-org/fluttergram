@@ -92,12 +92,9 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage(String text) async {
-    print('send msg');
     var chatId =  widget.conversation.id;
     var receiveUserId = widget.conversation.partnerUser!.id;
     Message sentMsg = await sendMessageAPI(text, chatId, receiveUserId );
-    print('sent Msg');
-    print(sentMsg);
     if(sentMsg.id != '') {
       globalCustomSocket.sendMessage(sentMsg,receiveUserId,widget.conversation);
       setState((){
@@ -168,12 +165,7 @@ class ChatScreenState extends State<ChatScreen> {
                         ),
                         onTap: () async{
                           if (widget.conversation.partnerUser!.id == await getCurrentUserId()){
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        DefaultScreen(currentScreen: 3)),
-                                ModalRoute.withName('/'));
+                            globalDefaultScreenRef.callbackDefaultScreen(3);
                           }
                           else {
                             Profile profile = await showAnotherProfile(widget.conversation.partnerUser!.id);
@@ -201,7 +193,6 @@ class ChatScreenState extends State<ChatScreen> {
                 PopupMenuButton<String>(
                   padding: EdgeInsets.all(0),
                   onSelected: (value) {
-                    print(value);
                   },
                   itemBuilder: (BuildContext contesxt) {
                     return [
