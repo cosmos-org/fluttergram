@@ -347,3 +347,19 @@ Future<bool> blockUser(String userId, String type) async{
   }
 }
 
+Future<List<User>> getBlockList() async {
+  String token = await getToken();
+  String url = hostname + getBlockListEndpoint;
+  final response = await get(Uri.parse(url),
+    headers: <String, String>{
+      'authorization': 'bearer ' + token,
+    },
+  );
+  var resp = jsonDecode(response.body);
+  var ls = <User>[];
+  for (var element in resp['data']) {
+    ls.add(User.fromJson(element));
+  }
+  return ls;
+}
+

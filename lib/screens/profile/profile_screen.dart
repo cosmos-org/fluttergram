@@ -8,6 +8,7 @@ import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post.dart';
 import 'package:fluttergram/screens/home/upload_post.dart';
 import 'package:fluttergram/screens/login/login_screen.dart';
+import 'package:fluttergram/screens/profile/blocked_list.dart';
 import 'package:fluttergram/screens/profile/change_password.dart';
 import 'package:fluttergram/screens/profile/friends.dart';
 import 'package:fluttergram/util/util.dart';
@@ -22,7 +23,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   void choiceAction(String choice) {
-    if (choice == Constants.Changepassword) {
+    if (choice == Constants.ChangePassword) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
     } else if (choice == Constants.SignOut) {
@@ -51,16 +52,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class Constants {
-  static const String Changepassword = 'Change password';
-  static const String ListBlocked = 'List blocked user';
+  static const String ChangePassword = 'Change password';
+  static const String ListBlocked = 'Block list';
   static const String SignOut = 'Sign out';
 
-  static const List<String> choices = <String>[Changepassword, ListBlocked, SignOut];
+  static const List<String> choices = <String>[
+    ChangePassword,
+    ListBlocked,
+    SignOut
+  ];
 }
 
 Widget profileHeaderWidget(BuildContext context, Profile profile) {
   void choiceAction(String choice) {
-    if (choice == Constants.Changepassword) {
+    if (choice == Constants.ChangePassword) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
     } else if (choice == Constants.SignOut) {
@@ -69,7 +74,8 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
           MaterialPageRoute(builder: (context) => LogInPage()),
           ModalRoute.withName("/Login"));
     } else if (choice == Constants.ListBlocked) {
-      //SONMT
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => BlockList()));
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/user_model.dart';
+import 'package:fluttergram/screens/profile/blocked_list.dart';
 import 'package:fluttergram/screens/profile/friends.dart';
 import 'package:fluttergram/util/util.dart';
 
@@ -114,6 +115,26 @@ class FriendCard extends StatelessWidget {
             },
             child: Text(
               "Cancel",
+              style: TextStyle(color: secondaryColor),
+            ));
+      case 4:
+        return ElevatedButton(
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0))),
+                backgroundColor: MaterialStateProperty.all(primaryColor)),
+            onPressed: () async {
+              String currentId = await getCurrentUserId();
+              blockUser(currentId, "false");
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          BlockList()),
+                  ModalRoute.withName('/'));
+            },
+            child: Text(
+              "Unblock",
               style: TextStyle(color: secondaryColor),
             ));
     }
