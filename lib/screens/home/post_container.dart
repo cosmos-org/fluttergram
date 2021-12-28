@@ -5,9 +5,11 @@ import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttergram/controllers/home/post_controller.dart';
+import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/models/user_model.dart';
 import 'package:fluttergram/screens/home/post_view_screen.dart';
 import 'package:fluttergram/screens/home/video.dart';
+import 'package:fluttergram/screens/profile/different_user_profile.dart';
 import 'package:video_player/video_player.dart';
 import '../../constants.dart';
 import '../../default_screen.dart';
@@ -121,24 +123,66 @@ class _PostHeader extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 20.0,
-          child: CircleAvatar(
-            radius: 20.0,
-            backgroundColor: Colors.grey[200],
-            backgroundImage:
-                getImageProviderNetWork(post.author.avatar!.fileName),
-          ),
+          child: InkWell(
+            child: CircleAvatar(
+              radius: 20.0,
+              backgroundColor: Colors.grey[200],
+              backgroundImage:
+              getImageProviderNetWork(post.author.avatar!.fileName),
+            ),
+            onTap: () async{
+              if (post.author.id == await getCurrentUserId()){
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            DefaultScreen(currentScreen: 3)),
+                    ModalRoute.withName('/'));
+              }
+              else {
+                Profile profile = await showAnotherProfile(post.author.id);
+                String status = await getStatusUser(post.author.id);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DUserProfileScreen(profile: profile, status: status))
+                );
+              }
+            },
+          )
+
         ),
         const SizedBox(width: 8.0),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                post.author.username,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
+              InkWell(
+                child: Text(
+                  post.author.username,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+                onTap: () async{
+                  if (post.author.id == await getCurrentUserId()){
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                DefaultScreen(currentScreen: 3)),
+                        ModalRoute.withName('/'));
+                  }
+                  else {
+                    Profile profile = await showAnotherProfile(post.author.id);
+                    String status = await getStatusUser(post.author.id);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DUserProfileScreen(profile: profile, status: status))
+                    );
+                  }
+                },
               ),
+
               Row(
                 children: [
                   Text(
@@ -321,7 +365,6 @@ class _PostStats extends State<PostStats> {
                       color: Colors.white,
                       child: InkWell(
                         onTap: () async {
-
                           List<Comment> listComment = await getComment(post);
                           for (var cm in listComment){
                             var userId = cm.author.id;

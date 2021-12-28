@@ -65,9 +65,10 @@ Widget profileHeaderWidget(
     Widget okButton = TextButton(
       child: Text("Ok", style: TextStyle(color: textColor)),
       onPressed: () async{
-        Navigator.of(context).pop();
-        callback('Add friend');
-        await removeFriend(profile.user.id);
+        if (await removeFriend(profile.user.id)){
+          Navigator.of(context).pop();
+          callback('Add friend');
+        };
       },
     );
 
@@ -95,18 +96,20 @@ Widget profileHeaderWidget(
     Widget yesButton = TextButton(
       child: Text("Yes", style: TextStyle(color: textColor)),
       onPressed: () async {
-        callback('Remove friend');
-        Navigator.of(context).pop();
-        await acceptFriend(profile.user.id, "1");
+        if (await acceptFriend(profile.user.id, "1")){
+          callback('Remove friend');
+          Navigator.of(context).pop();
+        };
       },
     );
 
     Widget noButton = TextButton(
       child: Text("No", style: TextStyle(color: textColor)),
       onPressed: () async{
-        Navigator.of(context).pop();
-        callback('Add friend');
-        await acceptFriend(profile.user.id, "2");
+        if (await acceptFriend(profile.user.id, "2")){
+          Navigator.of(context).pop();
+          callback('Add friend');
+        };
       },
     );
 
@@ -260,18 +263,20 @@ Widget profileHeaderWidget(
                                 removeFriendAlert(context, 'Do you want to remove $username from your friend list?');
                                 break;
                               case 'Add friend':
-                                buttonText = 'Cancel request';
-                                callback(buttonText);
-                                await requestFriend(profile.user.id);
+                                if (await requestFriend(profile.user.id)){
+                                  buttonText = 'Cancel request';
+                                  callback(buttonText);
+                                };
                                 break;
                               case 'Accept friend':
                                 String username = profile.user.username;
                                 acceptFriendAlert(context, 'Do you want to accept $username?');
                                 break;
                               case 'Cancel request':
-                                buttonText = 'Add friend';
-                                callback(buttonText);
-                                await removeRequestFriend(profile.user.id);
+                                if (await removeRequestFriend(profile.user.id)){
+                                  buttonText = 'Add friend';
+                                  callback(buttonText);
+                                };
                                 break;
                             };
                           },
