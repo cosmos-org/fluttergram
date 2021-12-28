@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttergram/constants.dart';
 import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
+import 'package:fluttergram/default_screen.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
 import 'package:fluttergram/screens/home/post.dart';
@@ -86,6 +88,46 @@ Widget profileHeaderWidget(
     );
   }
 
+    blockUserAlert(BuildContext context, String message) {
+      Color textColor = primaryColor;
+      Widget cancelButton = TextButton(
+        child: Text("Cancel", style: TextStyle(color: textColor)),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+
+      Widget okButton = TextButton(
+        child: Text("Ok", style: TextStyle(color: textColor)),
+        onPressed: () async{
+          if (await blockUser(profile.user.id, "true")){
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => DefaultScreen(currentScreen: 0)),
+                ModalRoute.withName('/'));
+          };
+        },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        backgroundColor: secondaryColor,
+        title: Text(message, style: TextStyle(color: textColor)),
+        actions: [
+          okButton,
+          cancelButton
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+
   acceptFriendAlert(BuildContext context, String message) {
     Color textColor = primaryColor;
     Widget yesButton = TextButton(
@@ -129,7 +171,8 @@ Widget profileHeaderWidget(
 
     void choiceAction(String choice) {
       if (choice == Constants.Block) {
-        print("Block user");
+        String username = profile.user.username;
+        blockUserAlert(context, 'Do you want block $username?');
       }
       if (choice == Constants_friend.RemoveFriend) {
         String username = profile.user.username;
