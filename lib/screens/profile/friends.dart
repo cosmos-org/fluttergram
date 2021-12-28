@@ -18,15 +18,7 @@ class FriendsState extends State<FriendsScreen>
     with SingleTickerProviderStateMixin {
   int _currentTab;
   bool state = true;
-  // late TabController _tabController;
   FriendsState(this._currentTab);
-
-  // @override
-  // void initState() {
-  //   _tabController = TabController(vsync: this, length: 3);
-  //   _tabController.index = _currentTab;
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
