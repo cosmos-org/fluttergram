@@ -102,6 +102,19 @@ class _PageState extends State<Page> {
             child: _Post(post: post),
           ),
           Divider(color: Colors.grey),
+          Container(
+            child: Text("You can only see your friends's comments"),
+          //   child: Card(
+          //       color: ,
+          //       margin: EdgeInsets.only(
+          //           left: 4, right: 4, bottom: 8),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(10),
+          //       ),
+          //     child: Text("You can only see your friends's comments",
+          //     : Colors.grey)
+          // ),
+          ),
           Expanded(
               child: ListView.builder(
                   controller: controller,
