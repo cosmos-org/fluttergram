@@ -94,7 +94,7 @@ Future<List<Post>> getMyPosts() async {
   String token = await getToken();
   String myId = await getCurrentUserId();
   final response = await http.get(
-      Uri.parse(hostname + postGetListEndpoint + '?page=0'),
+      Uri.parse(hostname + postGetListEndpoint + '?page=0&userId=$myId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'authorization': 'bearer ' + token,
