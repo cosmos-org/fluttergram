@@ -193,6 +193,32 @@ Future<void> editPost(Post post, String described) async{
 
 }
 
+Future<void> editComment(String commentID, String comment) async{
+  String token = await getToken();
+  String url = hostname + commentEditEndpoint + commentID;
+
+  String body = '{"content": "$comment"}';
+
+  final response = await http.post(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      },
+      body: body);
+  dynamic respBody = jsonDecode(response.body);
+
+}
+
+Future<void> deleteComment(String commentID) async{
+  String token = await getToken();
+  String url = hostname + commentDeleteEndpoint + commentID;
+  final response = await http.get(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+}
+
 Future<List<Comment>> getComment(Post post) async{
   String token = await getToken();
   String url = hostname + postGetCommentEndpoint + post.id;

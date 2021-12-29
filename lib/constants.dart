@@ -18,11 +18,11 @@ const boldFontWeight = FontWeight.bold;
 
 
 
-const hostname = "http://localhost:8000";
-const socketHostname = "http://localhost:7070";
+// const hostname = "http://localhost:8000";
+// const socketHostname = "http://localhost:7070";
 //
-// const hostname = "http://10.0.2.2:8000";
-// const socketHostname = "http://10.0.2.2:7070";
+const hostname = "http://10.0.2.2:8000";
+const socketHostname = "http://10.0.2.2:7070";
 
 // const hostname = "https://murmuring-inlet-24969.herokuapp.com";
 // const socketHostname = "https://tranquil-garden-75087.herokuapp.com";
@@ -57,6 +57,10 @@ const postDeleteEndpoint = "/api/v1/posts/delete/";
 const postReportEndpoint = "/api/v1/postReport/create/";
 const postEditEndpoint = "/api/v1/posts/edit/";
 const postCreateEndpoint = "/api/v1/posts/create";
+
+//API For Comment
+const commentEditEndpoint = "/api/v1/postComment/edit/";
+const commentDeleteEndpoint = "/api/v1/postComment/delete/";
 
 const int numberMsgPerPage = 50;
 const int numberPostPerPage = 5;

@@ -87,15 +87,17 @@ class _PostContainer extends State<PostContainer> {
                       .toList(),
                 ),
               )
-            // : const SizedBox.shrink(),
-        : Padding(
+            : const SizedBox.shrink(),
+        post.videos.isNotEmpty
+            ? Padding(
             padding: const EdgeInsets.all(12.0),
             child:  ChewieListItem(
                       videoPlayerController: VideoPlayerController.network(
-                        'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+                        hostname+ '/files/' + post.videos[0].fileName,
                   ), looping: true,
             )
-        ),
+          )
+            : const SizedBox.shrink(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PostStats(post: post, numLikes: numLikes, numComments: numComments)
@@ -279,10 +281,10 @@ class _PostStats extends State<PostStats> {
       numLikes = (num + tmp).toString();
     });
   }
-  void callBackNumComments(){
+  void callBackNumComments(int tmp){
     setState((){
       var num = int.parse(numComments);
-      numComments = (num + 1).toString();
+      numComments = (num + tmp).toString();
     });
   }
   @override
