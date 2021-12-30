@@ -22,7 +22,7 @@ class SearchConversationScreen extends StatefulWidget {
 
 class _SearchConversationScreenState extends State<SearchConversationScreen> {
 
-  String selectedTerm = 'a';
+  String selectedTerm = '';
 
 
 
@@ -44,9 +44,6 @@ class _SearchConversationScreenState extends State<SearchConversationScreen> {
         children: [
           Container(
             margin: const EdgeInsets.only(left: 20.0, right: 20.0,top: 50,bottom: 0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.blue),
-            ),
             child:TextField(
 //    ...,other fields
                 decoration: InputDecoration(
@@ -104,11 +101,7 @@ class ConversationSearchResultsListView extends StatelessWidget {
         ),
       );
     }
-    if (searchTerm == '') {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-      );
-    }
+
 
     return  FutureBuilder<List<Conversation>>(
       future: searchConversationAPI(searchTerm ?? '', conversations!),
@@ -122,12 +115,9 @@ class ConversationSearchResultsListView extends StatelessWidget {
           // data loaded:
           final conversations = snapshot.data!;
           if (conversations.length > 0)
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-              ),
-              child: ConversationSearchedList(conversations: conversations),
-            );
+            return
+               ConversationSearchedList(conversations: conversations);
+
           else
             return  Center(
               child: Text(
