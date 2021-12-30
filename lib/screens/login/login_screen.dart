@@ -5,6 +5,7 @@ import '../../util/util.dart';
 import 'package:fluttergram/default_screen.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import '../../socket/custom_socket.dart';
+import 'error_connection.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({Key? key}) : super(key: key);
@@ -95,7 +96,7 @@ class _LogInState extends State<LogInPage> {
                         if (_validatePhone && _validatePassword) {
                           var currentUserAndToken = await logIn(
                               phone, password);
-                          if (currentUserAndToken[0].id != "-1") {
+                          if (currentUserAndToken[0].id != "-1" && currentUserAndToken[0].id != "-2") {
                             User currentUser = currentUserAndToken[0];
                             String token = currentUserAndToken[1];
                             await setToken(token);
@@ -109,7 +110,15 @@ class _LogInState extends State<LogInPage> {
                                         currentScreen: 0,
                                       )),
                             );
-                          } else {
+                          } else if (currentUserAndToken[0].id == "-2")  {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) => ErrorScreen()
+                                    ),
+                                ModalRoute.withName('/error'));
+                          }
+                          else {
                             logInAlert(context, "error",
                                 "Logged in unsuccessfully.", "Retry");
                           }

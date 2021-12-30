@@ -117,26 +117,6 @@ class FriendCard extends StatelessWidget {
               "Cancel",
               style: TextStyle(color: secondaryColor),
             ));
-      case 4:
-        return ElevatedButton(
-            style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0))),
-                backgroundColor: MaterialStateProperty.all(primaryColor)),
-            onPressed: () async {
-              String currentId = await getCurrentUserId();
-              blockUser(currentId, "false");
-              Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          BlockList()),
-                  ModalRoute.withName('/'));
-            },
-            child: Text(
-              "Unblock",
-              style: TextStyle(color: secondaryColor),
-            ));
     }
   }
 }

@@ -49,20 +49,28 @@ class _CreatePostState extends State<CreatePost> {
                     TextButton(
                         onPressed: () async {
                           String description = descriptionController.text;
-                          List<String> encodeImages = await encodeFiles(images);
-                          List<String> encodeVideos = await encodeFiles(videos);
-                          int statusCode =
-                              await createPost(description, encodeImages, encodeVideos);
-                          print(statusCode);
-                          if (statusCode < 300) {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        DefaultScreen(currentScreen: 0)),
-                                ModalRoute.withName("/Home"));
+                          if (description.length == 0) {
+                            emptyPostAlert(context);
+                          } else {
+                            List<String> encodeImages = await encodeFiles(
+                                images);
+                            List<String> encodeVideos = await encodeFiles(
+                                videos);
+                            int statusCode =
+                            await createPost(
+                                description, encodeImages, encodeVideos);
+                            print(statusCode);
+                            if (statusCode < 300) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DefaultScreen(currentScreen: 0)),
+                                  ModalRoute.withName("/Home"));
+                            } else {
+                              postingFailAlert(context);
+                            }
                           }
-                          // TODO Alert posting failed
                         },
                         child: Text(
                           "Post",
@@ -345,6 +353,61 @@ postingFailAlert(context) {
     actions: [
       backHomeButton,
       retryButton
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+emptyPostAlert(BuildContext context) {
+  Color textColor = primaryColor;
+  Widget cancelButton = TextButton(
+    child: Text("Cancel", style: TextStyle(color: textColor)),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    backgroundColor: secondaryColor,
+    title: Text("This post can not be empty.", style: TextStyle(color: textColor)),
+    actions: [
+      cancelButton
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+exceedingImagesAlert(BuildContext context) {
+  Color textColor = primaryColor;
+
+  Widget cancelButton = TextButton(
+    child: Text("Cancel", style: TextStyle(color: textColor)),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    backgroundColor: secondaryColor,
+    title: Text("A post can only have 4 images in maximum.", style: TextStyle(color: textColor)),
+    actions: [
+      cancelButton
     ],
   );
 

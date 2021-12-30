@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
@@ -39,12 +40,16 @@ Future<User> getCurrentUser() async{
 }
 
 Future<List> logIn(String phone, String password) async {
-  // TODO Checking input condition
-
   String body = '{"phonenumber": "$phone", "password": "$password"}';
   Map<String, String> headers = {"Content-type": "application/json",};
   String loginUrl = hostname + userLogInEndpoint;
-  Response resp = await post(Uri.parse(loginUrl), headers: headers, body: body);
+  Response resp;
+  try {
+    resp = await post(
+        Uri.parse(loginUrl), headers: headers, body: body);
+  } on SocketException catch (_) {
+    return [User(id: '-2', username: "Error", phone: "", password: ""),''];
+  }
 
   int statusCode = resp.statusCode;
   dynamic respBody = jsonDecode(resp.body);

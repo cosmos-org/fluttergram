@@ -64,7 +64,7 @@ class Constants {
 }
 
 Widget profileHeaderWidget(BuildContext context, Profile profile) {
-  void choiceAction(String choice) {
+  Future<void> choiceAction(String choice) async {
     if (choice == Constants.ChangePassword) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
@@ -74,8 +74,9 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
           MaterialPageRoute(builder: (context) => LogInPage()),
           ModalRoute.withName("/Login"));
     } else if (choice == Constants.ListBlocked) {
+      List<User> blockedUsers = await getBlockList();
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => BlockList()));
+          context, MaterialPageRoute(builder: (context) => BlockList(blockedUsers)));
     }
   }
 
