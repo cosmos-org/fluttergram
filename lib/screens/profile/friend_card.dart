@@ -76,7 +76,7 @@ class FriendCard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              FriendsScreen(currentTab: tabIndex - 1)),
+                              FriendsScreen(currentTab: 0)),
                       ModalRoute.withName('/'));
                 },
                 child: Text(
@@ -90,7 +90,7 @@ class FriendCard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              FriendsScreen(currentTab: tabIndex - 1)),
+                              FriendsScreen(currentTab: 0)),
                       ModalRoute.withName('/'));
                 },
                 child: Text("Cancel", style: TextStyle(color: primaryColor)))
@@ -109,7 +109,7 @@ class FriendCard extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => FriendsScreen(
-                            currentTab: tabIndex - 1,
+                            currentTab: 0,
                           )),
                   ModalRoute.withName('/'));
             },
