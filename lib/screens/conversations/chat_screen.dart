@@ -127,6 +127,7 @@ class ChatScreenState extends State<ChatScreen> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),
             child: AppBar(
+              backgroundColor: primaryColor,
               leadingWidth: 70,
               titleSpacing: 0,
               leading: InkWell(
