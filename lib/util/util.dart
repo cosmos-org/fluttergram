@@ -8,9 +8,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
-
-
+import 'package:fluttergram/default_screen.dart';
+late DefaultScreenState globalDefaultScreenRef;
+void saveDefaultScreenRef(DefaultScreenState t){
+  globalDefaultScreenRef = t;
+}
 const String getFileUrl = hostname+ '/files/';
 String dateTimeFormat(String dateMongo){
   final t = DateTime.parse(dateMongo);
@@ -87,17 +89,32 @@ String stringConver(jsonValue){
 }
 //for example:  Image: getImageProviderNetWork(fileName),
 Image getImageNetWork(fileName) {
-  return Image.network(
-    getFileUrl + fileName,
-    fit: BoxFit.cover,
-  );
-}
 
+    return Image.network(
+            getFileUrl + fileName,
+         fit: BoxFit.cover,
+          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+             return  Image.asset(
+               'assets/default_image.jpg',
+               fit: BoxFit.cover,
+             );
+          },
+            );
+
+}
+const defaul_link = 'https://i.pinimg.com/564x/c2/5a/08/c25a08a1ec74b627d30139b17304db75.jpg';
 //for example:  backgroundImage: getImageProviderNetWork(fileName),
 NetworkImage getImageProviderNetWork(fileName) {
-  return NetworkImage(
-    getFileUrl + fileName,
-  );
+
+  try {
+    return NetworkImage(
+      getFileUrl + fileName,
+    );
+  } catch (e){
+    return NetworkImage(
+        defaul_link
+    );
+  }
 }
 
 Future<void> setCurrentUserId(String currentUserId) async {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/profile_model.dart';
@@ -39,12 +40,16 @@ Future<User> getCurrentUser() async{
 }
 
 Future<List> logIn(String phone, String password) async {
-  // TODO Checking input condition
-
   String body = '{"phonenumber": "$phone", "password": "$password"}';
   Map<String, String> headers = {"Content-type": "application/json",};
   String loginUrl = hostname + userLogInEndpoint;
-  Response resp = await post(Uri.parse(loginUrl), headers: headers, body: body);
+  Response resp;
+  try {
+    resp = await post(
+        Uri.parse(loginUrl), headers: headers, body: body);
+  } on SocketException catch (_) {
+    return [User(id: '-2', username: "Error", phone: "", password: ""),''];
+  }
 
   int statusCode = resp.statusCode;
   dynamic respBody = jsonDecode(resp.body);
@@ -242,7 +247,7 @@ Future<String> getStatusUser(String userId) async{
   }
   switch (status) {
     case 'friend':
-      return 'Remove friend';
+      return 'Message';
     case 'friendRequest':
       return 'Accept friend';
     case 'userSentRequest':
@@ -326,5 +331,40 @@ Future<bool> removeRequestFriend(String userId) async {
   else{
     return false;
   }
+}
+
+Future<bool> blockUser(String userId, String type) async{
+  String token = await getToken();
+  String url = hostname + userBlockEndpoint;
+  String param = '{"user_id": "$userId", "type": $type}';
+  final response = await post(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      },
+      body: param
+  );
+  if (response.statusCode<300){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+Future<List<User>> getBlockList() async {
+  String token = await getToken();
+  String url = hostname + getBlockListEndpoint;
+  final response = await get(Uri.parse(url),
+    headers: <String, String>{
+      'authorization': 'bearer ' + token,
+    },
+  );
+  var resp = jsonDecode(response.body);
+  var ls = <User>[];
+  for (var element in resp['data']) {
+    ls.add(User.fromJson(element));
+  }
+  return ls;
 }
 

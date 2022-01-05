@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/home/post_controller.dart';
-import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
 import 'package:fluttergram/models/comment_model.dart';
 import 'package:fluttergram/models/user_model.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import '../../util/util.dart';
 import 'package:fluttergram/constants.dart';
+
+import 'edit_comment.dart';
 
 class PostView extends StatefulWidget {
   final Post post;
@@ -83,11 +86,20 @@ class _PageState extends State<Page> {
   User user;
   ScrollController controller = new ScrollController();
   Function callBackNumComments;
+  List<String> comments = [];
   _PageState(this.post, this.listComment, this.user, this.callBackNumComments);
+  void callBackComment(String text, int index){
+    setState((){
+      comments[index] = text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     TextEditingController commentController = TextEditingController();
+    for(var c in listComment){
+      comments.add(c.content);
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -102,29 +114,85 @@ class _PageState extends State<Page> {
             child: _Post(post: post),
           ),
           Divider(color: Colors.grey),
+          Container(
+            child: Text("You can only see your friends's comments"),
+          //   child: Card(
+          //       color: ,
+          //       margin: EdgeInsets.only(
+          //           left: 4, right: 4, bottom: 8),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(10),
+          //       ),
+          //     child: Text("You can only see your friends's comments",
+          //     : Colors.grey)
+          // ),
+          ),
           Expanded(
               child: ListView.builder(
                   controller: controller,
                   itemCount: listComment.length,
-                  itemBuilder: (context, index) {
-                    final item = listComment[index];
-                    var userComment = item.author;
-                    return ListTile(
+                  itemBuilder: (context, index) => FocusedMenuHolder(
+                      blurSize: 0.3,
+                      blurBackgroundColor: secondaryColor,
+                      menuWidth: 200,
+                      menuItems:
+                        user.id == listComment[index].author.id
+                          ? <FocusedMenuItem>[
+                          FocusedMenuItem(
+                              title: Text("Edit", style: TextStyle(color: errorColor)),
+                              onPressed: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                    builder: (contex) =>
+                                    EditComment(comment: listComment[index], callBackComment: callBackComment, index: index)
+                                ));
+                              }
+                              ),
+                          FocusedMenuItem(
+                              title: Text("Delete"), onPressed: () {
+                              callBackNumComments(-1);
+                              deleteComment(listComment[index].id);
+                              setState((){
+                                this.listComment.removeAt(index);
+                                comments.removeAt(index);
+                                controller
+                                    .jumpTo((listComment.length - 1) * 100.0);
+                              });
+                          }),
+                          ]
+                          : user.id == post.author.id
+                            ?  <FocusedMenuItem>[
+                                  FocusedMenuItem(
+                                      title: Text("Delete"), onPressed: () {
+                                    callBackNumComments(-1);
+                                    deleteComment(listComment[index].id);
+                                    setState((){
+                                      this.listComment.removeAt(index);
+                                      comments.removeAt(index);
+                                      controller
+                                          .jumpTo((listComment.length - 1) * 100.0);
+                                    });
+                                  }),
+                                ]
+                            : <FocusedMenuItem>[],
+                      onPressed: () {},
+                      child: ListTile(
                       leading: CircleAvatar(
                         radius: 20.0,
                         child: CircleAvatar(
                           radius: 20.0,
                           backgroundColor: Color(0xFFEEEEEE),
                           backgroundImage: getImageProviderNetWork(
-                              userComment.avatar!.fileName),
+                              listComment[index].author.avatar!.fileName),
                         ),
                       ),
-                      trailing: Text(item.createdAt),
-                      title: Text(item.author.username),
-                      subtitle: Text(item.content),
+                      trailing: Text(listComment[index].createdAt),
+                      title: Text(listComment[index].author.username),
+                      subtitle: Text(comments[index]),
                       onTap: () {},
-                    );
-                  })),
+                    ))
+                  )),
           Container(
               height: 100.0,
               decoration: BoxDecoration(
@@ -200,9 +268,10 @@ class _PageState extends State<Page> {
                                     postId: post.id,
                                     content: commentController.text,
                                     createdAt: createdAt);
-                                callBackNumComments();
+                                callBackNumComments(1);
                                 setState(() {
                                   this.listComment.add(newComment);
+                                  comments.add(commentController.text);
                                   controller
                                       .jumpTo((listComment.length + 1) * 100.0);
                                 });

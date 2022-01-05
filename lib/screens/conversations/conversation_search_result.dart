@@ -16,8 +16,7 @@ class ConversationSearchedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 399,
+    return Expanded(
       child:ListView.builder(
           itemCount: conversations.length,
           itemBuilder: (_, index) => InkWell(
@@ -69,24 +68,24 @@ class ConversationSearched extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue),
-      ),
+
       margin: const EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: Padding(
         padding:
         const EdgeInsets.symmetric(horizontal: defaultPadding),
         child:Row(children: [
           CircleAvatar(
-            radius: 20.0,
+            radius: 40.0,
             child: CircleAvatar(
-              radius: 20.0,
+              radius: 40.0,
               backgroundColor: Colors.grey[200],
               backgroundImage: getImageProviderNetWork(conversation.partnerUser!.avatar!.fileName),
             ),
           ),
           const SizedBox(width: 8.0),
-          Text(conversation.partnerUser!.username)
+          Text(conversation.partnerUser!.username,style: TextStyle(
+            fontSize: 20,
+          ))
         ]),
       )
     );

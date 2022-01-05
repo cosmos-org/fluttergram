@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttergram/controllers/home/post_controller.dart';
 import 'package:fluttergram/controllers/user_controller.dart';
 import 'package:fluttergram/models/post_model.dart';
+import 'package:fluttergram/screens/home/video.dart';
 import 'package:fluttergram/util/util.dart';
+import 'package:video_player/video_player.dart';
 import '../../constants.dart';
 import '../../default_screen.dart';
 
@@ -107,7 +109,16 @@ class _EditPostState extends State<EditPost> {
               ),
             )
                 : const SizedBox.shrink(),
-
+            post.videos.isNotEmpty
+                ? Padding(
+                padding: const EdgeInsets.all(12.0),
+                child:  ChewieListItem(
+                  videoPlayerController: VideoPlayerController.network(
+                    hostname+ '/files/' + post.videos[0].fileName,
+                  ), looping: true,
+                )
+            )
+                : const SizedBox.shrink(),
             ]
         )
         );

@@ -202,7 +202,6 @@ class StrangerChatScreenState extends State<StrangerChatScreen> {
                       PopupMenuButton<String>(
                         padding: EdgeInsets.all(0),
                         onSelected: (value) {
-                          print(value);
                         },
                         itemBuilder: (BuildContext contesxt) {
                           return [
@@ -244,7 +243,7 @@ class StrangerChatScreenState extends State<StrangerChatScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: buildBody(ctx, friendStatusValue) ?? [Container()],
+                          children: buildBody(ctx, friendStatusValue),
                         )),
                   ),
                 )),

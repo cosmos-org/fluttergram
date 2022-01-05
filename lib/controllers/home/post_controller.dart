@@ -94,7 +94,7 @@ Future<List<Post>> getMyPosts() async {
   String token = await getToken();
   String myId = await getCurrentUserId();
   final response = await http.get(
-      Uri.parse(hostname + postGetListEndpoint + '?page=0' + '&userId=' + myId),
+      Uri.parse(hostname + postGetListEndpoint + '?page=0&userId=$myId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'authorization': 'bearer ' + token,
@@ -125,16 +125,24 @@ Future<void> likePost(Post post) async {
       });
 }
 
-Future<void> reportPost(Post post) async{
+Future<bool> reportPost(Post post,String subject,String detail) async{
   String token = await getToken();
   String url = hostname + postReportEndpoint + post.id;
-  String body = '{"subject": "1", "details": ""}';
+  String body = '{"subject": "${subject}", "details": "${detail}"}';
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'authorization': 'bearer ' + token,
       },
       body: body);
+  int statusCode = response.statusCode;
+  dynamic respBody = jsonDecode(response.body);
+  if (statusCode < 300) {
+    if (checkMessageResponse(respBody['message'])) {return true;}
+    else return false;
+  } else {
+    return false;
+  }
 }
 
 Future<void> deletePost(Post post) async{
@@ -185,6 +193,32 @@ Future<void> editPost(Post post, String described) async{
 
 }
 
+Future<void> editComment(String commentID, String comment) async{
+  String token = await getToken();
+  String url = hostname + commentEditEndpoint + commentID;
+
+  String body = '{"content": "$comment"}';
+
+  final response = await http.post(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      },
+      body: body);
+  dynamic respBody = jsonDecode(response.body);
+
+}
+
+Future<void> deleteComment(String commentID) async{
+  String token = await getToken();
+  String url = hostname + commentDeleteEndpoint + commentID;
+  final response = await http.get(Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'authorization': 'bearer ' + token,
+      });
+}
+
 Future<List<Comment>> getComment(Post post) async{
   String token = await getToken();
   String url = hostname + postGetCommentEndpoint + post.id;
@@ -231,7 +265,6 @@ Future<int> createPost(
   }
   String body =
       '{"described": "$description", "images": $images_value, "videos": $videos_value}';
-
   final response = await http.post(Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',

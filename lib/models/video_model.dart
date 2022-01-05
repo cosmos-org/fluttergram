@@ -23,8 +23,6 @@ class Video {
       fileType: json['mimetype'] ?? '',
       fileSize: json['fileSize'] ?? 0,
     );
-    print('from json video');
-    print(a);
     return a;
   }
 }
