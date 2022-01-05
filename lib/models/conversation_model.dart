@@ -30,7 +30,7 @@ class Conversation {
       id: json['_id'] ?? '',
       latestMessage: json['latestMessage'] ?? '',
       lastMessageTimeAgo: json['lastMessageTimeAgo'] ??  '',
-      isActive: json['isActive'] ?? true,
+      isActive: json['isActive'] ?? false,
       isSeen: json['isSeen'] ?? false,
       messages : json['messages'] ?? [],
       partnerUser: User.fromJson(jsonConvert(json['partnerUser'] ?? {})),

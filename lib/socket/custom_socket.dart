@@ -19,6 +19,12 @@ import 'dart:math';
 
 final String socketMessageEvent = 'message';
 final String socketSignInEvent = 'signin';
+final String socketOnlineEvent = 'online';
+final String socketOfflineEvent = 'offline';
+final String socketReadMsgEvent = 'read';
+final String socketRequestOnlineEvent = 'request_online';
+final String socketResponseOnlineEvent = 'online_list';
+
 late CustomSocket  globalCustomSocket;
 
 
@@ -35,6 +41,7 @@ class CustomSocket{
   CustomSocket(this.currentUserId);
   void initConversationState(ConversationScreenBodyState t){
     this.conversationScreenBodyState = t;
+    socket.emit(socketRequestOnlineEvent);
   }
   void initChatScreenState(ChatScreenState  t){
     this.chatScreenState = t;
@@ -46,12 +53,45 @@ class CustomSocket{
     });
     socket.connect();
     socket.emit(socketSignInEvent, this.currentUserId);
+
     socket.onConnect((data) {
       print('connected socket');
       socket.on(socketMessageEvent, (socketMsg) {
         Message msg = Message.fromJson(socketMsg);
         conversationScreenBodyState.handleNewMessage(msg);
         chatScreenState.handleNewMessage(msg);
+      });
+      socket.on(socketResponseOnlineEvent, (online_ls){
+        print('on');
+        while (conversationScreenBodyState == null){
+        };
+        try {
+          print('r');
+          conversationScreenBodyState.showOnlineConversation(online_ls);
+        }
+        catch(e){
+
+        };
+
+      });
+      socket.on(socketOnlineEvent, (id) {
+        print('user online');
+        print(id);
+        try {
+          conversationScreenBodyState.onlineUser(id);
+        }
+        catch(e){
+        };
+
+      });
+      socket.on(socketOfflineEvent, (id) {
+        print('user offline');
+        print(id);
+        try {
+          conversationScreenBodyState.offlineUser(id);
+        }
+        catch(e){
+        };
       });
     });
   }
