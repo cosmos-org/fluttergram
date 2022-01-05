@@ -32,8 +32,8 @@ Future<List<Conversation>> getConversationsAPI() async {
   Map<String, dynamic> handleConversationJson(json,messages){
     json['lastMessageTimeAgo'] =  timeAgo(json['lastMessageTime']);
     json['messages'] = messages ?? [];
-    json['isActive'] = true;
-    json['isSeen'] = true;
+    json['isActive'] = false;
+    json['isSeen'] = false;
     return json;
   }
   String token = await getToken();

@@ -124,6 +124,32 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
   //     return false;
   //   }
   // }
+  void showOnlineConversation(ls){
+    for (var l in ls) {
+      for (var c in widget.conversations){
+        if (c.partnerUser!.id == l){
+          c.isActive = true;
+        }
+      }
+    }
+    setState((){});
+  }
+  void offlineUser(id){
+    for (var c in widget.conversations){
+      if (c.partnerUser!.id == id){
+        c.isActive = false;
+      }
+    }
+    setState((){});
+  }
+  void onlineUser(id){
+    for (var c in widget.conversations){
+      if (c.partnerUser!.id == id){
+        c.isActive = true;
+      }
+    }
+    setState((){});
+  }
   void deleteConversation(Conversation conversation) {
     widget.conversations.removeWhere((c) => c == conversation);
   }
