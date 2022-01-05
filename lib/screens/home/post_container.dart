@@ -94,7 +94,7 @@ class _PostContainer extends State<PostContainer> {
             child:  ChewieListItem(
                       videoPlayerController: VideoPlayerController.network(
                         hostname+ '/files/' + post.videos[0].fileName,
-                  ), looping: true,
+                  ), looping: false,
             )
           )
             : const SizedBox.shrink(),
