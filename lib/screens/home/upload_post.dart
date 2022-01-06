@@ -59,7 +59,6 @@ class _CreatePostState extends State<CreatePost> {
                             int statusCode =
                             await createPost(
                                 description, encodeImages, encodeVideos);
-                            print(statusCode);
                             if (statusCode < 300) {
                               Navigator.pushAndRemoveUntil(
                                   context,

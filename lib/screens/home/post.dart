@@ -48,7 +48,6 @@ class _PostsState extends State<Posts> {
           } else{
             // loadMore(_snapshot.data);
             List<Post> list = _snapshot.data as List<Post>;
-            print('post list length '+ list.length.toString());
             return RefreshIndicator(
                 onRefresh: _postStreamModel.refresh,
                 child:SingleChildScrollView(

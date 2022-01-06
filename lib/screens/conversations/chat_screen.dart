@@ -53,6 +53,7 @@ class ChatScreenState extends State<ChatScreen> {
       });
     });
     globalCustomSocket.initChatScreenState(this);
+    readMsg();
     cachedPicker = EmojiPicker(
         rows: 4,
         columns: 7,
@@ -86,11 +87,33 @@ class ChatScreenState extends State<ChatScreen> {
     if (!msg.checkMsgUserId(widget.conversation.partnerUser!.id)) {
       return;
     }
+    globalCustomSocket.readMsg(msg.user!.id);
     setState((){
       return;
     });
   }
-
+  void offlineUser(id){
+    setState((){});
+  }
+  void onlineUser(id){
+    setState((){});
+  }
+  void beReadMsg(partner){
+    print('be read by ' + partner.toString());
+    if (widget.conversation.partnerUser!.id != partner){
+      return;
+    };
+    for (Message msg in widget.conversation.messages){
+      if (msg.user!.id != this.currentUserId) continue;
+      if (msg.isSeen) break;
+      msg.isSeen = true;
+    }
+    setState((){});
+  }
+  void readMsg(){
+    print(this.currentUserId.toString() + 'is reading msg of '+ widget.conversation.partnerUser!.id.toString());
+    globalCustomSocket.readMsg(widget.conversation.partnerUser!.id);
+  }
   void sendMessage(String text) async {
     var chatId =  widget.conversation.id;
     var receiveUserId = widget.conversation.partnerUser!.id;
@@ -132,6 +155,7 @@ class ChatScreenState extends State<ChatScreen> {
               titleSpacing: 0,
               leading: InkWell(
                 onTap: () {
+                  globalCustomSocket.cancelChatState();
                   Navigator.pop(context);
                 },
                 child: Row(
@@ -179,7 +203,7 @@ class ChatScreenState extends State<ChatScreen> {
                         },
                       ),
                       Text(
-                        "Last seen just now",
+                        widget.conversation.isActive ? "Online" : "Offline",
                         style: TextStyle(
                           fontSize: 13,
                         ),
@@ -277,6 +301,7 @@ class ChatScreenState extends State<ChatScreen> {
                                     return OwnMessageCard(
                                       message:  widget.conversation.messages[index].content.toString(),
                                       time: dateTimeFormat( widget.conversation.messages[index].createdAt.toString()),
+                                      isSeen:widget.conversation.messages[index].isSeen,
                                     );
                                   } else {
 
@@ -545,10 +570,10 @@ class ChatScreenState extends State<ChatScreen> {
 
 
 class OwnMessageCard extends StatelessWidget {
-  const OwnMessageCard({Key? key, required this.message,required this.time}) : super(key: key);
+  const OwnMessageCard({Key? key, required this.message,required this.time,required this.isSeen}) : super(key: key);
   final String message;
   final String time;
-
+  final bool isSeen;
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -594,10 +619,10 @@ class OwnMessageCard extends StatelessWidget {
                     SizedBox(
                       width: 5,
                     ),
-                    Icon(
+                    this.isSeen ? Icon(
                       Icons.done_all,
                       size: 20,
-                    ),
+                    ) : Container(),
                   ],
                 ),
               ),
