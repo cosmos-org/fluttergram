@@ -17,6 +17,7 @@ Message messageFromRespJson(json){
   final String chatId,id;
   final String content,createdAt,updatedAt;
   final User? user;
+  bool isSeen;
   id = json["_id"] ?? '';
   chatId = json['chat'] ?? '';
   content = json['content'] ?? '';
@@ -25,7 +26,8 @@ Message messageFromRespJson(json){
 
   updatedAt = json['updatedAt'] ?? '';
   user= User.fromJson(jsonConvert(json['user']));
-  return new Message(id: id, chatId: chatId,content: content,createdAt: createdAt,updatedAt: updatedAt,user: user);
+  isSeen  = json['isSeen'] ?? true;
+  return new Message(id: id, chatId: chatId,content: content,createdAt: createdAt,updatedAt: updatedAt,user: user,isSeen: isSeen);
 }
 
 Future<List<Conversation>> getConversationsAPI() async {
@@ -33,7 +35,7 @@ Future<List<Conversation>> getConversationsAPI() async {
     json['lastMessageTimeAgo'] =  timeAgo(json['lastMessageTime']);
     json['messages'] = messages ?? [];
     json['isActive'] = false;
-    json['isSeen'] = false;
+    json['isSeen'] = true;
     return json;
   }
   String token = await getToken();
@@ -120,7 +122,7 @@ Future<Message> sendMessageAPI(String content,String chatId,String  receiveId) a
       var msgID = resp['data']['_id'] ?? '';
       var msgJson =  resp['data'];
       if (msgID != '') {
-       return Message(id: msgJson['_id'],chatId: msgJson['chat']['_id'],
+       return Message(isSeen: false,id: msgJson['_id'],chatId: msgJson['chat']['_id'],
             content:  msgJson['content'],createdAt: msgJson['createdAt'],updatedAt: msgJson['updatedAt'],
             user: User.fromJson(jsonConvert(msgJson['user'])));
       }
@@ -206,7 +208,5 @@ Future<Conversation> getConversationsByPartnerUserIdAPI(String partnerUserId) as
 
   }
   else conversation =  Conversation.fromJson({});
-  print('get conver by partner id');
-  print(conversation);
   return conversation;
 }

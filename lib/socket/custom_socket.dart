@@ -22,6 +22,7 @@ final String socketSignInEvent = 'signin';
 final String socketOnlineEvent = 'online';
 final String socketOfflineEvent = 'offline';
 final String socketReadMsgEvent = 'read';
+final String socketBeReadEvent = 'be_read';
 final String socketRequestOnlineEvent = 'request_online';
 final String socketResponseOnlineEvent = 'online_list';
 
@@ -38,14 +39,30 @@ class CustomSocket{
   late String currentUserId;
   late ConversationScreenBodyState conversationScreenBodyState;
   late ChatScreenState chatScreenState;
+  bool haveConversationState = false;
+  bool haveChatState = false;
   CustomSocket(this.currentUserId);
   void initConversationState(ConversationScreenBodyState t){
     this.conversationScreenBodyState = t;
+    this.haveConversationState = true;
     socket.emit(socketRequestOnlineEvent);
   }
   void initChatScreenState(ChatScreenState  t){
     this.chatScreenState = t;
+    this.haveChatState = true;
   }
+  void cancelChatState(){
+    this.haveChatState = false;
+  }
+  void cancelConversationState(){
+    this.haveConversationState = false;
+
+  }
+  void readMsg(partnerId){
+    // this.conversationScreenBodyState.readMsg(partnerId);
+    socket.emit(socketReadMsgEvent, {'current': this.currentUserId, 'target': partnerId});
+  }
+
   void connect(){
     socket = IO.io(socketHostname, <String, dynamic>{
       "transports": ["websocket"],
@@ -59,14 +76,16 @@ class CustomSocket{
       socket.on(socketMessageEvent, (socketMsg) {
         Message msg = Message.fromJson(socketMsg);
         conversationScreenBodyState.handleNewMessage(msg);
-        chatScreenState.handleNewMessage(msg);
+        if (this.haveChatState)  chatScreenState.handleNewMessage(msg);
+      });
+      socket.on(socketBeReadEvent,(partner){
+        if (this.haveChatState)
+          this.chatScreenState.beReadMsg(partner);
       });
       socket.on(socketResponseOnlineEvent, (online_ls){
-        print('on');
         while (conversationScreenBodyState == null){
         };
         try {
-          print('r');
           conversationScreenBodyState.showOnlineConversation(online_ls);
         }
         catch(e){
@@ -75,20 +94,19 @@ class CustomSocket{
 
       });
       socket.on(socketOnlineEvent, (id) {
-        print('user online');
-        print(id);
+
         try {
           conversationScreenBodyState.onlineUser(id);
+          chatScreenState.onlineUser(id);
         }
         catch(e){
         };
 
       });
       socket.on(socketOfflineEvent, (id) {
-        print('user offline');
-        print(id);
         try {
           conversationScreenBodyState.offlineUser(id);
+          chatScreenState.offlineUser(id);
         }
         catch(e){
         };

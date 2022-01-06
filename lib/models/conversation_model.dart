@@ -22,6 +22,7 @@ class Conversation {
     this.lastMessageTimeAgo = timeAgo(msg.updatedAt);
     this.latestMessage = msg.content;
     this.messages.insert(0,msg);
+    this.isSeen = false;
     this.sender = (msg.user!.id == this.partnerUser!.id) ? 1: 0;
   }
   factory Conversation.fromJson(Map<String, dynamic> json){

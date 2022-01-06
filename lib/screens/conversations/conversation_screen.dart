@@ -59,7 +59,7 @@ class ConversationCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontWeight: conversation.isSeen
+                            fontWeight:conversation.sender == 0 ?  normalFontWeight : conversation.isSeen
                                 ? normalFontWeight
                                 : boldFontWeight),
                       ),
@@ -134,6 +134,15 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
     }
     setState((){});
   }
+  // void readMsg(partnerId){
+  //   List<Conversation> conversationFoundLs = widget.conversations.where((c) => c.partnerUser?.id == partnerId).toList();
+  //   Conversation conversationFound;
+  //   if (conversationFoundLs.length > 0) { //if new msg from one of current chat
+  //     conversationFound = conversationFoundLs[0];
+  //     conversationFound.isSeen = true;
+  //     setState((){});
+  //   }
+  // }
   void offlineUser(id){
     for (var c in widget.conversations){
       if (c.partnerUser!.id == id){
@@ -177,6 +186,7 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
     } else {// if chat is new (friend relation has just been establish :))
       getConversationsByPartnerUserIdAPI(fromUserId).then((Conversation conversation) {
         setState(() {
+          conversation.isSeen = false;
           widget.conversations.insert(0, conversation);
         });
       });
@@ -222,6 +232,8 @@ class ConversationScreenBodyState extends State<ConversationScreenBody> {
                       conversation: widget.conversations[index],
                     )),
           );
+            widget.conversations[index].isSeen = true;
+            setState((){});
           }, // move to chat screen
           child: ConversationCard(conversation: widget.conversations[index])),
     );
