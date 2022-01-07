@@ -25,7 +25,7 @@ final String socketReadMsgEvent = 'read';
 final String socketBeReadEvent = 'be_read';
 final String socketRequestOnlineEvent = 'request_online';
 final String socketResponseOnlineEvent = 'online_list';
-
+final String socketDisconnectEvent = 'disconnect';
 late CustomSocket  globalCustomSocket;
 
 
@@ -58,6 +58,10 @@ class CustomSocket{
     this.haveConversationState = false;
 
   }
+  void signOut(){
+    print('disconnect');
+    socket.disconnect();
+  }
   void readMsg(partnerId){
     // this.conversationScreenBodyState.readMsg(partnerId);
     socket.emit(socketReadMsgEvent, {'current': this.currentUserId, 'target': partnerId});
@@ -72,7 +76,6 @@ class CustomSocket{
     socket.emit(socketSignInEvent, this.currentUserId);
 
     socket.onConnect((data) {
-      print('connected socket');
       socket.on(socketMessageEvent, (socketMsg) {
         Message msg = Message.fromJson(socketMsg);
         conversationScreenBodyState.handleNewMessage(msg);
@@ -104,6 +107,7 @@ class CustomSocket{
 
       });
       socket.on(socketOfflineEvent, (id) {
+        print(id.toString()+ 'offline');
         try {
           conversationScreenBodyState.offlineUser(id);
           chatScreenState.offlineUser(id);

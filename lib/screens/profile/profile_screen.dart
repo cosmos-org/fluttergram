@@ -13,7 +13,7 @@ import 'package:fluttergram/screens/profile/change_password.dart';
 import 'package:fluttergram/screens/profile/friends.dart';
 import 'package:fluttergram/util/util.dart';
 import 'edit_profile.dart';
-
+import '../../socket/custom_socket.dart';
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -27,6 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
     } else if (choice == Constants.SignOut) {
+      print('sig out');
+      globalCustomSocket.signOut();
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (BuildContext context) => LogInPage()),
@@ -69,6 +71,7 @@ Widget profileHeaderWidget(BuildContext context, Profile profile) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
     } else if (choice == Constants.SignOut) {
+      globalCustomSocket.signOut();
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => LogInPage()),
