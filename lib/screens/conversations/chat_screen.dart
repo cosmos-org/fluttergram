@@ -99,7 +99,6 @@ class ChatScreenState extends State<ChatScreen> {
     setState((){});
   }
   void beReadMsg(partner){
-    print('be read by ' + partner.toString());
     if (widget.conversation.partnerUser!.id != partner){
       return;
     };
@@ -165,10 +164,41 @@ class ChatScreenState extends State<ChatScreen> {
                       Icons.arrow_back,
                       size: 24,
                     ),
-                    CircleAvatar(
-                      backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
-                      radius: 20,
-                    ),
+                   widget.conversation.isActive ? SizedBox(
+                      width: 40,
+                      height:40,
+                      child: Stack(
+                          clipBehavior: Clip.none,
+                          fit: StackFit.expand,
+                          children: [
+                            CircleAvatar(
+                              backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
+                              radius: 20,
+                            ),
+                            Positioned(
+                                right: -5,
+                                bottom: -5,
+                                child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: RawMaterialButton(
+                                      // shape: RoundedRectangleBorder(
+                                      //   borderRadius: BorderRadius.circular(50),
+                                      //   side: BorderSide(color: primaryColor),
+                                      // ),
+                                      elevation: 2.0,
+                                      fillColor: primaryColor,
+                                      onPressed: () {},
+                                      // TODO: Icon not centered.
+                                      child:  Icon(Icons.brightness_1_rounded,color: Colors.green,size:15),
+                                      shape: CircleBorder(),
+                                    )))
+                          ]
+                      )
+                    ) : CircleAvatar(
+    backgroundImage:  getImageProviderNetWork(widget.conversation.partnerUser!.avatar!.fileName),
+    radius: 20,
+    ),
                   ],
                 ),
               ),
