@@ -111,6 +111,7 @@ Future<User> getAnotherUser(String UserId) async {
 }
 
 Future<Profile> show() async{
+  String crUser = await getCurrentUserId();
   User user = await getUser();
   if(user.gender=="secret"){
     user.gender = "Secret";
@@ -122,7 +123,7 @@ Future<Profile> show() async{
     user.gender = "Female";
   }
   List<User> lf = await getFriends();
-  List<Post> lp = await getPosts();
+  List<Post> lp = await getPostsByUserId(crUser);
   int numFriends = lf.length, numPosts = lp.length;
   Profile p = Profile(user, numPosts, numFriends, lp);
   return p;
